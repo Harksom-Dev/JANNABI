@@ -1,0 +1,40 @@
+
+Jannabi.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+normal_reload
+  rotate: false
+  xy: 0, 32
+  size: 256, 32
+  orig: 256, 32
+  offset: 0, 0
+  index: -1
+pistol_run
+  rotate: false
+  xy: 0, 0
+  size: 256, 32
+  orig: 256, 32
+  offset: 0, 0
+  index: -1
+run_aim
+  rotate: false
+  xy: 256, 32
+  size: 256, 32
+  orig: 256, 32
+  offset: 0, 0
+  index: -1
+stand_aim
+  rotate: false
+  xy: 256, 0
+  size: 256, 32
+  orig: 256, 32
+  offset: 0, 0
+  index: -1
+jump_aim
+  rotate: false
+  xy: 512, 32
+  size: 128, 32
+  orig: 128, 32
+  offset: 0, 0
+  index: -1
