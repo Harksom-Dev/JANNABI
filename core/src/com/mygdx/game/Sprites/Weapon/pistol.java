@@ -9,14 +9,15 @@ import com.mygdx.game.Jannabi;
 import com.mygdx.game.Screen.PlayScreen;
 
 public class pistol extends weapons {
-
-    public pistol(PlayScreen screen, float x, float y, boolean fireRight,boolean aimUp,boolean aimdown) {
-        super(screen,x,y,fireRight,aimUp,aimdown);
+    public int Dmg;
+    public pistol(PlayScreen screen, float x, float y, boolean fireRight,boolean aimUp,boolean aimDown,int Dmg) {
+        super(screen,x,y,fireRight,aimUp,aimDown);
         this.fireRight = fireRight;
         this.aimUp = aimUp;
-        this.aimDown = aimdown;
+        this.aimDown = aimDown;
         this.screen = screen;
         this.world = screen.getWorld();
+        this.Dmg = Dmg;
 
         img = new Texture("bullet/pistol.png");
         setRegion(img);
@@ -38,15 +39,15 @@ public class pistol extends weapons {
         PolygonShape shape = new PolygonShape();
         shape.setAsBox(5/Jannabi.PPM,1/Jannabi.PPM);
         fdef.filter.categoryBits =  Jannabi.PISTOL_BULLET_BIT;
-        fdef.filter.maskBits = Jannabi.JANNABI_BIT ;
+        fdef.filter.maskBits = Jannabi.JANNABI_BIT | Jannabi.ENEMY_BIT ;
 
 
         fdef.shape = shape;
-        fdef.restitution = 0;
-        fdef.friction = 1;
-        fdef.density = 0;
+        //fdef.restitution = 0;
+        //fdef.friction = 1;
+        fdef.density = 1;
         b2body.createFixture(fdef).setUserData(this);
-        b2body.setBullet(true);
+        //b2body.setBullet(true);
 
         if(!aimUp && !aimDown){
             b2body.setLinearVelocity(new Vector2(fireRight ? 10 : -10, 0));

@@ -17,7 +17,9 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.Jannabi;
+import com.mygdx.game.Sprites.Enemy;
 import com.mygdx.game.Sprites.Player;
+import com.mygdx.game.Sprites.Slime;
 import com.mygdx.game.tools.B2WorldCreator;
 import com.mygdx.game.tools.worldContactListener;
 
@@ -44,13 +46,14 @@ public class PlayScreen implements Screen {
     //box2d variable
     private World world;
     private Box2DDebugRenderer b2dr;
+    private B2WorldCreator creator;
 
     public PlayScreen(Jannabi game) {
 
         background = new Texture("Background/Stage1/stage1.png");
 
         //create atlas and load from path
-        atlas = new TextureAtlas("Sprite/Jannabi/Jannabi.pack");
+        atlas = new TextureAtlas("Sprite/allCharacter/character_gdx.pack");
 
         //set this class to current screen
         this.game = game;
@@ -72,13 +75,14 @@ public class PlayScreen implements Screen {
         b2dr = new Box2DDebugRenderer();
 
         //call B2WorldCreator to set them at box2d
-        new B2WorldCreator(this);
+        creator = new B2WorldCreator(this);
 
         //create player class
         player = new Player(this);
 
         //use this class to use collision detect
         world.setContactListener(new worldContactListener());
+
 
     }
 
@@ -119,7 +123,14 @@ public class PlayScreen implements Screen {
 
         //update player
         player.update(dt);
-
+        //spawn all slimes
+        for(Slime enemy : creator.getSlimes()){
+            enemy.update(dt);
+            if(enemy.getX() < player.getX() +1){
+                enemy.b2body.setActive(true);
+                //we can use this to enable attack in the future
+            }
+        }
         //track camera with main player
         //check if we ae at the beginning of the stage or end of stage to freeze camera
         if(player.b2body.getPosition().x > (Jannabi.V_WIDTH/2) /Jannabi.PPM ){
@@ -166,6 +177,9 @@ public class PlayScreen implements Screen {
         //draw things
         game.batch.begin();
         player.draw(game.batch);
+        for(Enemy enemy : creator.getSlimes()){
+            enemy.draw(game.batch);
+        }
         game.batch.end();
 
 

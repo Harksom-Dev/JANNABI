@@ -18,6 +18,8 @@ public abstract class weapons extends Sprite {
     boolean fireRight;
     boolean aimUp;
     boolean aimDown;
+
+    protected int Dmg;
     //TextureRegion region;
     Texture img;
     //for further use

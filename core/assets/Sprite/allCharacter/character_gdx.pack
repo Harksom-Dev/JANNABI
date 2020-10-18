@@ -1,0 +1,103 @@
+
+character_gdx.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+slime_attack
+  rotate: false
+  xy: 0, 96
+  size: 512, 32
+  orig: 512, 32
+  offset: 0, 0
+  index: -1
+normal_reload
+  rotate: false
+  xy: 0, 64
+  size: 256, 32
+  orig: 256, 32
+  offset: 0, 0
+  index: -1
+pistol_run
+  rotate: false
+  xy: 512, 96
+  size: 256, 32
+  orig: 256, 32
+  offset: 0, 0
+  index: -1
+run_aim
+  rotate: false
+  xy: 768, 96
+  size: 256, 32
+  orig: 256, 32
+  offset: 0, 0
+  index: -1
+stand_aim
+  rotate: false
+  xy: 0, 32
+  size: 256, 32
+  orig: 256, 32
+  offset: 0, 0
+  index: -1
+tamruot_walk
+  rotate: false
+  xy: 0, 0
+  size: 256, 32
+  orig: 256, 32
+  offset: 0, 0
+  index: -1
+jump_aim
+  rotate: false
+  xy: 256, 64
+  size: 128, 32
+  orig: 128, 32
+  offset: 0, 0
+  index: -1
+slime_gethit
+  rotate: false
+  xy: 256, 32
+  size: 128, 32
+  orig: 128, 32
+  offset: 0, 0
+  index: -1
+slime_stay
+  rotate: false
+  xy: 256, 0
+  size: 128, 32
+  orig: 128, 32
+  offset: 0, 0
+  index: -1
+tamruot_hit
+  rotate: false
+  xy: 384, 64
+  size: 64, 32
+  orig: 64, 32
+  offset: 0, 0
+  index: -1
+tamruot_stand
+  rotate: false
+  xy: 384, 32
+  size: 64, 32
+  orig: 64, 32
+  offset: 0, 0
+  index: -1
+pistol_gethit
+  rotate: false
+  xy: 384, 0
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+tamruot_gethit
+  rotate: false
+  xy: 416, 0
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+bullet
+  rotate: false
+  xy: 448, 80
+  size: 64, 16
+  orig: 64, 16
+  offset: 0, 0
+  index: -1

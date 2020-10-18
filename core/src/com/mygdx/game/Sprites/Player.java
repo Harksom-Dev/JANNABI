@@ -42,7 +42,7 @@ public class Player extends Sprite {
     private Animation<TextureRegion> playerReload;
 
 
-    //implement StateTime for something(don'tKnow yet) and boolean check that we running right or not
+    //implement StateTime for something(don't Know yet) and boolean check that we running right or not
     private float stateTimer;
     private boolean runningRight;
     private boolean aimUp;
@@ -66,7 +66,7 @@ public class Player extends Sprite {
         aimUp = false;
         aimDown = false;
 
-        //create this class for shorter constructor
+        //create this class for shorter constructor that implement all pistol animation
         setJannabiWithPistol(screen);
 
         //use to check collision and create box2d body
@@ -195,56 +195,11 @@ public class Player extends Sprite {
         if((b2body.getLinearVelocity().x < 0 || !runningRight) && !region.isFlipX()){
             region.flip(true,false);
             runningRight = false;
-            /*if(currentState == State.JUMP_AIM_UP ||  currentState == State.RUNNING_AIM_UP){
-                aimUp = true;
-            }else{
-                aimUp = false;
-            }
 
-            if(currentState == State.JUMP_AIM_DOWN ||  currentState == State.RUNNING_AIM_DOWN){
-                aimDown = true;
-            }else{
-                aimDown = false;
-            }*/
         }else if((b2body.getLinearVelocity().x > 0 || runningRight) && region.isFlipX()){
             region.flip(true,false);
             runningRight = true;
-            /*if(currentState == State.JUMP_AIM_UP ||  currentState == State.RUNNING_AIM_UP){
-                aimUp = true;
-            }else{
-                aimUp = false;
-            }
 
-            if(currentState == State.JUMP_AIM_DOWN ||  currentState == State.RUNNING_AIM_DOWN){
-                aimDown = true;
-            }else{
-                aimDown = false;
-            }*/
-        /*}else if((b2body.getLinearVelocity().x == 0 || !runningRight) && !region.isFlipX()){
-
-            if(currentState == State.STAND_AIM_UP ){
-                aimUp = true;
-            }else{
-                aimUp = false;
-            }
-
-            if(currentState == State.STAND_AIM_DOWN){
-                aimDown = true;
-            }else{
-                aimDown = false;
-            }
-        }else if((b2body.getLinearVelocity().x == 0 || runningRight) && region.isFlipX()){
-            if( currentState == State.STAND_AIM_UP ){
-                aimUp = true;
-            }else{
-                aimUp = false;
-            }
-
-            if(currentState == State.STAND_AIM_DOWN){
-                aimDown = true;
-            }else{
-                aimDown = false;
-            }*/
         }
 
         //confuse af
@@ -329,7 +284,7 @@ public class Player extends Sprite {
         //set category bit
         fdef.filter.categoryBits = Jannabi.JANNABI_BIT;
         //what our mainPlayer can collide with
-        fdef.filter.maskBits = Jannabi.DEFAULT_BIT | Jannabi.OTHERLAYER_BIT;
+        fdef.filter.maskBits = Jannabi.DEFAULT_BIT | Jannabi.OTHERLAYER_BIT | Jannabi.ENEMY_BIT;
 
         fdef.shape = shape;
         //fdef.isSensor = false;//this sensor use for jumping through
@@ -365,12 +320,12 @@ public class Player extends Sprite {
 
 
     }
-
+    //fire method for pistol gun (temporaly)
     public void fire(){
         pistolsBullet.add(new pistol(screen, b2body.getPosition().x, b2body.getPosition().y, runningRight ? true : false, aimUp ? true:false,
-                aimDown ? true : false));
+                aimDown ? true : false,20));
     }
-
+    //draw each bullet
     public void draw(Batch batch){
         super.draw(batch);
         for(pistol bullet:pistolsBullet){
