@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.game.Screen.PlayScreen;
 
 public class Jannabi extends Game {
+
 	public SpriteBatch batch;
 	//create constant variable
 	//create width & height of our game
