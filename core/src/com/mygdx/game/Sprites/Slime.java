@@ -95,11 +95,12 @@ public class Slime extends Enemy {
         //set category bit
         fdef.filter.categoryBits = Jannabi.ENEMY_BIT;
         //what our mainPlayer can collide with
-        fdef.filter.maskBits = Jannabi.DEFAULT_BIT | Jannabi.OTHERLAYER_BIT | Jannabi.ENEMY_BIT | Jannabi.JANNABI_BIT | Jannabi.PISTOL_BULLET_BIT;
+        fdef.filter.maskBits = Jannabi.DEFAULT_BIT | Jannabi.OTHERLAYER_BIT | Jannabi.ENEMY_BIT | Jannabi.JANNABI_BIT | Jannabi.PISTOL_BULLET_BIT
+                                | Jannabi.Edge_BIT;
 
         fdef.shape = shape;
-        //fdef.restitution = 0.2f;
-        fdef.density = 5;
+        fdef.restitution = 0.2f;
+        fdef.density = 50;
         //fdef.isSensor = false;//this sensor use for jumping through
         b2body.createFixture(fdef).setUserData(this);
     }
@@ -117,7 +118,7 @@ public class Slime extends Enemy {
         //setRegion(tempHitAnimation.getKeyFrame(0.5f,true));
         //b2body.setLinearVelocity(3,2);
 
-        Hp -=pistol.Dmg;
+        Hp -= pistol.getDmg();
         if(Hp <= 0){
             setToDestroy = true;
         }
@@ -129,11 +130,11 @@ public class Slime extends Enemy {
         pauseJump -= dt;
         if(pauseJump < 0){
             if(moveLeft && b2body.getLinearVelocity().y == 0){
-                b2body.applyLinearImpulse(new Vector2(-0.07f,0.15f),b2body.getWorldCenter(),true);
+                b2body.applyLinearImpulse(velocity,b2body.getWorldCenter(),true);
                 moveLeft = false;
                 pauseJump = 1.5f;
             }else if(!moveLeft && b2body.getLinearVelocity().y == 0){
-                b2body.applyLinearImpulse(new Vector2(0.07f,0.15f),b2body.getWorldCenter(),true);
+                //b2body.applyLinearImpulse(new Vector2(0.07f,0.15f),b2body.getWorldCenter(),true);
                 moveLeft = true;
                 pauseJump = 1.5f;
             }if(b2body.getLinearVelocity().y == 0 && b2body.getLinearVelocity().x !=0){
@@ -142,4 +143,5 @@ public class Slime extends Enemy {
 
         }
     }
+
 }

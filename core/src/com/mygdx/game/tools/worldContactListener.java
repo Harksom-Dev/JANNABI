@@ -39,6 +39,14 @@ public class worldContactListener implements ContactListener {
                     ((Player)fixB.getUserData()).getHit();
                 }
                 break;
+            case Jannabi.ENEMY_BIT | Jannabi.Edge_BIT:
+                /*if(fixA.getFilterData().categoryBits == Jannabi.ENEMY_BIT){
+                    ((Enemy)fixA.getUserData()).reverseVelocity(true,false);
+                }
+                if(fixB.getFilterData().categoryBits == Jannabi.ENEMY_BIT){
+                    ((Enemy)fixB.getUserData()).reverseVelocity(true,false);
+                }
+                break;*/
 
         }
 

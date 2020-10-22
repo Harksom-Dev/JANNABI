@@ -9,7 +9,7 @@ import com.mygdx.game.Jannabi;
 import com.mygdx.game.Screen.PlayScreen;
 
 public class pistol extends weapons {
-    public int Dmg;
+    private int Dmg;
     public pistol(PlayScreen screen, float x, float y, boolean fireRight,boolean aimUp,boolean aimDown,int Dmg) {
         super(screen,x,y,fireRight,aimUp,aimDown);
         this.fireRight = fireRight;
@@ -18,6 +18,8 @@ public class pistol extends weapons {
         this.screen = screen;
         this.world = screen.getWorld();
         this.Dmg = Dmg;
+        this.clip = 13;
+        this.reloaded = true;
 
         img = new Texture("bullet/pistol.png");
         setRegion(img);
@@ -30,7 +32,7 @@ public class pistol extends weapons {
     public void definedWeapon() {
         BodyDef bdef = new BodyDef();
         bdef.position.set(fireRight ? getX() + 12 / Jannabi.PPM : getX() - 12 / Jannabi.PPM, getY() +2 / Jannabi.PPM);
-        bdef.type = BodyDef.BodyType.DynamicBody;
+        bdef.type = BodyDef.BodyType.KinematicBody;
         if(!world.isLocked())
             b2body = world.createBody(bdef);
 
@@ -45,7 +47,8 @@ public class pistol extends weapons {
         fdef.shape = shape;
         //fdef.restitution = 0;
         //fdef.friction = 1;
-        fdef.density = 5;
+        fdef.density = 0.02f;
+        fdef.isSensor = true;
         b2body.createFixture(fdef).setUserData(this);
         //b2body.setBullet(true);
 
@@ -80,6 +83,8 @@ public class pistol extends weapons {
     public void update(float dt) {
         stateTime += dt;
         //setRegion(fireAnimation.getKeyFrame(stateTime, true));
+
+
         //change position of sprite here
         if(!aimUp && !aimDown){
             //normal case
@@ -131,6 +136,10 @@ public class pistol extends weapons {
     @Override
     public boolean isDestroyed() {
         return  destroyed;
+    }
+
+    public int getDmg() {
+        return Dmg;
     }
 
 }

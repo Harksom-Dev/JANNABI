@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.Jannabi;
@@ -18,7 +17,7 @@ public class Player extends Sprite {
 
     //enum for checkState
     public enum State {FALLING,JUMPING,STANDING,RUNNING,STAND_AIM_UP,STAND_AIM_DOWN,RUNNING_AIM_UP,RUNNING_AIM_DOWN,
-                        JUMP_AIM_UP,JUMP_AIM_DOWN,RELOAD,DEAD};
+                        JUMP_AIM_UP,JUMP_AIM_DOWN,RELOAD,DEAD,GETHIT};
 
 
     //implement state to check current and previous
@@ -36,7 +35,7 @@ public class Player extends Sprite {
     private TextureRegion playerStandAimDown;
     private TextureRegion playerJumAimUp;
     private TextureRegion playerJumAimDown;
-    private TextureRegion playerPistolGetHit;
+    private Animation<TextureRegion> playerPistolGetHit;
     private Animation<TextureRegion> playerRun;
     private Animation<TextureRegion> playerRunAimUp;
     private Animation<TextureRegion> playerRunAimDown;
@@ -57,8 +56,12 @@ public class Player extends Sprite {
     //use for display hit anim
     private boolean beenHit;
 
-    private int pauseanim;
+    private int pauseAnim = 1;
 
+    private int pistolClip = 13;
+    private int currentAmmo;
+    private int allAmmo;
+    private boolean reloaded;
     //create Constructor
     public Player( PlayScreen screen){
         //get start image in .pack
@@ -75,6 +78,8 @@ public class Player extends Sprite {
         aimDown = false;
         hp = 10;
         beenHit = false;
+        reloaded = false;
+
 
         //create this class for shorter constructor that implement all pistol animation
         setJannabiWithPistol(screen);
@@ -87,6 +92,8 @@ public class Player extends Sprite {
         //setRegion(playerStand);
 
         pistolsBullet = new Array<>();
+        currentAmmo = pistolClip;
+        allAmmo = 52;
     }
 
     //create methods for implement all animation
@@ -144,40 +151,32 @@ public class Player extends Sprite {
 
         }
         frames.add(new TextureRegion(screen.getAtlas().findRegion("stand_aim"),0,0,32,32));
-        playerReload = new Animation<TextureRegion>(0.3f,frames);
+        playerReload = new Animation<TextureRegion>(0.1f,frames);
         frames.clear();
 
         //get hit animation
-        playerPistolGetHit = new TextureRegion(screen.getAtlas().findRegion("pistol_gethit"),0,0,32,32);
+        //playerPistolGetHit = new TextureRegion(screen.getAtlas().findRegion("pistol_gethit"),0,0,32,32);
+        frames.add(new TextureRegion(screen.getAtlas().findRegion("pistol_gethit"),0,0,32,32));
+        frames.add(new TextureRegion(screen.getAtlas().findRegion("pistol_gethit"),0,0,32,32));
+        playerPistolGetHit = new Animation<TextureRegion>(0.5f,frames);
     }
 
 
     public void update(float dt){
-        pauseanim -= dt;
+        pauseAnim -= dt;
         //set position of sprite here
         setPosition(b2body.getPosition().x - getWidth() / 2 , b2body.getPosition().y - getHeight() / 3.5f);
-        if(beenHit){
-            //get frame to change animation
-            //Animation<TextureRegion> tempAnim;
-            //tempAnim = new Animation<TextureRegion>(0.3f,playerPistolGetHit,getFrame(dt));
-            //TextureRegion region = tempAnim.getKeyFrame(stateTimer,false);
-            setRegion(playerPistolGetHit);
-            if(pauseanim < 0){
-                beenHit = false;
-                pauseanim = -1;
+
+        setRegion(getFrame(dt));
+
+            for(pistol  bullet : pistolsBullet) {
+                bullet.update(dt);
+                if(bullet.isDestroyed())
+                    pistolsBullet.removeValue(bullet, true);
             }
 
-        }else{
-            //setRegion(playerPistolGetHit);
-            setRegion(getFrame(dt));
-            pauseanim = -1;
 
-        }
-        for(pistol  bullet : pistolsBullet) {
-            bullet.update(dt);
-            if(bullet.isDestroyed())
-                pistolsBullet.removeValue(bullet, true);
-        }
+
     }
 
     //checkState
@@ -213,8 +212,9 @@ public class Player extends Sprite {
             case RELOAD:
                 region = playerReload.getKeyFrame(stateTimer);
                 break;
+            case GETHIT:
             case DEAD:
-                region = playerPistolGetHit;
+                region = playerPistolGetHit.getKeyFrame(stateTimer);
                 break;
             case FALLING:
             case STANDING:
@@ -243,7 +243,12 @@ public class Player extends Sprite {
 
     //this class check that we jump or do other animation
     public State getState(){
-        if(b2body.getLinearVelocity().y > 0 || (b2body.getLinearVelocity().y < 0 && previousState == State.JUMPING)){
+        if(hp <= 0){
+            return State.DEAD;
+        }else if(beenHit){
+            beenHit = false;
+            return State.GETHIT;
+        }else if(b2body.getLinearVelocity().y > 0 || (b2body.getLinearVelocity().y < 0 && previousState == State.JUMPING)){
             if(Gdx.input.isKeyPressed(Input.Keys.UP)){
                 aimUp = true;
                 return State.JUMP_AIM_UP;
@@ -288,9 +293,8 @@ public class Player extends Sprite {
         }else if(Gdx.input.isKeyPressed(Input.Keys.F)){
             aimUp = false;
             aimDown = false;
+            reloaded = true;
             return State.RELOAD;
-        }else if(hp <= 0){
-            return State.DEAD;
         }else{
             aimUp = false;
             aimDown = false;
@@ -318,7 +322,7 @@ public class Player extends Sprite {
         //set category bit
         fdef.filter.categoryBits = Jannabi.JANNABI_BIT;
         //what our mainPlayer can collide with
-        fdef.filter.maskBits = Jannabi.DEFAULT_BIT | Jannabi.OTHERLAYER_BIT | Jannabi.ENEMY_BIT;
+        fdef.filter.maskBits = Jannabi.DEFAULT_BIT | Jannabi.OTHERLAYER_BIT | Jannabi.ENEMY_BIT | Jannabi.Edge_BIT;
 
         fdef.shape = shape;
         //fdef.isSensor = false;//this sensor use for jumping through
@@ -361,8 +365,28 @@ public class Player extends Sprite {
     }
     //fire method for pistol gun (temporary)
     public void fire(){
-        pistolsBullet.add(new pistol(screen, b2body.getPosition().x, b2body.getPosition().y, runningRight ? true : false, aimUp ? true:false,
-                aimDown ? true : false,20));
+        if(currentAmmo > 0){
+            pistolsBullet.add(new pistol(screen, b2body.getPosition().x, b2body.getPosition().y, runningRight ? true : false, aimUp ? true:false,
+                    aimDown ? true : false,20));
+            currentAmmo--;
+        }else if(allAmmo > 0){
+            //clink sound
+            Gdx.app.log("ammo","need to reload");
+            //reload
+            if(reloaded){
+                pistolsBullet.clear();
+                Gdx.app.log("ammo","reload complete");
+                allAmmo -= pistolClip;
+                currentAmmo = pistolClip;
+                reloaded = false;
+                Gdx.app.log("ammo = "+allAmmo,"ammoleft ");
+            }
+
+        }else if(currentAmmo <= 0 && allAmmo <= 00){
+            //clinksound
+            Gdx.app.log("ammo out","no bullet left");
+        }
+
     }
     //draw each bullet
     public void draw(Batch batch){
@@ -380,6 +404,8 @@ public class Player extends Sprite {
         //next is die stage
 
     }
+
+
 
     public int getHp() {
         return hp;

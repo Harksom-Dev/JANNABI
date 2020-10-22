@@ -28,8 +28,8 @@ public class B2WorldCreator {
         World world = screen.getWorld();
         TiledMap map = screen.getMap();
 
-        getObjectLayer(world,map,7);
-        getObjectLayer(world,map,12);
+        getObjectLayer(world,map,7,Jannabi.DEFAULT_BIT);
+        getObjectLayer(world,map,12,Jannabi.Edge_BIT);
         for (MapObject object : map.getLayers().get(9).getObjects()) {
             new TestLayer(screen,object);
         }
@@ -49,7 +49,7 @@ public class B2WorldCreator {
         return slimes;
     }
 
-    private  void getObjectLayer(World world, TiledMap map, int layer) {
+    private  void getObjectLayer(World world, TiledMap map, int layer,short bit) {
         BodyDef bdef = new BodyDef();
         //PolygonShape shape = new PolygonShape();
         FixtureDef fdef = new FixtureDef();
@@ -67,6 +67,7 @@ public class B2WorldCreator {
             bdef.type = BodyDef.BodyType.StaticBody;
             body = world.createBody(bdef);
             fdef.shape = shape;
+            fdef.filter.categoryBits = bit;
             fixture = body.createFixture(fdef);
             fixture.setUserData(this);
         }
