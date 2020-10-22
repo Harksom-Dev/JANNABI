@@ -36,6 +36,7 @@ public class Player extends Sprite {
     private TextureRegion playerStandAimDown;
     private TextureRegion playerJumAimUp;
     private TextureRegion playerJumAimDown;
+    private TextureRegion playerPistolGetHit;
     private Animation<TextureRegion> playerRun;
     private Animation<TextureRegion> playerRunAimUp;
     private Animation<TextureRegion> playerRunAimDown;
@@ -51,6 +52,11 @@ public class Player extends Sprite {
     //pistol shot array
     private Array<pistol> pistolsBullet;
 
+    //hit count of our main character
+    private int hp;
+    //use for display hit anim
+    private boolean beenHit;
+
     //create Constructor
     public Player( PlayScreen screen){
         //get start image in .pack
@@ -65,6 +71,8 @@ public class Player extends Sprite {
         runningRight = true;
         aimUp = false;
         aimDown = false;
+        hp = 3;
+        beenHit = false;
 
         //create this class for shorter constructor that implement all pistol animation
         setJannabiWithPistol(screen);
@@ -80,7 +88,7 @@ public class Player extends Sprite {
     }
 
     //create methods for implement all animation
-    protected void setJannabiWithPistol(PlayScreen screen){
+    private void setJannabiWithPistol(PlayScreen screen){
         //create Array to store all image to use to animation
         com.badlogic.gdx.utils.Array<TextureRegion> frames = new Array<TextureRegion>();
         //loop for get runAnimation
@@ -136,14 +144,23 @@ public class Player extends Sprite {
         frames.add(new TextureRegion(screen.getAtlas().findRegion("stand_aim"),0,0,32,32));
         playerReload = new Animation<TextureRegion>(0.3f,frames);
         frames.clear();
+
+        //get hit animation
+        playerPistolGetHit = new TextureRegion(screen.getAtlas().findRegion("pistol_gethit"),0,0,32,32);
     }
 
 
     public void update(float dt){
         //set position of sprite here
         setPosition(b2body.getPosition().x - getWidth() / 2 , b2body.getPosition().y - getHeight() / 3.5f);
-        //get frame to change animation
-        setRegion(getFrame(dt));
+        if(!beenHit){
+            //get frame to change animation
+            setRegion(getFrame(dt));
+        }else {
+            setRegion(playerPistolGetHit);
+
+
+        }
         for(pistol  bullet : pistolsBullet) {
             bullet.update(dt);
             if(bullet.isDestroyed())
@@ -288,39 +305,44 @@ public class Player extends Sprite {
 
         fdef.shape = shape;
         //fdef.isSensor = false;//this sensor use for jumping through
-        b2body.createFixture(fdef).setUserData("body");
-
+        b2body.createFixture(fdef).setUserData(this);
+        //b2body.createFixture(fdef);
+        /*
         //create above hitBox with edgeShape
         EdgeShape aboveHitBox = new EdgeShape();
         aboveHitBox.set(new Vector2(-6.5f / Jannabi.PPM,16 / Jannabi.PPM),new Vector2(6.5f / Jannabi.PPM , 16 / Jannabi.PPM));
         fdef.shape = aboveHitBox;
         fdef.isSensor = true;
-        b2body.createFixture(fdef).setUserData("aboveHitBox");
+        //b2body.createFixture(fdef).setUserData(this);
+        b2body.createFixture(fdef);
 
         //create leftHitBox
         EdgeShape leftHitBox = new EdgeShape();
         leftHitBox.set(new Vector2(-7.5f / Jannabi.PPM,16 / Jannabi.PPM),new Vector2(-7.5f / Jannabi.PPM , -8 / Jannabi.PPM));
         fdef.shape = leftHitBox;
         fdef.isSensor = true;
-        b2body.createFixture(fdef).setUserData("leftHitBox");
+        //b2body.createFixture(fdef).setUserData(this);
+        b2body.createFixture(fdef);
 
         //create rightHitBox
         EdgeShape rightHitBox = new EdgeShape();
         rightHitBox.set(new Vector2(7.5f / Jannabi.PPM,16 / Jannabi.PPM),new Vector2(7.5f / Jannabi.PPM , -8 / Jannabi.PPM));
         fdef.shape = rightHitBox;
         fdef.isSensor = true;
-        b2body.createFixture(fdef).setUserData("rightHitBox");
+        //b2body.createFixture(fdef).setUserData(this);
+        b2body.createFixture(fdef);
 
         //create belowHitBox
         EdgeShape belowHitBox = new EdgeShape();
         belowHitBox.set(new Vector2(-6.5f / Jannabi.PPM,-8 / Jannabi.PPM),new Vector2(6.5f / Jannabi.PPM , -8 / Jannabi.PPM));
         fdef.shape = belowHitBox;
         fdef.isSensor = true;
-        b2body.createFixture(fdef).setUserData("belowHitBox");
+        //b2body.createFixture(fdef).setUserData(this);
+        b2body.createFixture(fdef);*/
 
 
     }
-    //fire method for pistol gun (temporaly)
+    //fire method for pistol gun (temporary)
     public void fire(){
         pistolsBullet.add(new pistol(screen, b2body.getPosition().x, b2body.getPosition().y, runningRight ? true : false, aimUp ? true:false,
                 aimDown ? true : false,20));
@@ -331,5 +353,14 @@ public class Player extends Sprite {
         for(pistol bullet:pistolsBullet){
             bullet.draw(batch);
         }
+    }
+
+    public void getHit(){
+        hp--;
+        beenHit = true;
+        //push back when hit
+        //b2body.applyLinearImpulse(new Vector2(100,0),b2body.getWorldCenter(),true);
+        //next is die stage
+
     }
 }

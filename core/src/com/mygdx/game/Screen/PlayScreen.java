@@ -3,6 +3,7 @@ package com.mygdx.game.Screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.ai.btree.decorator.Random;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -10,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.RandomXS128;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2D;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
@@ -126,7 +128,7 @@ public class PlayScreen implements Screen {
         //spawn all slimes
         for(Slime enemy : creator.getSlimes()){
             enemy.update(dt);
-            if(enemy.getX() < player.getX() +1){
+            if(enemy.getX() < player.getX() +224 / Jannabi.PPM){
                 enemy.b2body.setActive(true);
                 //we can use this to enable attack in the future
             }
@@ -168,7 +170,7 @@ public class PlayScreen implements Screen {
         game.batch.begin();
         //multiple width to increase background (now get commented to check box2d)
         //now comment background due to check collision
-        //game.batch.draw(background,0,0,(Jannabi.V_WIDTH /Jannabi.PPM) * 8,Jannabi.V_HEIGHT / Jannabi.PPM);
+        game.batch.draw(background,0,0,(Jannabi.V_WIDTH /Jannabi.PPM) * 8,Jannabi.V_HEIGHT / Jannabi.PPM);
         game.batch.end();
 
         //need to render after background

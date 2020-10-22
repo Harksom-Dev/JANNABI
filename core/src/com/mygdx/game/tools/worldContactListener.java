@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.physics.box2d.*;
 import com.mygdx.game.Jannabi;
 import com.mygdx.game.Sprites.Enemy;
+import com.mygdx.game.Sprites.Player;
 import com.mygdx.game.Sprites.Weapon.pistol;
 import com.mygdx.game.StageTile.TestLayer;
 
@@ -31,6 +32,14 @@ public class worldContactListener implements ContactListener {
                 break;
             case Jannabi.ENEMY_BIT | Jannabi.JANNABI_BIT:
                 Gdx.app.log("hit","I'm Hit!!!");
+                if(fixA.getFilterData().categoryBits == Jannabi.JANNABI_BIT){
+                    ((Player)fixA.getUserData()).getHit();
+                }
+                if(fixB.getFilterData().categoryBits == Jannabi.JANNABI_BIT){
+                    ((Player)fixB.getUserData()).getHit();
+                }
+                break;
+
         }
 
 

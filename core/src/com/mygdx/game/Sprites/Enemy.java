@@ -20,7 +20,7 @@ public abstract class Enemy extends Sprite {
         this.screen = screen;
         setPosition(x,y);
         defineEnemy();
-        velocity = new Vector2(-0.5f,0);
+        velocity = new Vector2(-0.5f,2);
         //set to not active at first so we can wake when we near it
         b2body.setActive(false);
     }

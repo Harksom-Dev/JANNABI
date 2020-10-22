@@ -45,7 +45,7 @@ public class pistol extends weapons {
         fdef.shape = shape;
         //fdef.restitution = 0;
         //fdef.friction = 1;
-        fdef.density = 1;
+        fdef.density = 5;
         b2body.createFixture(fdef).setUserData(this);
         //b2body.setBullet(true);
 
@@ -58,7 +58,7 @@ public class pistol extends weapons {
             if(fireRight){
                 b2body.setTransform(b2body.getPosition().x- getWidth()/ 3.5f,b2body.getPosition().y- getHeight() / 10,45);
             }else{
-                b2body.setTransform(b2body.getPosition().x- (getWidth()/ 50) + 15/ Jannabi.PPM,b2body.getPosition().y- getHeight() / 10,-45);
+                b2body.setTransform(b2body.getPosition().x- (getWidth()/ 50) + 3/ Jannabi.PPM,(b2body.getPosition().y- getHeight() / 10) +13 /Jannabi.PPM,-45);
             }
 
         }else if(!aimUp && aimDown){

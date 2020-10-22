@@ -1,10 +1,10 @@
 package com.mygdx.game.Sprites;
 
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -24,6 +24,7 @@ public class Slime extends Enemy {
     private int Hp;
     private boolean setToDestroy;
     private boolean destroy;
+    private boolean moveLeft;
 
     public Slime(PlayScreen screen, float x, float y,int Hp) {
         super(screen, x, y);
@@ -36,7 +37,7 @@ public class Slime extends Enemy {
         frames.clear();
         stateTime = 0;
         for(int i = 0; i < 7 ;i++){
-            frames.add(new TextureRegion(screen.getAtlas().findRegion("slime_attack"),i*32,0,64,32));
+            frames.add(new TextureRegion(screen.getAtlas().findRegion("slime_attack"),i*48,0,64,32));
         }
         walkAnimation = new Animation<TextureRegion>(0.5f,frames);
         frames.clear();
@@ -51,6 +52,7 @@ public class Slime extends Enemy {
         setToDestroy = false;
         destroy = false;
         this.Hp  = Hp;
+        moveLeft = false;
 
     }
 
@@ -62,7 +64,12 @@ public class Slime extends Enemy {
             stateTime = 0;
             setRegion(tempHitAnimation.getKeyFrame(0.5f,false));
         }else if(!destroy){
-            b2body.setLinearVelocity(velocity);
+            if(
+                b2body.applyLinearImpulse(new Vector2(0,0.0002f),b2body.getWorldCenter(),true);
+
+
+
+
             setPosition(b2body.getPosition().x - getWidth() / 2.5f,b2body.getPosition().y - getHeight()/ 3);
             setRegion(stayAnimation.getKeyFrame(stateTime,true));
         }
@@ -91,8 +98,8 @@ public class Slime extends Enemy {
         fdef.filter.maskBits = Jannabi.DEFAULT_BIT | Jannabi.OTHERLAYER_BIT | Jannabi.ENEMY_BIT | Jannabi.JANNABI_BIT | Jannabi.PISTOL_BULLET_BIT;
 
         fdef.shape = shape;
-        fdef.restitution = 0.5f;
-        fdef.density = 8;
+        fdef.restitution = 0.2f;
+        fdef.density = 5;
         //fdef.isSensor = false;//this sensor use for jumping through
         b2body.createFixture(fdef).setUserData(this);
     }
@@ -107,12 +114,14 @@ public class Slime extends Enemy {
 
 
     public void getHit(pistol pistol) {
-        setRegion(tempHitAnimation.getKeyFrame(0.5f,true));
-        b2body.setLinearVelocity(3,2);
+        //setRegion(tempHitAnimation.getKeyFrame(0.5f,true));
+        //b2body.setLinearVelocity(3,2);
         Hp -=pistol.Dmg;
         if(Hp <= 0){
             setToDestroy = true;
         }
 
     }
+
+
 }
