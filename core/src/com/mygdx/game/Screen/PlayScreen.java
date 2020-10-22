@@ -59,7 +59,7 @@ public class PlayScreen implements Screen {
         background = new Texture("Background/Stage1/stage1.png");
 
         //create atlas and load from path
-        atlas = new TextureAtlas("Sprite/allCharacter/character_gdx.pack");
+        atlas = new TextureAtlas("Sprite/allCharacter/Character.pack");
 
         //set this class to current screen
         this.game = game;
@@ -127,8 +127,6 @@ public class PlayScreen implements Screen {
             //check for input
             handleInput(dt);
         }
-
-
 
         //dont know what this doing
         world.step(1/60f,6,2);
