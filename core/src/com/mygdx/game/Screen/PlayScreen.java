@@ -95,7 +95,7 @@ public class PlayScreen implements Screen {
 
     }
 
-    //create getter for texture atlas
+    //create getter for texture atlasc
     public TextureAtlas getAtlas(){
         return atlas;
     }

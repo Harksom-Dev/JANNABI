@@ -18,17 +18,17 @@ public class Hud {
 
     private Integer worldTimer;
     private float timeCount;
-    private Integer score;
+    private static Integer score;
 
-    Label countDownLabel;
-    Label scoreLabel;
-    Label timeLabel;
-    Label levelLabel;
-    Label worldLabel;
-    Label janabiLabel;
+    private Label countDownLabel;
+    private static Label scoreLabel;
+    private Label textScoreLabel;
+    private Label levelLabel;
+    private Label stageLabel;
+    private Label janabiLabel;
 
     public Hud(SpriteBatch sb){
-        worldTimer = 300;
+        //worldTimer = 300;
         timeCount = 0;
         score = 0;
 
@@ -39,21 +39,27 @@ public class Hud {
         table.top();
         table.setFillParent(true);
 
-        countDownLabel = new Label(String.format("%03d",worldTimer), new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        scoreLabel = new Label(String.format("%06d",score), new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        timeLabel = new Label("TIME", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        levelLabel = new Label("1-1", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        worldLabel = new Label("WORLD", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
+        scoreLabel = new Label(String.format("%03d",score), new Label.LabelStyle(new BitmapFont(), Color.WHITE));
+        textScoreLabel = new Label("SCORE", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
+        levelLabel = new Label("1", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
+        stageLabel = new Label("STAGE", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
         janabiLabel = new Label("JANABI", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
 
-        table.add(janabiLabel).expandX().padTop(10);
-        table.add(worldLabel).expandX().padTop(10);
-        table.add(timeLabel).expandX().padTop(10);
+        table.add(janabiLabel).expandX().padTop(2);
+        table.add(stageLabel).expandX().padTop(2);
+        table.add(textScoreLabel).expandX().padTop(2);
         table.row();
-        table.add(scoreLabel).expandX();
+        table.add(scoreLabel).expandX(); //must change to health
         table.add(levelLabel).expandX();
-        table.add(countDownLabel).expandX();
+        table.add(scoreLabel).expandX();
 
         stage.addActor(table);
     }
+
+    public static void addScore(int value){
+        score += value;
+        scoreLabel.setText(String.format("%03d",score));
+    }
+
+
 }
