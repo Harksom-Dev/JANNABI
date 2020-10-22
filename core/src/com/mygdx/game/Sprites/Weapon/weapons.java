@@ -13,6 +13,7 @@ public abstract class weapons extends Sprite {
     public Body b2body;
     protected float ammoCount;
     float stateTime;
+    float fireRate;
     boolean destroyed;
     boolean setToDestroy;
     boolean fireRight;

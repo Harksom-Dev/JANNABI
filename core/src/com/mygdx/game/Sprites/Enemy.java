@@ -13,6 +13,7 @@ public abstract class Enemy extends Sprite {
     protected PlayScreen screen;
     protected int Hp;
     public Vector2 velocity;
+    protected float pauseJump;
 
     public Body b2body;
     public Enemy(PlayScreen screen,float x,float y){
@@ -28,6 +29,7 @@ public abstract class Enemy extends Sprite {
     protected abstract void defineEnemy();
     public abstract void update(float dt);
     public abstract void getHit(pistol pistol);
+    protected abstract void randomMove(float dt);
 
     public void reverseVelocity(boolean x,boolean y){
         if(x)velocity.x = -velocity.x;

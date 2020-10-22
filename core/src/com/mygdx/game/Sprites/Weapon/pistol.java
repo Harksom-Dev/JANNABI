@@ -132,4 +132,5 @@ public class pistol extends weapons {
     public boolean isDestroyed() {
         return  destroyed;
     }
+
 }

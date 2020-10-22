@@ -26,6 +26,8 @@ public class Slime extends Enemy {
     private boolean destroy;
     private boolean moveLeft;
 
+
+
     public Slime(PlayScreen screen, float x, float y,int Hp) {
         super(screen, x, y);
 
@@ -52,7 +54,8 @@ public class Slime extends Enemy {
         setToDestroy = false;
         destroy = false;
         this.Hp  = Hp;
-        moveLeft = false;
+        moveLeft = true;
+        pauseJump = 1;
 
     }
 
@@ -64,11 +67,8 @@ public class Slime extends Enemy {
             stateTime = 0;
             setRegion(tempHitAnimation.getKeyFrame(0.5f,false));
         }else if(!destroy){
-            if(
-                b2body.applyLinearImpulse(new Vector2(0,0.0002f),b2body.getWorldCenter(),true);
-
-
-
+            //random movement ot this slime
+            randomMove(dt);
 
             setPosition(b2body.getPosition().x - getWidth() / 2.5f,b2body.getPosition().y - getHeight()/ 3);
             setRegion(stayAnimation.getKeyFrame(stateTime,true));
@@ -98,7 +98,7 @@ public class Slime extends Enemy {
         fdef.filter.maskBits = Jannabi.DEFAULT_BIT | Jannabi.OTHERLAYER_BIT | Jannabi.ENEMY_BIT | Jannabi.JANNABI_BIT | Jannabi.PISTOL_BULLET_BIT;
 
         fdef.shape = shape;
-        fdef.restitution = 0.2f;
+        //fdef.restitution = 0.2f;
         fdef.density = 5;
         //fdef.isSensor = false;//this sensor use for jumping through
         b2body.createFixture(fdef).setUserData(this);
@@ -116,6 +116,7 @@ public class Slime extends Enemy {
     public void getHit(pistol pistol) {
         //setRegion(tempHitAnimation.getKeyFrame(0.5f,true));
         //b2body.setLinearVelocity(3,2);
+
         Hp -=pistol.Dmg;
         if(Hp <= 0){
             setToDestroy = true;
@@ -123,5 +124,22 @@ public class Slime extends Enemy {
 
     }
 
+    @Override
+    protected void randomMove(float dt) {
+        pauseJump -= dt;
+        if(pauseJump < 0){
+            if(moveLeft && b2body.getLinearVelocity().y == 0){
+                b2body.applyLinearImpulse(new Vector2(-0.05f,0.2f),b2body.getWorldCenter(),true);
+                moveLeft = false;
+                pauseJump = 1;
+            }else if(!moveLeft && b2body.getLinearVelocity().y == 0){
+                b2body.applyLinearImpulse(new Vector2(0.05f,0.2f),b2body.getWorldCenter(),true);
+                moveLeft = true;
+                pauseJump = 1;
+            }if(b2body.getLinearVelocity().y == 0 && b2body.getLinearVelocity().x !=0){
+                b2body.setLinearVelocity(0,0);
+            }
 
+        }
+    }
 }
