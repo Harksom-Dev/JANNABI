@@ -116,8 +116,11 @@ public class PlayScreen implements Screen {
     }
 
     public void update(float dt){
-        //check for input
-        handleInput(dt);
+        if(player.getHp() > 0){
+            //check for input
+            handleInput(dt);
+        }
+
 
 
         //dont know what this doing
@@ -150,6 +153,7 @@ public class PlayScreen implements Screen {
 
     @Override
     public void render(float delta) {
+
         update(delta);
 
 

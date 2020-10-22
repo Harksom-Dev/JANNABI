@@ -129,13 +129,13 @@ public class Slime extends Enemy {
         pauseJump -= dt;
         if(pauseJump < 0){
             if(moveLeft && b2body.getLinearVelocity().y == 0){
-                b2body.applyLinearImpulse(new Vector2(-0.05f,0.2f),b2body.getWorldCenter(),true);
+                b2body.applyLinearImpulse(new Vector2(-0.07f,0.15f),b2body.getWorldCenter(),true);
                 moveLeft = false;
-                pauseJump = 1;
+                pauseJump = 1.5f;
             }else if(!moveLeft && b2body.getLinearVelocity().y == 0){
-                b2body.applyLinearImpulse(new Vector2(0.05f,0.2f),b2body.getWorldCenter(),true);
+                b2body.applyLinearImpulse(new Vector2(0.07f,0.15f),b2body.getWorldCenter(),true);
                 moveLeft = true;
-                pauseJump = 1;
+                pauseJump = 1.5f;
             }if(b2body.getLinearVelocity().y == 0 && b2body.getLinearVelocity().x !=0){
                 b2body.setLinearVelocity(0,0);
             }

@@ -18,7 +18,7 @@ public class Player extends Sprite {
 
     //enum for checkState
     public enum State {FALLING,JUMPING,STANDING,RUNNING,STAND_AIM_UP,STAND_AIM_DOWN,RUNNING_AIM_UP,RUNNING_AIM_DOWN,
-                        JUMP_AIM_UP,JUMP_AIM_DOWN,RELOAD};
+                        JUMP_AIM_UP,JUMP_AIM_DOWN,RELOAD,DEAD};
 
 
     //implement state to check current and previous
@@ -57,6 +57,8 @@ public class Player extends Sprite {
     //use for display hit anim
     private boolean beenHit;
 
+    private int pauseanim;
+
     //create Constructor
     public Player( PlayScreen screen){
         //get start image in .pack
@@ -71,7 +73,7 @@ public class Player extends Sprite {
         runningRight = true;
         aimUp = false;
         aimDown = false;
-        hp = 3;
+        hp = 10;
         beenHit = false;
 
         //create this class for shorter constructor that implement all pistol animation
@@ -151,14 +153,24 @@ public class Player extends Sprite {
 
 
     public void update(float dt){
+        pauseanim -= dt;
         //set position of sprite here
         setPosition(b2body.getPosition().x - getWidth() / 2 , b2body.getPosition().y - getHeight() / 3.5f);
-        if(!beenHit){
+        if(beenHit){
             //get frame to change animation
-            setRegion(getFrame(dt));
-        }else {
+            //Animation<TextureRegion> tempAnim;
+            //tempAnim = new Animation<TextureRegion>(0.3f,playerPistolGetHit,getFrame(dt));
+            //TextureRegion region = tempAnim.getKeyFrame(stateTimer,false);
             setRegion(playerPistolGetHit);
+            if(pauseanim < 0){
+                beenHit = false;
+                pauseanim = -1;
+            }
 
+        }else{
+            //setRegion(playerPistolGetHit);
+            setRegion(getFrame(dt));
+            pauseanim = -1;
 
         }
         for(pistol  bullet : pistolsBullet) {
@@ -200,6 +212,9 @@ public class Player extends Sprite {
                 break;
             case RELOAD:
                 region = playerReload.getKeyFrame(stateTimer);
+                break;
+            case DEAD:
+                region = playerPistolGetHit;
                 break;
             case FALLING:
             case STANDING:
@@ -274,6 +289,8 @@ public class Player extends Sprite {
             aimUp = false;
             aimDown = false;
             return State.RELOAD;
+        }else if(hp <= 0){
+            return State.DEAD;
         }else{
             aimUp = false;
             aimDown = false;
@@ -362,5 +379,9 @@ public class Player extends Sprite {
         //b2body.applyLinearImpulse(new Vector2(100,0),b2body.getWorldCenter(),true);
         //next is die stage
 
+    }
+
+    public int getHp() {
+        return hp;
     }
 }
