@@ -3,7 +3,6 @@ package com.mygdx.game.Screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.ai.btree.decorator.Random;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -11,19 +10,25 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.math.RandomXS128;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Box2D;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.Jannabi;
 import com.mygdx.game.Sprites.Enemy;
+import com.mygdx.game.Sprites.Item.Item;
+import com.mygdx.game.Sprites.Item.ItemDef;
+import com.mygdx.game.Sprites.Item.Potion;
 import com.mygdx.game.Sprites.Player;
 import com.mygdx.game.Sprites.Slime;
 import com.mygdx.game.tools.B2WorldCreator;
 import com.mygdx.game.tools.worldContactListener;
+
+import java.util.PriorityQueue;
+import java.util.concurrent.LinkedBlockingDeque;
+
 
 public class PlayScreen implements Screen {
     //create Texture for background
@@ -49,6 +54,10 @@ public class PlayScreen implements Screen {
     private World world;
     private Box2DDebugRenderer b2dr;
     private B2WorldCreator creator;
+
+    //array for item
+    private Array<Item> items;
+    private LinkedBlockingDeque<ItemDef> itemToSpawn;
 
     public PlayScreen(Jannabi game) {
 
@@ -85,7 +94,9 @@ public class PlayScreen implements Screen {
         //use this class to use collision detect
         world.setContactListener(new worldContactListener());
 
-
+        //initialize item
+        items = new Array<Item>();
+        itemToSpawn = new LinkedBlockingDeque<ItemDef>();
     }
 
     //create getter for texture atlas
@@ -96,6 +107,19 @@ public class PlayScreen implements Screen {
     @Override
     public void show() {
 
+    }
+
+    public void spawnItem(ItemDef idef){
+        itemToSpawn.add(idef);
+    }
+
+    public void handleSpawningItems(){
+        if(!itemToSpawn.isEmpty()){
+            ItemDef idef = itemToSpawn.poll();
+            if(idef.type == Potion.class){
+                items.add(new Potion(this,idef.position.x,idef.position.y));
+            }
+        }
     }
 
     //create handle input when we get input from user
@@ -121,6 +145,8 @@ public class PlayScreen implements Screen {
             handleInput(dt);
         }
 
+        handleSpawningItems();
+
         //dont know what this doing
         world.step(1/60f,6,2);
 
@@ -133,6 +159,9 @@ public class PlayScreen implements Screen {
                 enemy.b2body.setActive(true);
                 //we can use this to enable attack in the future
             }
+        }
+        for(Item item : items){
+            item.update(dt);
         }
         //track camera with main player
         //check if we ae at the beginning of the stage or end of stage to freeze camera
@@ -183,6 +212,9 @@ public class PlayScreen implements Screen {
         player.draw(game.batch);
         for(Enemy enemy : creator.getSlimes()){
             enemy.draw(game.batch);
+        }
+        for(Item item : items){
+            item.draw(game.batch);
         }
         game.batch.end();
 

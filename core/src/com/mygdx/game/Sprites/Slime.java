@@ -5,12 +5,15 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.Jannabi;
 import com.mygdx.game.Screen.PlayScreen;
+import com.mygdx.game.Sprites.Item.ItemDef;
+import com.mygdx.game.Sprites.Item.Potion;
 import com.mygdx.game.Sprites.Weapon.pistol;
 
 public class Slime extends Enemy {
@@ -85,13 +88,7 @@ public class Slime extends Enemy {
             setPosition(b2body.getPosition().x - getWidth() / 2.5f,b2body.getPosition().y - getHeight()/ 3);
             //check if slime get hit change animation
             if(beenHit){
-                animateDelay += dt;
-                setRegion(getHitAnimation.getKeyFrame(stateTime,false));
-                if(animateDelay > 0.125f){
-
-                    beenHit = false;
-                    animateDelay = 0;
-                }
+                animateGetHit(dt);
 
             }else{
                 setRegion(stayAnimation.getKeyFrame(stateTime,true));
@@ -147,6 +144,7 @@ public class Slime extends Enemy {
         beenHit = true;
         if(Hp <= 0){
             setToDestroy = true;
+            screen.spawnItem(new ItemDef(new Vector2(b2body.getPosition().x,b2body.getPosition().y),Potion.class));
         }
 
     }
@@ -170,4 +168,14 @@ public class Slime extends Enemy {
         }
     }
 
+    @Override
+    protected void animateGetHit(float dt) {
+        animateDelay += dt;
+        setRegion(getHitAnimation.getKeyFrame(stateTime,false));
+        if(animateDelay > 0.125f){
+
+            beenHit = false;
+            animateDelay = 0;
+        }
+    }
 }
