@@ -6,6 +6,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.mygdx.game.Screen.GameOverScreen;
+import com.mygdx.game.Screen.MainMenuScreen;
 import com.mygdx.game.Screen.PlayScreen;
 
 public class Jannabi extends Game {
@@ -26,7 +28,8 @@ public class Jannabi extends Game {
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-		setScreen(new PlayScreen(this));
+		setScreen(new MainMenuScreen(this));
+		//setScreen(new GameOverScreen(this));
 	}
 
 	@Override

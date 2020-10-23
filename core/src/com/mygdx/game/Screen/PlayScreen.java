@@ -47,7 +47,7 @@ public class PlayScreen implements Screen {
 
     public PlayScreen(Jannabi game) {
 
-        background = new Texture("Background/Stage1/stage1.png");
+        background = new Texture("Background/Stage1/stage1_fix.png");
 
         //create atlas and load from path
         atlas = new TextureAtlas("Sprite/Jannabi/Jannabi.pack");
@@ -157,7 +157,7 @@ public class PlayScreen implements Screen {
         game.batch.begin();
         //multiple width to increase background (now get commented to check box2d)
         //now comment background due to check collision
-        //game.batch.draw(background,0,0,(Jannabi.V_WIDTH /Jannabi.PPM) * 8,Jannabi.V_HEIGHT / Jannabi.PPM);
+        game.batch.draw(background,0,0,(Jannabi.V_WIDTH /Jannabi.PPM) * 8,Jannabi.V_HEIGHT / Jannabi.PPM);
         game.batch.end();
 
         //need to render after background
