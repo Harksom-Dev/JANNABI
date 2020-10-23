@@ -37,4 +37,15 @@ public abstract class Enemy extends Sprite {
         if(x)velocity.x = -velocity.x;
         if(y)velocity.y = -velocity.y;
     }
+
+    public abstract boolean getToDestroy();
+
+
+    public abstract boolean getDestroyed();
+
+
+    public abstract void setDestroyed(boolean d);
+
+    public abstract float getStateTime();
+
 }

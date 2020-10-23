@@ -18,6 +18,8 @@ import com.mygdx.game.StageTile.SecondFloor;
 import com.mygdx.game.StageTile.TestLayer;
 import com.mygdx.game.StageTile.ThirdFloor;
 
+import java.util.Iterator;
+
 public class B2WorldCreator {
     //this class use for create line for detect collision between ground stage and character
     //create constructor
@@ -27,6 +29,10 @@ public class B2WorldCreator {
     public B2WorldCreator(PlayScreen screen){
         World world = screen.getWorld();
         TiledMap map = screen.getMap();
+
+        //////////////////////temporary fo fixing crash////////////////////////
+
+        ///////////////////////////////////////////////////////////////////////
 
         getObjectLayer(world,map,7,Jannabi.DEFAULT_BIT);
         getObjectLayer(world,map,12,Jannabi.Edge_BIT);
@@ -49,6 +55,10 @@ public class B2WorldCreator {
         return slimes;
     }
 
+    public Iterator<Slime> getSlimeIterator()
+    {
+        return slimes.iterator();
+    }
     private  void getObjectLayer(World world, TiledMap map, int layer,short bit) {
         BodyDef bdef = new BodyDef();
         //PolygonShape shape = new PolygonShape();
@@ -99,6 +109,10 @@ public class B2WorldCreator {
         return polygonShape;
 
     }
+
+
+
+
 
 
 }

@@ -26,6 +26,7 @@ import com.mygdx.game.Sprites.Slime;
 import com.mygdx.game.tools.B2WorldCreator;
 import com.mygdx.game.tools.worldContactListener;
 
+import java.util.Iterator;
 import java.util.PriorityQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 
@@ -54,6 +55,9 @@ public class PlayScreen implements Screen {
     private World world;
     private Box2DDebugRenderer b2dr;
     private B2WorldCreator creator;
+
+    //iterator
+    private Iterator<Slime> slimeIterator;
 
     //array for item
     private Array<Item> items;
@@ -153,13 +157,33 @@ public class PlayScreen implements Screen {
         //update player
         player.update(dt);
         //spawn all slimes
-        for(Slime enemy : creator.getSlimes()){
+        slimeIterator = creator.getSlimeIterator();
+        while(slimeIterator.hasNext())
+        {
+            Slime nextGoomba = slimeIterator.next();
+            nextGoomba.update(dt);
+            if(nextGoomba.getX()<player.getX()+224 / Jannabi.PPM)
+                nextGoomba.b2body.setActive((true));
+            if (nextGoomba.getToDestroy() && !nextGoomba.getDestroyed())
+            {
+                world.destroyBody(nextGoomba.b2body);
+                nextGoomba.setDestroyed(true);
+            }
+
+            if (nextGoomba.getStateTime() >= 1 && nextGoomba.getDestroyed())
+            {
+                Gdx.app.log("removing goomba from array", "");
+                slimeIterator.remove();
+            }
+
+        }
+        /*for(Slime enemy : creator.getSlimes()){
             enemy.update(dt);
             if(enemy.getX() < player.getX() +224 / Jannabi.PPM){
                 enemy.b2body.setActive(true);
                 //we can use this to enable attack in the future
             }
-        }
+        }*/
         for(Item item : items){
             item.update(dt);
         }

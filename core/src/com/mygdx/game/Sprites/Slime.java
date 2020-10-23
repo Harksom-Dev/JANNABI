@@ -77,7 +77,7 @@ public class Slime extends Enemy {
 
         stateTime += dt;
         if(setToDestroy && !destroy){
-            world.destroyBody(b2body);
+            //world.destroyBody(b2body);
             destroy = true;
             stateTime = 0;
             setRegion(deadAnimation.getKeyFrame(0.5f,false));
@@ -177,5 +177,25 @@ public class Slime extends Enemy {
             beenHit = false;
             animateDelay = 0;
         }
+    }
+
+    @Override
+    public boolean getToDestroy() {
+        return setToDestroy;
+    }
+
+    @Override
+    public boolean getDestroyed() {
+        return destroy;
+    }
+
+    @Override
+    public void setDestroyed(boolean d) {
+        destroy = d;
+    }
+
+    @Override
+    public float getStateTime() {
+        return stateTime;
     }
 }
