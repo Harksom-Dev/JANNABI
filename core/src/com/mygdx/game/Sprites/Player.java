@@ -195,7 +195,7 @@ public class Player extends Sprite {
     }
 
     //checkState
-    public TextureRegion getFrame(float dt){
+    private TextureRegion getFrame(float dt){
         currentState = getState();
 
         TextureRegion region;
@@ -257,7 +257,7 @@ public class Player extends Sprite {
     }
 
     //this class check that we jump or do other animation
-    public State getState(){
+    private State getState(){
         if(hp <= 0){
             return State.DEAD;
         }else if(beenHit){
@@ -319,7 +319,7 @@ public class Player extends Sprite {
 
 
     //create box2d and set fixture
-    public void definePlayer(){
+    private void definePlayer(){
         BodyDef bdef = new BodyDef();
         //set box2d our animation now have width16 and height 32
         bdef.position.set(32 / Jannabi.PPM,32 / Jannabi.PPM);
@@ -438,4 +438,22 @@ public class Player extends Sprite {
         return hp;
     }
 
+    public void changeGun(String gun){
+        if(gun == "sword"){
+            //setJannabiWithSword(screen);
+            Gdx.app.log("change to sword","");
+        }
+        if(gun == "pistol"){
+            setJannabiWithPistol(screen);
+        }
+    }
+
+    private TextureRegion loadRegion(){
+
+        return null;
+    }
+
+    private Animation<TextureRegion> loadAnimation(){
+        return null;
+    }
 }
