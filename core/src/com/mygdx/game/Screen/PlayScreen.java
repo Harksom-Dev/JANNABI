@@ -225,8 +225,8 @@ public class PlayScreen implements Screen {
         //need to draw background before render and render before player.draw
         game.batch.begin();
         //multiple width to increase background (now get commented to check box2d)
-        //now comment background due to check collision
-        game.batch.draw(background,0,0,(Jannabi.V_WIDTH /Jannabi.PPM) * 8,Jannabi.V_HEIGHT / Jannabi.PPM);
+        //can comment background  to check collision
+        //game.batch.draw(background,0,0,(Jannabi.V_WIDTH /Jannabi.PPM) * 8,Jannabi.V_HEIGHT / Jannabi.PPM);
         game.batch.end();
 
         //need to render after background

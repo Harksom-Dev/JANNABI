@@ -7,6 +7,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.Jannabi;
 import com.mygdx.game.Screen.PlayScreen;
+import com.mygdx.game.Sprites.Player;
 
 public abstract class Item extends Sprite {
     protected PlayScreen screen;
@@ -27,7 +28,8 @@ public abstract class Item extends Sprite {
     }
 
     public abstract void defineItem();
-    public abstract void use();
+    public abstract void use(Player player);
+
 
     public void update(float dt){
         if(toDestroy && !Destroy){

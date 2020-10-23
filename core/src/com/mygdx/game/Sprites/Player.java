@@ -337,7 +337,7 @@ public class Player extends Sprite {
         //set category bit
         fdef.filter.categoryBits = Jannabi.JANNABI_BIT;
         //what our mainPlayer can collide with
-        fdef.filter.maskBits = Jannabi.DEFAULT_BIT | Jannabi.OTHERLAYER_BIT | Jannabi.ENEMY_BIT | Jannabi.Edge_BIT;
+        fdef.filter.maskBits = Jannabi.DEFAULT_BIT | Jannabi.OTHERLAYER_BIT | Jannabi.ENEMY_BIT | Jannabi.Edge_BIT | Jannabi.ITEM_BIT;
 
         fdef.shape = shape;
         //fdef.isSensor = false;//this sensor use for jumping through
@@ -429,9 +429,13 @@ public class Player extends Sprite {
 
     }
 
-
+    public void getPotion(){
+        hp+= 3;
+        Gdx.app.log("hp Up","cur hp is" + hp);
+    }
 
     public int getHp() {
         return hp;
     }
+
 }

@@ -79,7 +79,7 @@ public class Slime extends Enemy {
         stateTime += dt;
         if(setToDestroy && !destroy){
             //world.destroyBody(b2body);
-            destroy = true;
+            //destroy = true;
             stateTime = 0;
             setRegion(deadAnimation.getKeyFrame(0.5f,false));
         }else if(!destroy){
