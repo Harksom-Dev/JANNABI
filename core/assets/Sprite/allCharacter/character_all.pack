@@ -1,5 +1,5 @@
 
-Character_all.png
+character_all.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -101,93 +101,107 @@ tamruot_walk
   orig: 256, 32
   offset: 0, 0
   index: -1
-jump_aim
+boss_gethit
   rotate: false
   xy: 512, 128
   size: 128, 32
   orig: 128, 32
   offset: 0, 0
   index: -1
-shotgun_jumpandAim
+jump_aim
   rotate: false
   xy: 0, 32
   size: 128, 32
   orig: 128, 32
   offset: 0, 0
   index: -1
-shotgun_run
+shotgun_jumpandAim
   rotate: false
   xy: 0, 0
   size: 128, 32
   orig: 128, 32
   offset: 0, 0
   index: -1
-shotgun_stand
+shotgun_run
   rotate: false
   xy: 256, 64
   size: 128, 32
   orig: 128, 32
   offset: 0, 0
   index: -1
-slime_gethit
+shotgun_stand
   rotate: false
   xy: 512, 96
   size: 128, 32
   orig: 128, 32
   offset: 0, 0
   index: -1
-slime_stay
+slime_dead
   rotate: false
   xy: 640, 128
   size: 128, 32
   orig: 128, 32
   offset: 0, 0
   index: -1
-smg_jumpandAim
+slime_gethit
   rotate: false
   xy: 128, 32
   size: 128, 32
   orig: 128, 32
   offset: 0, 0
   index: -1
-smg_run
+slime_stay
   rotate: false
   xy: 128, 0
   size: 128, 32
   orig: 128, 32
   offset: 0, 0
   index: -1
-smg_stand
+smg_jumpandAim
   rotate: false
   xy: 384, 64
   size: 128, 32
   orig: 128, 32
   offset: 0, 0
   index: -1
-sword_run
+smg_run
   rotate: false
   xy: 640, 96
   size: 128, 32
   orig: 128, 32
   offset: 0, 0
   index: -1
-sword_standattack
+smg_stand
   rotate: false
   xy: 768, 128
   size: 128, 32
   orig: 128, 32
   offset: 0, 0
   index: -1
-sword_gethit
+sword_run
+  rotate: false
+  xy: 896, 128
+  size: 128, 32
+  orig: 128, 32
+  offset: 0, 0
+  index: -1
+sword_standattack
   rotate: false
   xy: 256, 32
+  size: 128, 32
+  orig: 128, 32
+  offset: 0, 0
+  index: -1
+sword_gethit
+  rotate: false
+  xy: 256, 0
   size: 64, 32
   orig: 64, 32
   offset: 0, 0
   index: -1
 sword_stand
   rotate: false
-  xy: 256, 0
+  xy: 320, 0
   size: 64, 32
   orig: 64, 32
   offset: 0, 0
@@ -208,55 +222,55 @@ tamruot_stand
   index: -1
 bullet
   rotate: false
-  xy: 896, 144
+  xy: 384, 48
   size: 64, 16
   orig: 64, 16
   offset: 0, 0
   index: -1
 clip
   rotate: false
-  xy: 960, 144
+  xy: 576, 80
   size: 64, 16
   orig: 64, 16
   offset: 0, 0
   index: -1
 potion
   rotate: false
-  xy: 320, 48
+  xy: 832, 112
   size: 64, 16
   orig: 64, 16
   offset: 0, 0
   index: -1
 pistol_gethit
   rotate: false
-  xy: 576, 64
+  xy: 384, 16
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 shotgun_getHit
   rotate: false
-  xy: 832, 96
+  xy: 416, 16
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 smg_getHit
   rotate: false
-  xy: 320, 16
+  xy: 448, 32
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 tamruot_gethit
   rotate: false
-  xy: 608, 64
+  xy: 448, 0
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 
-Character_all2.png
+character_all2.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none

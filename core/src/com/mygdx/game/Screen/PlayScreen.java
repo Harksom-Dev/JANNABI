@@ -55,7 +55,7 @@ public class PlayScreen implements Screen {
         background = new Texture("Background/Stage1/stage1.png");
 
         //create atlas and load from path
-        atlas = new TextureAtlas("Sprite/allCharacter/Character.pack");
+        atlas = new TextureAtlas("Sprite/allCharacter/character_all.pack");
 
         //set this class to current screen
         this.game = game;
