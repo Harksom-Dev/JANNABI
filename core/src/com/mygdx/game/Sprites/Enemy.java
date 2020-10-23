@@ -14,6 +14,7 @@ public abstract class Enemy extends Sprite {
     protected int Hp;
     public Vector2 velocity;
     protected float pauseJump;
+    protected boolean drop;
 
 
     public Body b2body;

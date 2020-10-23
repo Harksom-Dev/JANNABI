@@ -157,23 +157,23 @@ public class PlayScreen implements Screen {
         //update player
         player.update(dt);
         //spawn all slimes
-        /////////////need to destroy in playscreen////////////
+        /////////////need to destroy enemy in playscreen////////////
         slimeIterator = creator.getSlimeIterator();
         while(slimeIterator.hasNext())
         {
-            Slime nextGoomba = slimeIterator.next();
-            nextGoomba.update(dt);
-            if(nextGoomba.getX()<player.getX()+224 / Jannabi.PPM)
-                nextGoomba.b2body.setActive((true));
-            if (nextGoomba.getToDestroy() && !nextGoomba.getDestroyed())
+            Slime nextSlime = slimeIterator.next();
+            nextSlime.update(dt);
+            if(nextSlime.getX()<player.getX()+224 / Jannabi.PPM)
+                nextSlime.b2body.setActive((true));
+            if (nextSlime.getToDestroy() && !nextSlime.getDestroyed())
             {
-                world.destroyBody(nextGoomba.b2body);
-                nextGoomba.setDestroyed(true);
+                world.destroyBody(nextSlime.b2body);
+                nextSlime.setDestroyed(true);
             }
 
-            if (nextGoomba.getStateTime() >= 1 && nextGoomba.getDestroyed())
+            if (nextSlime.getStateTime() >= 1 && nextSlime.getDestroyed())
             {
-                Gdx.app.log("removing goomba from array", "");
+                Gdx.app.log("removing slime from array", "");
                 slimeIterator.remove();
             }
 

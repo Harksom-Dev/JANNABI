@@ -26,11 +26,13 @@ public class Potion extends Item {
         //create fixture
         FixtureDef fdef = new FixtureDef();
         CircleShape shape = new CircleShape();
-        shape.setRadius(6 / Jannabi.PPM);
-
+        shape.setRadius(2 / Jannabi.PPM);
+        fdef.filter.categoryBits = Jannabi.ITEM_BIT;
+        //what our item can collide with
+        fdef.filter.maskBits = Jannabi.DEFAULT_BIT | Jannabi.OTHERLAYER_BIT | Jannabi.JANNABI_BIT;
         fdef.shape = shape;
-        /*fdef.restitution = 0.2f;
-        fdef.density = 50;*/
+        fdef.restitution = 0.2f;
+        //fdef.density = 50;
         //fdef.isSensor = false;//this sensor use for jumping through
         body.createFixture(fdef).setUserData(this);
     }
