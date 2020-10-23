@@ -30,9 +30,6 @@ public class B2WorldCreator {
         World world = screen.getWorld();
         TiledMap map = screen.getMap();
 
-        //////////////////////temporary fo fixing crash////////////////////////
-
-        ///////////////////////////////////////////////////////////////////////
 
         getObjectLayer(world,map,7,Jannabi.DEFAULT_BIT);
         getObjectLayer(world,map,12,Jannabi.Edge_BIT);
