@@ -9,14 +9,17 @@ import com.mygdx.game.Jannabi;
 import com.mygdx.game.Screen.PlayScreen;
 
 public class pistol extends weapons {
-
-    public pistol(PlayScreen screen, float x, float y, boolean fireRight,boolean aimUp,boolean aimdown) {
-        super(screen,x,y,fireRight,aimUp,aimdown);
+    private int Dmg;
+    public pistol(PlayScreen screen, float x, float y, boolean fireRight,boolean aimUp,boolean aimDown,int Dmg) {
+        super(screen,x,y,fireRight,aimUp,aimDown);
         this.fireRight = fireRight;
         this.aimUp = aimUp;
-        this.aimDown = aimdown;
+        this.aimDown = aimDown;
         this.screen = screen;
         this.world = screen.getWorld();
+        this.Dmg = Dmg;
+        this.clip = 13;
+        this.reloaded = true;
 
         img = new Texture("bullet/pistol.png");
         setRegion(img);
@@ -29,7 +32,7 @@ public class pistol extends weapons {
     public void definedWeapon() {
         BodyDef bdef = new BodyDef();
         bdef.position.set(fireRight ? getX() + 12 / Jannabi.PPM : getX() - 12 / Jannabi.PPM, getY() +2 / Jannabi.PPM);
-        bdef.type = BodyDef.BodyType.DynamicBody;
+        bdef.type = BodyDef.BodyType.KinematicBody;
         if(!world.isLocked())
             b2body = world.createBody(bdef);
 
@@ -38,15 +41,16 @@ public class pistol extends weapons {
         PolygonShape shape = new PolygonShape();
         shape.setAsBox(5/Jannabi.PPM,1/Jannabi.PPM);
         fdef.filter.categoryBits =  Jannabi.PISTOL_BULLET_BIT;
-        fdef.filter.maskBits = Jannabi.JANNABI_BIT ;
+        fdef.filter.maskBits = Jannabi.JANNABI_BIT | Jannabi.ENEMY_BIT ;
 
 
         fdef.shape = shape;
-        fdef.restitution = 0;
-        fdef.friction = 1;
-        fdef.density = 0;
+        //fdef.restitution = 0;
+        //fdef.friction = 1;
+        fdef.density = 0.02f;
+        fdef.isSensor = true;
         b2body.createFixture(fdef).setUserData(this);
-        b2body.setBullet(true);
+        //b2body.setBullet(true);
 
         if(!aimUp && !aimDown){
             b2body.setLinearVelocity(new Vector2(fireRight ? 10 : -10, 0));
@@ -57,7 +61,7 @@ public class pistol extends weapons {
             if(fireRight){
                 b2body.setTransform(b2body.getPosition().x- getWidth()/ 3.5f,b2body.getPosition().y- getHeight() / 10,45);
             }else{
-                b2body.setTransform(b2body.getPosition().x- (getWidth()/ 50) + 15/ Jannabi.PPM,b2body.getPosition().y- getHeight() / 10,-45);
+                b2body.setTransform(b2body.getPosition().x- (getWidth()/ 50) + 3/ Jannabi.PPM,(b2body.getPosition().y- getHeight() / 10) +13 /Jannabi.PPM,-45);
             }
 
         }else if(!aimUp && aimDown){
@@ -79,6 +83,8 @@ public class pistol extends weapons {
     public void update(float dt) {
         stateTime += dt;
         //setRegion(fireAnimation.getKeyFrame(stateTime, true));
+
+
         //change position of sprite here
         if(!aimUp && !aimDown){
             //normal case
@@ -131,4 +137,9 @@ public class pistol extends weapons {
     public boolean isDestroyed() {
         return  destroyed;
     }
+
+    public int getDmg() {
+        return Dmg;
+    }
+
 }

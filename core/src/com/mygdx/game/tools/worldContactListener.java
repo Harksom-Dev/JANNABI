@@ -2,6 +2,10 @@ package com.mygdx.game.tools;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.physics.box2d.*;
+import com.mygdx.game.Jannabi;
+import com.mygdx.game.Sprites.Enemy;
+import com.mygdx.game.Sprites.Player;
+import com.mygdx.game.Sprites.Weapon.pistol;
 import com.mygdx.game.StageTile.TestLayer;
 
 //this class get called when 2 box2d collision
@@ -12,20 +16,41 @@ public class worldContactListener implements ContactListener {
     public void beginContact(Contact contact) {
         Fixture fixA = contact.getFixtureA();
         Fixture fixB = contact.getFixtureB();
-        if(fixA.getUserData() == "belowHitBox" || fixB.getUserData() == "belowHitBox"){
-            Fixture body = fixA.getUserData() == "belowHitBox" ? fixA : fixB;
-            Fixture object = body == fixA ? fixB : fixA;
-            //Gdx.app.log("begincontact","pass");
-           /*if(object.getUserData() != null && B2WorldCreator.class.isAssignableFrom(object.getUserData().getClass())){
-                Gdx.app.log("begincontact","pass");
-                //((PassTest)object.getUserData()).change();
-            }
-            if(object.getUserData() != null && PassTest.class.isAssignableFrom(object.getUserData().getClass())){
 
-                ((PassTest)object.getUserData()).notChange();
-            }*/
-            //TestLayer.test();
+        //collision magic
+        int cDef = fixA.getFilterData().categoryBits | fixB.getFilterData().categoryBits;
+        switch (cDef){
+            case Jannabi.ENEMY_BIT | Jannabi.PISTOL_BULLET_BIT:
+                if(fixA.getFilterData().categoryBits == Jannabi.ENEMY_BIT){
+                    ((Enemy)fixA.getUserData()).getHit((pistol) fixB.getUserData());
+                    ((pistol)fixB.getUserData()).setToDestroy();
+                }
+                if(fixB.getFilterData().categoryBits == Jannabi.ENEMY_BIT){
+                    ((Enemy)fixB.getUserData()).getHit((pistol) fixA.getUserData());
+                    ((pistol)fixA.getUserData()).setToDestroy();
+                }
+                break;
+            case Jannabi.ENEMY_BIT | Jannabi.JANNABI_BIT:
+                Gdx.app.log("hit","I'm Hit!!!");
+                if(fixA.getFilterData().categoryBits == Jannabi.JANNABI_BIT){
+                    ((Player)fixA.getUserData()).getHit();
+                }
+                if(fixB.getFilterData().categoryBits == Jannabi.JANNABI_BIT){
+                    ((Player)fixB.getUserData()).getHit();
+                }
+                break;
+            case Jannabi.ENEMY_BIT | Jannabi.Edge_BIT:
+                /*if(fixA.getFilterData().categoryBits == Jannabi.ENEMY_BIT){
+                    ((Enemy)fixA.getUserData()).reverseVelocity(true,false);
+                }
+                if(fixB.getFilterData().categoryBits == Jannabi.ENEMY_BIT){
+                    ((Enemy)fixB.getUserData()).reverseVelocity(true,false);
+                }
+                break;*/
+
         }
+
+
 
 
     }

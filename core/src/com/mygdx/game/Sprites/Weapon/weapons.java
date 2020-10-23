@@ -11,13 +11,18 @@ public abstract class weapons extends Sprite {
     protected World world;
     protected PlayScreen screen;
     public Body b2body;
-    protected float ammoCount;
+    protected int ammoCount;
     float stateTime;
+    float fireRate;
     boolean destroyed;
     boolean setToDestroy;
     boolean fireRight;
     boolean aimUp;
     boolean aimDown;
+    boolean reloaded;
+
+    protected int Dmg;
+    protected int clip;
     //TextureRegion region;
     Texture img;
     //for further use
@@ -36,5 +41,7 @@ public abstract class weapons extends Sprite {
     public abstract void setToDestroy();
     public abstract boolean isDestroyed();
 
-
+    public int getClip() {
+        return clip;
+    }
 }
