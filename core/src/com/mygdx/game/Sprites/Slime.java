@@ -86,7 +86,6 @@ public class Slime extends Enemy {
             //check if slime get hit change animation
             if(beenHit){
                 animateDelay += dt;
-                Gdx.app.log("delay",""+animateDelay);
                 setRegion(getHitAnimation.getKeyFrame(stateTime,false));
                 if(animateDelay > 0.125f){
 
