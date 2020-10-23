@@ -10,7 +10,6 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.Jannabi;
-import com.mygdx.game.Scenes.Hud;
 import com.mygdx.game.Screen.PlayScreen;
 import com.mygdx.game.Sprites.Weapon.pistol;
 
@@ -122,7 +121,6 @@ public class Slime extends Enemy {
         Hp -= pistol.getDmg();
         if(Hp <= 0){
             setToDestroy = true;
-            Hud.addScore(50);
         }
 
     }

@@ -56,7 +56,7 @@ public class Player extends Sprite {
     //use for display hit anim
     private boolean beenHit;
 
-    private int pauseAnim = 1;
+    private float animateDelay;
 
     private int pistolClip = 13;
     private int currentAmmo;
@@ -74,12 +74,15 @@ public class Player extends Sprite {
         currentState = State.STANDING;
         previousState = State.STANDING;
         stateTimer = 0;
+
+        //all boolean and vaule for animation
         runningRight = true;
         aimUp = false;
         aimDown = false;
         hp = 10;
         beenHit = false;
         reloaded = false;
+        animateDelay = 0;
 
 
         //create this class for shorter constructor that implement all pistol animation
@@ -164,11 +167,22 @@ public class Player extends Sprite {
 
 
     public void update(float dt){
-        pauseAnim -= dt;
+
         //set position of sprite here
         setPosition(b2body.getPosition().x - getWidth() / 2 , b2body.getPosition().y - getHeight() / 3.5f);
+        if(beenHit){
+            animateDelay += dt;
+            Gdx.app.log("player gethit",""+animateDelay);
+            setRegion(playerPistolGetHit.getKeyFrame(dt,false));
+            if(animateDelay > 0.125f){
 
-        setRegion(getFrame(dt));
+                beenHit = false;
+                animateDelay = 0;
+            }
+        }else{
+            setRegion(getFrame(dt));
+        }
+
 
             for(pistol  bullet : pistolsBullet) {
                 bullet.update(dt);

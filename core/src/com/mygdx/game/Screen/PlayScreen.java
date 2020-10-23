@@ -19,7 +19,6 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.Jannabi;
-import com.mygdx.game.Scenes.Hud;
 import com.mygdx.game.Sprites.Enemy;
 import com.mygdx.game.Sprites.Player;
 import com.mygdx.game.Sprites.Slime;
@@ -50,9 +49,6 @@ public class PlayScreen implements Screen {
     private World world;
     private Box2DDebugRenderer b2dr;
     private B2WorldCreator creator;
-
-    //hud
-    private Hud hud;
 
     public PlayScreen(Jannabi game) {
 
@@ -89,13 +85,10 @@ public class PlayScreen implements Screen {
         //use this class to use collision detect
         world.setContactListener(new worldContactListener());
 
-        //Hud
-        hud = new Hud(game.batch);
-
 
     }
 
-    //create getter for texture atlasc
+    //create getter for texture atlas
     public TextureAtlas getAtlas(){
         return atlas;
     }
@@ -167,8 +160,6 @@ public class PlayScreen implements Screen {
 
 
 
-
-
         //render box2d
 
         //if we comment this we not gonna outline object but not sure we can collide or not
@@ -176,8 +167,6 @@ public class PlayScreen implements Screen {
 
 
         game.batch.setProjectionMatrix(gamecam.combined);
-        //game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
-
 
         //need to draw background before render and render before player.draw
         game.batch.begin();
@@ -197,7 +186,7 @@ public class PlayScreen implements Screen {
         }
         game.batch.end();
 
-        hud.stage.draw();
+
 
     }
 
