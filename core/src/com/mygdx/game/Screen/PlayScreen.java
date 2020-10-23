@@ -157,6 +157,7 @@ public class PlayScreen implements Screen {
         //update player
         player.update(dt);
         //spawn all slimes
+        /////////////need to destroy in playscreen////////////
         slimeIterator = creator.getSlimeIterator();
         while(slimeIterator.hasNext())
         {
