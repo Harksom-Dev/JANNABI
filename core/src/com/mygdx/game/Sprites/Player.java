@@ -13,6 +13,7 @@ import com.mygdx.game.Screen.GameOverScreen;
 import com.mygdx.game.Screen.MainMenuScreen;
 import com.mygdx.game.Screen.PlayScreen;
 import com.mygdx.game.Sprites.Weapon.pistol;
+import com.mygdx.game.tools.LoadTexture;
 
 //this class is create for create main player create box2d sprite and further
 public class Player extends Sprite {
@@ -21,10 +22,13 @@ public class Player extends Sprite {
     public enum State {FALLING,JUMPING,STANDING,RUNNING,STAND_AIM_UP,STAND_AIM_DOWN,RUNNING_AIM_UP,RUNNING_AIM_DOWN,
                         JUMP_AIM_UP,JUMP_AIM_DOWN,RELOAD,DEAD,GETHIT};
 
+    public enum GunState {SWORD,PISTOL,SMG,SHOTGUN}
+    public GunState curGunState;
 
     //implement state to check current and previous
     public State currentState;
     public State previousState;
+
 
     //implement box2d
     public World world;
@@ -64,11 +68,13 @@ public class Player extends Sprite {
     private int currentAmmo;
     private int allAmmo;
     private boolean reloaded;
+    private LoadTexture loader;
 
     //create Constructor
     public Player( PlayScreen screen){
         //get start image in .pack
-        super(screen.getAtlas().findRegion("stand_aim"));
+        //super(screen.getAtlas().findRegion("stand_aim"));
+        super(screen.getAtlas().findRegion("playerStand"));
         this.screen = screen;
         this.world = screen.getWorld();
 
@@ -76,6 +82,7 @@ public class Player extends Sprite {
         currentState = State.STANDING;
         previousState = State.STANDING;
         stateTimer = 0;
+        curGunState = GunState.PISTOL;
 
         //all boolean and vaule for animation
         runningRight = true;
@@ -88,7 +95,9 @@ public class Player extends Sprite {
 
 
         //create this class for shorter constructor that implement all pistol animation
-        setJannabiWithPistol(screen);
+        //setJannabiWithPistol(screen);
+        loader = new LoadTexture(screen);
+
 
         //use to check collision and create box2d body
         definePlayer();
@@ -175,7 +184,7 @@ public class Player extends Sprite {
         if(beenHit){
             animateDelay += dt;
             Gdx.app.log("player gethit",""+animateDelay);
-            setRegion(playerPistolGetHit.getKeyFrame(dt,false));
+            setRegion(loader.getIndividualRegion(curGunState));
             if(animateDelay > 0.125f){
 
                 beenHit = false;
@@ -197,11 +206,11 @@ public class Player extends Sprite {
     }
 
     //checkState
-    public TextureRegion getFrame(float dt){
+    private TextureRegion getFrame(float dt){
         currentState = getState();
-
         TextureRegion region;
-        switch (currentState){
+        region = loader.getRegion(currentState,curGunState,stateTimer);
+        /*switch (currentState){
             case JUMPING:
                 region = playerJump;
                 break;
@@ -238,7 +247,7 @@ public class Player extends Sprite {
             default:
                 region = playerStand.getKeyFrame(stateTimer,true);
                 break;
-        }
+        }*/
 
         //check now we running to the right or left
         if((b2body.getLinearVelocity().x < 0 || !runningRight) && !region.isFlipX()){
@@ -259,7 +268,7 @@ public class Player extends Sprite {
     }
 
     //this class check that we jump or do other animation
-    public State getState(){
+    private State getState(){
         if(hp <= 0){
             return State.DEAD;
         }else if(beenHit){
@@ -321,7 +330,7 @@ public class Player extends Sprite {
 
 
     //create box2d and set fixture
-    public void definePlayer(){
+    private void definePlayer(){
         BodyDef bdef = new BodyDef();
         //set box2d our animation now have width16 and height 32
         bdef.position.set(32 / Jannabi.PPM,32 / Jannabi.PPM);
@@ -339,7 +348,7 @@ public class Player extends Sprite {
         //set category bit
         fdef.filter.categoryBits = Jannabi.JANNABI_BIT;
         //what our mainPlayer can collide with
-        fdef.filter.maskBits = Jannabi.DEFAULT_BIT | Jannabi.OTHERLAYER_BIT | Jannabi.ENEMY_BIT | Jannabi.Edge_BIT;
+        fdef.filter.maskBits = Jannabi.DEFAULT_BIT | Jannabi.OTHERLAYER_BIT | Jannabi.ENEMY_BIT | Jannabi.Edge_BIT | Jannabi.ITEM_BIT;
 
         fdef.shape = shape;
         //fdef.isSensor = false;//this sensor use for jumping through
@@ -433,9 +442,51 @@ public class Player extends Sprite {
 
     }
 
-
+    public void getPotion(){
+        hp+= 3;
+        Gdx.app.log("hp Up","cur hp is" + hp);
+    }
 
     public int getHp() {
         return hp;
     }
+
+    public void changeGun(String gun){
+        switch (gun){
+            case "sword":
+                curGunState = GunState.SWORD;
+                Gdx.app.log("change to sword","");
+                break;
+            case "pistol":
+                curGunState = GunState.PISTOL;
+                Gdx.app.log("change to pistol","");
+                break;
+            case "smg":
+                curGunState = GunState.SMG;
+                Gdx.app.log("change to smg","");
+                break;
+            default:
+                curGunState = GunState.SHOTGUN;
+                Gdx.app.log("change to shotgun","");
+        }
+       /* if(gun == "sword"){
+            //setJannabiWithSword(screen);
+
+        }
+        if(gun == "pistol"){
+            //setJannabiWithPistol(screen);
+            curGunState = GunState.PISTOL;
+            Gdx.app.log("change to pistol","");
+        }*/
+    }
+
+    private TextureRegion loadRegion(){
+
+        return null;
+    }
+
+    private Animation<TextureRegion> loadAnimation(){
+        return null;
+    }
+
 }

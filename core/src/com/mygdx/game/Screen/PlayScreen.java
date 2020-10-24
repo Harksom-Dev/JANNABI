@@ -3,6 +3,7 @@ package com.mygdx.game.Screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.ai.GdxAI;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -13,14 +14,23 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.Jannabi;
 import com.mygdx.game.Sprites.Enemy;
+import com.mygdx.game.Sprites.Item.Item;
+import com.mygdx.game.Sprites.Item.ItemDef;
+import com.mygdx.game.Sprites.Item.Potion;
 import com.mygdx.game.Sprites.Player;
 import com.mygdx.game.Sprites.Slime;
 import com.mygdx.game.tools.B2WorldCreator;
 import com.mygdx.game.tools.worldContactListener;
+
+import java.util.Iterator;
+import java.util.PriorityQueue;
+import java.util.concurrent.LinkedBlockingDeque;
+
 
 public class PlayScreen implements Screen {
     //create Texture for background
@@ -47,12 +57,23 @@ public class PlayScreen implements Screen {
     private Box2DDebugRenderer b2dr;
     private B2WorldCreator creator;
 
+    //iterator
+    private Iterator<Slime> slimeIterator;
+
+    //array for item
+    private Array<Item> items;
+    private LinkedBlockingDeque<ItemDef> itemToSpawn;
+
+
     public PlayScreen(Jannabi game) {
 
-        background = new Texture("Background/Stage1/stage1_fix.png");
+        background = new Texture("Background/Stage1/stage1.png");
 
         //create atlas and load from path
-        atlas = new TextureAtlas("Sprite/allCharacter/character_all.pack");
+        //atlas = new TextureAtlas("Sprite/allCharacter/character_all.pack");
+        //trying Load class
+        atlas = new TextureAtlas("Sprite/allCharacter/newCharacterpack.pack");
+
 
         //set this class to current screen
         this.game = game;
@@ -82,7 +103,9 @@ public class PlayScreen implements Screen {
         //use this class to use collision detect
         world.setContactListener(new worldContactListener());
 
-
+        //initialize item
+        items = new Array<Item>();
+        itemToSpawn = new LinkedBlockingDeque<ItemDef>();
     }
 
     //create getter for texture atlas
@@ -92,7 +115,20 @@ public class PlayScreen implements Screen {
 
     @Override
     public void show() {
-        //game.setScreen(new GameOverScreen(game));
+
+    }
+
+    public void spawnItem(ItemDef idef){
+        itemToSpawn.add(idef);
+    }
+
+    public void handleSpawningItems(){
+        if(!itemToSpawn.isEmpty()){
+            ItemDef idef = itemToSpawn.poll();
+            if(idef.type == Potion.class){
+                items.add(new Potion(this,idef.position.x,idef.position.y));
+            }
+        }
     }
 
     //create handle input when we get input from user
@@ -108,50 +144,72 @@ public class PlayScreen implements Screen {
         }
         if(Gdx.input.isKeyJustPressed(Input.Keys.C)){
             player.fire();
+        }else if(Gdx.input.isKeyJustPressed(Input.Keys.Q)){
+            player.changeGun("sword");
+        }else if(Gdx.input.isKeyJustPressed(Input.Keys.W)){
+            player.changeGun("pistol");
+        }else if(Gdx.input.isKeyJustPressed(Input.Keys.E)){
+            player.changeGun("smg");
+        }else if(Gdx.input.isKeyJustPressed(Input.Keys.R)){
+            player.changeGun("shotgun");
         }
 
     }
 
-//    public void playerIsDead(){
-//        //game.setScreen(new MainMenuScreen(game));
-//        game.setScreen(new GameOverScreen(game));
-//    }
     public void update(float dt){
-        if (player.getHp() <= 0){
-            //show();
-            //game.batch.end();
-            //this.dispose();
-            dispose();
-            System.out.println("Now iam in 0 hp condition");
-            game.setScreen(new EmptyScreen(game));
-            System.out.println("Now iam emd of set Screen code");
-            //return;
-            //playerIsDead();
-            //this.dispose();
-        }
-
         if(player.getHp() > 0){
             //check for input
             handleInput(dt);
         }
+//        else{
+//            game.setScreen(new EmptyScreen(game));
+//            Gdx.input.setInputProcessor(null);
+//        }
+
+        handleSpawningItems();
+
         //dont know what this doing
         world.step(1/60f,6,2);
 
         //update player
         player.update(dt);
         //spawn all slimes
-        for(Slime enemy : creator.getSlimes()){
+        /////////////need to destroy enemy in playscreen////////////
+        slimeIterator = creator.getSlimeIterator();
+        while(slimeIterator.hasNext())
+        {
+            Slime nextSlime = slimeIterator.next();
+            nextSlime.update(dt);
+            if(nextSlime.getX()<player.getX()+224 / Jannabi.PPM)
+                nextSlime.b2body.setActive((true));
+            if (nextSlime.getToDestroy() && !nextSlime.getDestroyed())
+            {
+                world.destroyBody(nextSlime.b2body);
+                nextSlime.setDestroyed(true);
+            }
+
+            if (nextSlime.getStateTime() >= 1 && nextSlime.getDestroyed())
+            {
+                Gdx.app.log("removing slime from array", "");
+                slimeIterator.remove();
+            }
+
+        }
+        /*for(Slime enemy : creator.getSlimes()){
             enemy.update(dt);
             if(enemy.getX() < player.getX() +224 / Jannabi.PPM){
                 enemy.b2body.setActive(true);
                 //we can use this to enable attack in the future
             }
+        }*/
+        for(Item item : items){
+            item.update(dt);
         }
         //track camera with main player
         //check if we ae at the beginning of the stage or end of stage to freeze camera
         if(player.b2body.getPosition().x > (Jannabi.V_WIDTH/2) /Jannabi.PPM ){
             if(player.b2body.getPosition().x < (((Jannabi.V_WIDTH * 7) + (Jannabi.V_WIDTH/2)) /Jannabi.PPM))
-            gamecam.position.x = player.b2body.getPosition().x;
+                gamecam.position.x = player.b2body.getPosition().x;
         }
 
 
@@ -164,11 +222,14 @@ public class PlayScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        Gdx.app.log("Now I'm in Render Playscreen before update","Pass");
+
         update(delta);
-        Gdx.app.log("Now I'm in Render Playscreen","Pass");
+
+
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+
 
         //render box2d
 
@@ -180,34 +241,46 @@ public class PlayScreen implements Screen {
         //need to draw background before render and render before player.draw
         game.batch.begin();
         //multiple width to increase background (now get commented to check box2d)
-        //now comment background due to check collision
-        Gdx.app.log("Now I'm in Render Playscreen DRAW SOMETHING","Pass");
-        game.batch.draw(background,0,0,(Jannabi.V_WIDTH /Jannabi.PPM) * 8,Jannabi.V_HEIGHT / Jannabi.PPM);
-        Gdx.app.log("Now I'm in Render Playscreen DRAW SOMETHING DONE!!! ","Pass Like a Shit");
+        //can comment background  to check collision
+        //game.batch.draw(background,0,0,(Jannabi.V_WIDTH /Jannabi.PPM) * 8,Jannabi.V_HEIGHT / Jannabi.PPM);
         game.batch.end();
 
         //need to render after background
         renderer.render();
-        Gdx.app.log("Iam Here Graffer","Pass Like a shit");
+
         //draw things
         game.batch.begin();
         player.draw(game.batch);
         for(Enemy enemy : creator.getSlimes()){
             enemy.draw(game.batch);
         }
-        game.batch.end();
-
-//        if (player.getHp() <= 0){
+        for(Item item : items){
+            item.draw(game.batch);
+        }
+        if (player.getHp() <= 0){
+            Gdx.app.log("IAM in IF CHECK PLAYER DIE", "DAMNNNN");
+            this.dispose();
+            game.setScreen(new GameOverScreen(game));
+            //game.setScreen(new MainMenuScreen(game));
+        }
+//        if (gameOver() ){
 //            game.setScreen(new GameOverScreen(game));
 //        }
+        game.batch.end();
 
 
+
+    }
+
+    public boolean gameOver(){
+        if (player.currentState == Player.State.DEAD ){
+            return true;
+        }else{ return false;}
     }
 
     @Override
     public void resize(int width, int height) {
         gamePort.update(width,height);
-        Gdx.app.log("Now I'm in Resize","Pass");
     }
 
     public TiledMap getMap(){
@@ -235,7 +308,6 @@ public class PlayScreen implements Screen {
 
     @Override
     public void dispose() {
-        Gdx.app.log("Now I'm dispose","Yahhhh ");
         background.dispose();
         map.dispose();
         renderer.dispose();

@@ -70,6 +70,7 @@ public class Slime extends Enemy {
         moveLeft = true;
         pauseJump = 1;
         beenHit = false;
+        drop = false;
 
     }
 
@@ -78,7 +79,7 @@ public class Slime extends Enemy {
         stateTime += dt;
         if(setToDestroy && !destroy){
             //world.destroyBody(b2body);
-            destroy = true;
+            //destroy = true;
             stateTime = 0;
             setRegion(deadAnimation.getKeyFrame(0.5f,false));
         }else if(!destroy){
@@ -101,7 +102,7 @@ public class Slime extends Enemy {
     @Override
     protected void defineEnemy() {
         BodyDef bdef = new BodyDef();
-        //set box2d our animation now have width16 and height 32
+        //set box2d our animation now have width32 and height 32
         bdef.position.set(getX(),getY()/Jannabi.PPM);
         bdef.type = BodyDef.BodyType.DynamicBody;
         b2body = world.createBody(bdef);
@@ -116,7 +117,7 @@ public class Slime extends Enemy {
 
         //set category bit
         fdef.filter.categoryBits = Jannabi.ENEMY_BIT;
-        //what our mainPlayer can collide with
+        //what our slime can collide with
         fdef.filter.maskBits = Jannabi.DEFAULT_BIT | Jannabi.OTHERLAYER_BIT | Jannabi.ENEMY_BIT | Jannabi.JANNABI_BIT | Jannabi.PISTOL_BULLET_BIT
                                 | Jannabi.Edge_BIT;
 
@@ -144,7 +145,12 @@ public class Slime extends Enemy {
         beenHit = true;
         if(Hp <= 0){
             setToDestroy = true;
-            screen.spawnItem(new ItemDef(new Vector2(b2body.getPosition().x,b2body.getPosition().y),Potion.class));
+            //define drop condition
+            if(!drop){
+                screen.spawnItem(new ItemDef(new Vector2(b2body.getPosition().x,b2body.getPosition().y + 25),Potion.class));
+                drop = true;
+            }
+
         }
 
     }

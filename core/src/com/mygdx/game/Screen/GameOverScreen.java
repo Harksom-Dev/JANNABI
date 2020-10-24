@@ -9,8 +9,11 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.Jannabi;
+
+import java.awt.*;
 
 public class GameOverScreen implements Screen {
 
@@ -20,8 +23,12 @@ public class GameOverScreen implements Screen {
     private static final int MAINMENU_BUTTON_HEIGHT = 148;
     private static final int QUIT_BUTTON_WIDTH = 759 ;
     private static final int QUIT_BUTTON_HEIGHT = 148 ;
+    private static final int SCREEN_WIDTH = 1280;
+    private static final int SCREEN_HEIGHT = 720;
     private Viewport viewport;
     private Stage stage;
+    private OrthographicCamera cam;
+
 
     Jannabi game ;
     Texture GameOverWallpaper ;
@@ -36,8 +43,10 @@ public class GameOverScreen implements Screen {
     public GameOverScreen(Jannabi game){
 
         this.game = game;
-        //viewport = new FitViewport(Jannabi.V_WIDTH, Jannabi.V_HEIGHT, new OrthographicCamera());
-        //stage = new Stage(viewport,((Jannabi) game).batch);
+        viewport = new FitViewport(SCREEN_WIDTH, SCREEN_HEIGHT, new OrthographicCamera());
+        stage = new Stage(viewport,((Jannabi) game).batch);
+        cam = new OrthographicCamera();
+
         Gdx.app.log("Now i'm in GameOverScreen","Pass");
 
         GameOverWallpaper = new Texture("GameOver/wallaper.png");
@@ -58,9 +67,12 @@ public class GameOverScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        //cam.setToOrtho(true, 136, 720);
         Gdx.app.log("Now I'm in Render Game Over Screen","Pass");
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        stage.act();
+        stage.draw();
         game.batch.begin();
         Gdx.app.log("Now I'm in Render AT DRAW","WHY NOT DRAW");
         game.batch.draw(GameOverWallpaper,0,0);

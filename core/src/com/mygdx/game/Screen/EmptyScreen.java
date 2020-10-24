@@ -35,6 +35,8 @@ public class EmptyScreen implements Screen {
         dispose();
         Gdx.app.log("IM IN RENDER_EMPTY","Pass");
         game.setScreen(new GameOverScreen(game));
+        Gdx.input.setInputProcessor(null);
+        return;
     }
 
     @Override

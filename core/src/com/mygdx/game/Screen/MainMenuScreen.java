@@ -3,7 +3,13 @@ package com.mygdx.game.Screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.viewport.FillViewport;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.Jannabi;
 
 public class MainMenuScreen implements Screen {
@@ -17,7 +23,12 @@ public class MainMenuScreen implements Screen {
     private static final int EXIT_BUTTON_HEIGHT = 212 ;
     private static final int HOW_BUTTON_WIDTE = 88 ;
     private static final int HOW_BUTTON_HEIGHT = 307;
+    private static final int SCREEN_WIDTH = 1280;
+    private static final int SCREEN_HEIGHT = 720;
 
+    private Viewport viewport;
+    private Stage stage;
+    private OrthographicCamera cam;
     Jannabi game;
 
     Texture MainMenuWallpaper;
@@ -32,6 +43,11 @@ public class MainMenuScreen implements Screen {
 
     public MainMenuScreen (Jannabi game){
         this.game = game;
+        viewport = new FitViewport(SCREEN_WIDTH, SCREEN_HEIGHT,new OrthographicCamera());
+        stage = new Stage(viewport,((Jannabi) game).batch);
+        cam = new OrthographicCamera();
+
+
 
         PlayButtonActive = new Texture("MainMenu/StartActive.png");
         PlayButtonInactive = new Texture("MainMenu/StartInactive.png");
@@ -43,6 +59,7 @@ public class MainMenuScreen implements Screen {
         HowtoplayInactive = new Texture("MainMenu/HowtoplayInactive.png");
         MainMenuWallpaper = new Texture("MainMenu/MainWallpaper.png");
         //MainMenuWallpaper = new Texture("MainMenu/giphy.gif");
+;
 
     }
 
@@ -59,6 +76,8 @@ public class MainMenuScreen implements Screen {
     public void render(float delta) {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        stage.act();
+        stage.draw();
         game.batch.begin();
         game.batch.draw(MainMenuWallpaper,0,0);
         /// START GAME
