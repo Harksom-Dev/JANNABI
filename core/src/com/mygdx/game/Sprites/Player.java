@@ -275,10 +275,19 @@ public class Player extends Sprite {
         }else if(b2body.getLinearVelocity().y > 0 || (b2body.getLinearVelocity().y < 0 && previousState == State.JUMPING)){
             if(Gdx.input.isKeyPressed(Input.Keys.UP)){
                 aimUp = true;
-                return State.JUMP_AIM_UP;
+                if(curGunState == GunState.SWORD ){
+                    return State.JUMPING;
+                }else{
+                    return State.JUMP_AIM_UP;
+                }
+
             }else if(Gdx.input.isKeyPressed(Input.Keys.DOWN)){
                 aimDown = true;
-                return State.JUMP_AIM_DOWN;
+                if(curGunState == GunState.SWORD ){
+                    return State.JUMPING;
+                }else{
+                    return State.JUMP_AIM_DOWN;
+                }
             }else {
                 aimUp = false;
                 aimDown = false;
@@ -287,10 +296,19 @@ public class Player extends Sprite {
         }else if(b2body.getLinearVelocity().y < 0){
             if(Gdx.input.isKeyPressed(Input.Keys.UP)){
                 aimUp = true;
-                return State.JUMP_AIM_UP;
+                if(curGunState == GunState.SWORD ){
+                    return State.JUMPING;
+                }else{
+                    return State.JUMP_AIM_UP;
+                }
             }else if(Gdx.input.isKeyPressed(Input.Keys.DOWN)){
                 aimDown = true;
-                return State.JUMP_AIM_DOWN;
+                if(curGunState == GunState.SWORD ){
+                    return State.JUMPING;
+                }else{
+                    return State.JUMP_AIM_DOWN;
+                }
+
             }else {
                 aimUp = false;
                 aimDown = false;
@@ -299,10 +317,20 @@ public class Player extends Sprite {
         }else if(b2body.getLinearVelocity().x != 0){
             if(Gdx.input.isKeyPressed(Input.Keys.UP)){
                 aimUp = true;
-                return State.RUNNING_AIM_UP;
+                if(curGunState == GunState.SWORD){
+                    return State.RUNNING;
+                }else{
+                    return State.RUNNING_AIM_UP;
+                }
+
             }else if(Gdx.input.isKeyPressed(Input.Keys.DOWN)){
                 aimDown = true;
-                return State.RUNNING_AIM_DOWN;
+                if(curGunState == GunState.SWORD){
+                    return State.RUNNING;
+                }else{
+                    return State.RUNNING_AIM_DOWN;
+                }
+
             }else{
                 aimUp = false;
                 aimDown = false;
@@ -310,15 +338,30 @@ public class Player extends Sprite {
             }
         }else if(Gdx.input.isKeyPressed(Input.Keys.UP)){
             aimUp = true;
-            return State.STAND_AIM_UP;
+            if(curGunState == GunState.SWORD){
+                return State.STANDING;
+            }else{
+                return State.STAND_AIM_UP;
+            }
+
         }else if(Gdx.input.isKeyPressed(Input.Keys.DOWN)){
             aimDown = true;
-            return State.STAND_AIM_DOWN;
+            if(curGunState == GunState.SWORD){
+                return State.STANDING;
+            }else{
+                return State.STAND_AIM_DOWN;
+            }
+
         }else if(Gdx.input.isKeyPressed(Input.Keys.F)){
             aimUp = false;
             aimDown = false;
             reloaded = true;
-            return State.RELOAD;
+            if(curGunState == GunState.SWORD){
+                return State.STANDING;
+            }else{
+                return State.RELOAD;
+            }
+
         }else{
             aimUp = false;
             aimDown = false;
@@ -465,15 +508,6 @@ public class Player extends Sprite {
                 curGunState = GunState.SHOTGUN;
                 Gdx.app.log("change to shotgun","");
         }
-       /* if(gun == "sword"){
-            //setJannabiWithSword(screen);
-
-        }
-        if(gun == "pistol"){
-            //setJannabiWithPistol(screen);
-            curGunState = GunState.PISTOL;
-            Gdx.app.log("change to pistol","");
-        }*/
     }
 
     private TextureRegion loadRegion(){
