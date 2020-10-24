@@ -68,7 +68,10 @@ public class PlayScreen implements Screen {
         background = new Texture("Background/Stage1/stage1.png");
 
         //create atlas and load from path
-        atlas = new TextureAtlas("Sprite/allCharacter/character_all.pack");
+        //atlas = new TextureAtlas("Sprite/allCharacter/character_all.pack");
+        //trying Load class
+        atlas = new TextureAtlas("Sprite/allCharacter/newCharacterpack.pack");
+
 
         //set this class to current screen
         this.game = game;
@@ -143,6 +146,10 @@ public class PlayScreen implements Screen {
             player.changeGun("sword");
         }else if(Gdx.input.isKeyJustPressed(Input.Keys.W)){
             player.changeGun("pistol");
+        }else if(Gdx.input.isKeyJustPressed(Input.Keys.E)){
+            player.changeGun("smg");
+        }else if(Gdx.input.isKeyJustPressed(Input.Keys.R)){
+            player.changeGun("shotgun");
         }
 
     }

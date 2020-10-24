@@ -71,7 +71,8 @@ public class Player extends Sprite {
     //create Constructor
     public Player( PlayScreen screen){
         //get start image in .pack
-        super(screen.getAtlas().findRegion("stand_aim"));
+        //super(screen.getAtlas().findRegion("stand_aim"));
+        super(screen.getAtlas().findRegion("playerStand"));
         this.screen = screen;
         this.world = screen.getWorld();
 
@@ -92,7 +93,7 @@ public class Player extends Sprite {
 
 
         //create this class for shorter constructor that implement all pistol animation
-        setJannabiWithPistol(screen);
+        //setJannabiWithPistol(screen);
         loader = new LoadTexture(screen);
 
 
@@ -181,7 +182,7 @@ public class Player extends Sprite {
         if(beenHit){
             animateDelay += dt;
             Gdx.app.log("player gethit",""+animateDelay);
-            setRegion(playerPistolGetHit.getKeyFrame(dt,false));
+            setRegion(loader.getIndividualRegion(curGunState));
             if(animateDelay > 0.125f){
 
                 beenHit = false;
@@ -205,10 +206,9 @@ public class Player extends Sprite {
     //checkState
     private TextureRegion getFrame(float dt){
         currentState = getState();
-
         TextureRegion region;
-        loader.getRegion(currentState,curGunState,stateTimer);
-        switch (currentState){
+        region = loader.getRegion(currentState,curGunState,stateTimer);
+        /*switch (currentState){
             case JUMPING:
                 region = playerJump;
                 break;
@@ -245,7 +245,7 @@ public class Player extends Sprite {
             default:
                 region = playerStand.getKeyFrame(stateTimer,true);
                 break;
-        }
+        }*/
 
         //check now we running to the right or left
         if((b2body.getLinearVelocity().x < 0 || !runningRight) && !region.isFlipX()){
@@ -448,16 +448,32 @@ public class Player extends Sprite {
     }
 
     public void changeGun(String gun){
-        if(gun == "sword"){
+        switch (gun){
+            case "sword":
+                curGunState = GunState.SWORD;
+                Gdx.app.log("change to sword","");
+                break;
+            case "pistol":
+                curGunState = GunState.PISTOL;
+                Gdx.app.log("change to pistol","");
+                break;
+            case "smg":
+                curGunState = GunState.SMG;
+                Gdx.app.log("change to smg","");
+                break;
+            default:
+                curGunState = GunState.SHOTGUN;
+                Gdx.app.log("change to shotgun","");
+        }
+       /* if(gun == "sword"){
             //setJannabiWithSword(screen);
-            curGunState = GunState.SWORD;
-            Gdx.app.log("change to sword","");
+
         }
         if(gun == "pistol"){
             //setJannabiWithPistol(screen);
             curGunState = GunState.PISTOL;
             Gdx.app.log("change to pistol","");
-        }
+        }*/
     }
 
     private TextureRegion loadRegion(){
