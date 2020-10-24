@@ -9,6 +9,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.Jannabi;
+import com.mygdx.game.Screen.GameOverScreen;
+import com.mygdx.game.Screen.MainMenuScreen;
 import com.mygdx.game.Screen.PlayScreen;
 import com.mygdx.game.Sprites.Weapon.pistol;
 
@@ -79,7 +81,7 @@ public class Player extends Sprite {
         runningRight = true;
         aimUp = false;
         aimDown = false;
-        hp = 10;
+        hp = 3;
         beenHit = false;
         reloaded = false;
         animateDelay = 0;
@@ -420,8 +422,10 @@ public class Player extends Sprite {
         }
     }
 
+
     public void getHit(){
         hp--;
+        //hp -= 1;
         beenHit = true;
         //push back when hit
         //b2body.applyLinearImpulse(new Vector2(100,0),b2body.getWorldCenter(),true);
