@@ -32,6 +32,7 @@ public class Jannabi extends Game {
 		batch = new SpriteBatch();
 		setScreen(new MainMenuScreen(this));
 		//setScreen(new GameOverScreen(this));
+		//setScreen(new PlayScreen(this));
 	}
 
 	@Override
@@ -43,4 +44,6 @@ public class Jannabi extends Game {
 	public void dispose () {
 		batch.dispose();
 	}
+
+
 }

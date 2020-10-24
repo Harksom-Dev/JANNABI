@@ -3,7 +3,6 @@ package com.mygdx.game.Screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.ai.btree.decorator.Random;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -11,9 +10,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.math.RandomXS128;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Box2D;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
@@ -95,7 +92,7 @@ public class PlayScreen implements Screen {
 
     @Override
     public void show() {
-
+        //game.setScreen(new GameOverScreen(game));
     }
 
     //create handle input when we get input from user
@@ -115,12 +112,28 @@ public class PlayScreen implements Screen {
 
     }
 
+//    public void playerIsDead(){
+//        //game.setScreen(new MainMenuScreen(game));
+//        game.setScreen(new GameOverScreen(game));
+//    }
     public void update(float dt){
+        if (player.getHp() <= 0){
+            //show();
+            //game.batch.end();
+            //this.dispose();
+            dispose();
+            System.out.println("Now iam in 0 hp condition");
+            game.setScreen(new EmptyScreen(game));
+            System.out.println("Now iam emd of set Screen code");
+            //return;
+            //playerIsDead();
+            //this.dispose();
+        }
+
         if(player.getHp() > 0){
             //check for input
             handleInput(dt);
         }
-
         //dont know what this doing
         world.step(1/60f,6,2);
 
@@ -151,20 +164,16 @@ public class PlayScreen implements Screen {
 
     @Override
     public void render(float delta) {
-
+        Gdx.app.log("Now I'm in Render Playscreen before update","Pass");
         update(delta);
-
-
+        Gdx.app.log("Now I'm in Render Playscreen","Pass");
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-
 
         //render box2d
 
         //if we comment this we not gonna outline object but not sure we can collide or not
         b2dr.render(world, gamecam.combined);
-
 
         game.batch.setProjectionMatrix(gamecam.combined);
 
@@ -172,12 +181,14 @@ public class PlayScreen implements Screen {
         game.batch.begin();
         //multiple width to increase background (now get commented to check box2d)
         //now comment background due to check collision
+        Gdx.app.log("Now I'm in Render Playscreen DRAW SOMETHING","Pass");
         game.batch.draw(background,0,0,(Jannabi.V_WIDTH /Jannabi.PPM) * 8,Jannabi.V_HEIGHT / Jannabi.PPM);
+        Gdx.app.log("Now I'm in Render Playscreen DRAW SOMETHING DONE!!! ","Pass Like a Shit");
         game.batch.end();
 
         //need to render after background
         renderer.render();
-
+        Gdx.app.log("Iam Here Graffer","Pass Like a shit");
         //draw things
         game.batch.begin();
         player.draw(game.batch);
@@ -186,6 +197,9 @@ public class PlayScreen implements Screen {
         }
         game.batch.end();
 
+//        if (player.getHp() <= 0){
+//            game.setScreen(new GameOverScreen(game));
+//        }
 
 
     }
@@ -193,6 +207,7 @@ public class PlayScreen implements Screen {
     @Override
     public void resize(int width, int height) {
         gamePort.update(width,height);
+        Gdx.app.log("Now I'm in Resize","Pass");
     }
 
     public TiledMap getMap(){
@@ -220,6 +235,7 @@ public class PlayScreen implements Screen {
 
     @Override
     public void dispose() {
+        Gdx.app.log("Now I'm dispose","Yahhhh ");
         background.dispose();
         map.dispose();
         renderer.dispose();

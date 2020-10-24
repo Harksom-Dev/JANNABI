@@ -59,7 +59,6 @@ public class MainMenuScreen implements Screen {
     public void render(float delta) {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
         game.batch.begin();
         game.batch.draw(MainMenuWallpaper,0,0);
         /// START GAME
@@ -75,7 +74,7 @@ public class MainMenuScreen implements Screen {
         if (Gdx.input.getX() > 88 && Gdx.input.getX() < 417 && Gdx.input.getY() > 373&& Gdx.input.getY() < 410) {
             game.batch.draw(HowtoplayActive, HOW_BUTTON_WIDTE, HOW_BUTTON_HEIGHT);
             if (Gdx.input.isTouched()){
-                game.setScreen(new PlayScreen(game));
+                game.setScreen(new GameOverScreen(game));
             }
         }
         else
@@ -86,7 +85,6 @@ public class MainMenuScreen implements Screen {
         }
         else
         {game.batch.draw(AboutButtonInactive,ABOUT_BUTTON_WIDTH,ABOUT_BUTTON_HEIGHT);}
-
         /// EXIT
         if (Gdx.input.getX() > 88 && Gdx.input.getX() < 417 && Gdx.input.getY() > 470 && Gdx.input.getY() < 510) {
             game.batch.draw(ExitButtonActive,EXIT_BUTTON_WIDTH,EXIT_BUTTON_HEIGHT);
@@ -96,10 +94,6 @@ public class MainMenuScreen implements Screen {
         }
         else
         {game.batch.draw(ExitButtonInactive,EXIT_BUTTON_WIDTH,EXIT_BUTTON_HEIGHT);}
-
-
-
-
         game.batch.end();
     }
 
