@@ -140,7 +140,7 @@ public class LoadTexture extends Sprite {
                 region = playerStandAimDown[index];
                 break;
             case RELOAD:
-                region = playerReload[index-1].getKeyFrame(stateTimer);
+                region = playerReload[index-1].getKeyFrame(stateTimer,false);
                 break;
             case GETHIT:
             case DEAD:

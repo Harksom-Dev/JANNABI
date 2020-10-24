@@ -32,7 +32,7 @@ public class Player extends Sprite {
     public World world;
     public Body b2body;
 
-    //implement texture or animation for character
+    /*//implement texture or animation for character
     private Animation<TextureRegion> playerStand;
     private TextureRegion playerJump;
     private TextureRegion playerStandAimUp;
@@ -43,7 +43,7 @@ public class Player extends Sprite {
     private Animation<TextureRegion> playerRun;
     private Animation<TextureRegion> playerRunAimUp;
     private Animation<TextureRegion> playerRunAimDown;
-    private Animation<TextureRegion> playerReload;
+    private Animation<TextureRegion> playerReload;*/
 
 
     //implement StateTime for something(don't Know yet) and boolean check that we running right or not
@@ -61,6 +61,9 @@ public class Player extends Sprite {
     private boolean beenHit;
 
     private float animateDelay;
+
+    //float for  reload delayTime
+    private float reloadTime;
 
     private int pistolClip = 13;
     private int currentAmmo;
@@ -91,9 +94,10 @@ public class Player extends Sprite {
         reloaded = false;
         animateDelay = 0;
 
+        reloadTime = 0;
 
-        //create this class for shorter constructor that implement all pistol animation
-        //setJannabiWithPistol(screen);
+
+        //create this class for shorter and easy access
         loader = new LoadTexture(screen);
 
 
@@ -107,71 +111,6 @@ public class Player extends Sprite {
         pistolsBullet = new Array<>();
         currentAmmo = pistolClip;
         allAmmo = 52;
-    }
-
-    //create methods for implement all animation
-    private void setJannabiWithPistol(PlayScreen screen){
-        //create Array to store all image to use to animation
-        com.badlogic.gdx.utils.Array<TextureRegion> frames = new Array<TextureRegion>();
-        //loop for get runAnimation
-        for(int i = 1; i < 4 ; i++){
-            frames.add(new TextureRegion(screen.getAtlas().findRegion("pistol_run"),i*32,0,32,32));
-        }
-        playerRun = new Animation<TextureRegion>(0.12f,frames);
-        frames.clear();
-
-        //get jump animation
-        playerJump = new TextureRegion(screen.getAtlas().findRegion("jump_aim"),64,0,32,32);
-
-
-        //get stand texture
-        for(int i = 0;i < 2;i++){
-            frames.add(new TextureRegion(screen.getAtlas().findRegion("stand_aim"),i*32,0,32,32));
-        }
-        playerStand = new Animation<TextureRegion>(0.5f,frames);
-        frames.clear();
-        //playerStand = new TextureRegion(screen.getAtlas().findRegion("stand_aim"),0,0,32,32);
-
-        //get stand aim texture
-        //aim up
-        playerStandAimUp = new TextureRegion(screen.getAtlas().findRegion("stand_aim"),64,0,32,32);
-        //aim down
-        playerStandAimDown = new TextureRegion(screen.getAtlas().findRegion("stand_aim"),96,0,32,32);
-
-        //get aim&run
-        //aimUp&run
-        for(int i = 0;i < 4;i++){
-            frames.add(new TextureRegion(screen.getAtlas().findRegion("run_aim"),i*32,0,32,32));
-        }
-        playerRunAimUp = new Animation<TextureRegion>(0.12f,frames);
-        frames.clear();
-        //aimDown&run
-        for(int i = 4;i < 8;i++){
-            frames.add(new TextureRegion(screen.getAtlas().findRegion("run_aim"),i*32,0,32,32));
-        }
-        playerRunAimDown = new Animation<TextureRegion>(0.12f,frames);
-        frames.clear();
-
-        //get jump & aim
-        //jump & aim up
-        playerJumAimUp = new TextureRegion(screen.getAtlas().findRegion("jump_aim"),0,0,32,32);
-        //jump & aim down
-        playerJumAimDown = new TextureRegion(screen.getAtlas().findRegion("jump_aim"),32,0,32,32);
-
-        //get reload animation
-        for(int i = 0;i < 5;i++){
-            frames.add(new TextureRegion(screen.getAtlas().findRegion("normal_reload"),i*32,0,32,32));
-
-        }
-        frames.add(new TextureRegion(screen.getAtlas().findRegion("stand_aim"),0,0,32,32));
-        playerReload = new Animation<TextureRegion>(0.1f,frames);
-        frames.clear();
-
-        //get hit animation
-        //playerPistolGetHit = new TextureRegion(screen.getAtlas().findRegion("pistol_gethit"),0,0,32,32);
-        frames.add(new TextureRegion(screen.getAtlas().findRegion("pistol_gethit"),0,0,32,32));
-        frames.add(new TextureRegion(screen.getAtlas().findRegion("pistol_gethit"),0,0,32,32));
-        playerPistolGetHit = new Animation<TextureRegion>(0.5f,frames);
     }
 
 
@@ -205,47 +144,11 @@ public class Player extends Sprite {
 
     //checkState
     private TextureRegion getFrame(float dt){
-        currentState = getState();
+        currentState = getState(dt);
         TextureRegion region;
+
         region = loader.getRegion(currentState,curGunState,stateTimer);
-        /*switch (currentState){
-            case JUMPING:
-                region = playerJump;
-                break;
-            case JUMP_AIM_UP:
-                region = playerJumAimUp;
-                break;
-            case JUMP_AIM_DOWN:
-                region = playerJumAimDown;
-                break;
-            case RUNNING:
-                region = playerRun.getKeyFrame(stateTimer,true);
-                break;
-            case RUNNING_AIM_UP:
-                region = playerRunAimUp.getKeyFrame(stateTimer,true);
-                break;
-            case RUNNING_AIM_DOWN:
-                region = playerRunAimDown.getKeyFrame(stateTimer,true);
-                break;
-            case STAND_AIM_UP:
-                region = playerStandAimUp;
-                break;
-            case STAND_AIM_DOWN:
-                region = playerStandAimDown;
-                break;
-            case RELOAD:
-                region = playerReload.getKeyFrame(stateTimer);
-                break;
-            case GETHIT:
-            case DEAD:
-                region = playerPistolGetHit.getKeyFrame(stateTimer);
-                break;
-            case FALLING:
-            case STANDING:
-            default:
-                region = playerStand.getKeyFrame(stateTimer,true);
-                break;
-        }*/
+
 
         //check now we running to the right or left
         if((b2body.getLinearVelocity().x < 0 || !runningRight) && !region.isFlipX()){
@@ -266,7 +169,7 @@ public class Player extends Sprite {
     }
 
     //this class check that we jump or do other animation
-    private State getState(){
+    private State getState(float dt){
         if(hp <= 0){
             return State.DEAD;
         }else if(beenHit){
@@ -355,12 +258,19 @@ public class Player extends Sprite {
         }else if(Gdx.input.isKeyPressed(Input.Keys.F)){
             aimUp = false;
             aimDown = false;
-            reloaded = true;
+            reloadTime += dt;
+            Gdx.app.log("press more","" + reloadTime);
             if(curGunState == GunState.SWORD){
                 return State.STANDING;
             }else{
+                if(reloadTime > 0.7f){
+                    Gdx.app.log("reloadcomplete","");
+                    reloaded = true;
+                    reloadTime = 0;
+                }
                 return State.RELOAD;
             }
+
 
         }else{
             aimUp = false;

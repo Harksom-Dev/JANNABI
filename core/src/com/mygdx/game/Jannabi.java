@@ -16,7 +16,7 @@ public class Jannabi extends Game {
 	public static final int V_HEIGHT = 208;
 	public static final float PPM = 100;
 
-	//create bit category for collision (2bit)
+	//create bit category for collision
 	public static final short DEFAULT_BIT = 1;
 	public static final short JANNABI_BIT = 2;
 	public static final short OTHERLAYER_BIT = 4;
