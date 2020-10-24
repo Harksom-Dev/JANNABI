@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.Jannabi;
 import com.mygdx.game.Screen.PlayScreen;
 import com.mygdx.game.Sprites.Weapon.pistol;
+import com.mygdx.game.tools.LoadTexture;
 
 //this class is create for create main player create box2d sprite and further
 public class Player extends Sprite {
@@ -19,10 +20,13 @@ public class Player extends Sprite {
     public enum State {FALLING,JUMPING,STANDING,RUNNING,STAND_AIM_UP,STAND_AIM_DOWN,RUNNING_AIM_UP,RUNNING_AIM_DOWN,
                         JUMP_AIM_UP,JUMP_AIM_DOWN,RELOAD,DEAD,GETHIT};
 
+    public enum GunState {SWORD,PISTOL,SMG,SHOTGUN}
+    public GunState curGunState;
 
     //implement state to check current and previous
     public State currentState;
     public State previousState;
+
 
     //implement box2d
     public World world;
@@ -62,6 +66,7 @@ public class Player extends Sprite {
     private int currentAmmo;
     private int allAmmo;
     private boolean reloaded;
+    private LoadTexture loader;
 
     //create Constructor
     public Player( PlayScreen screen){
@@ -74,6 +79,7 @@ public class Player extends Sprite {
         currentState = State.STANDING;
         previousState = State.STANDING;
         stateTimer = 0;
+        curGunState = GunState.PISTOL;
 
         //all boolean and vaule for animation
         runningRight = true;
@@ -87,6 +93,8 @@ public class Player extends Sprite {
 
         //create this class for shorter constructor that implement all pistol animation
         setJannabiWithPistol(screen);
+        loader = new LoadTexture(screen);
+
 
         //use to check collision and create box2d body
         definePlayer();
@@ -199,6 +207,7 @@ public class Player extends Sprite {
         currentState = getState();
 
         TextureRegion region;
+        loader.getRegion(currentState,curGunState,stateTimer);
         switch (currentState){
             case JUMPING:
                 region = playerJump;
@@ -441,10 +450,13 @@ public class Player extends Sprite {
     public void changeGun(String gun){
         if(gun == "sword"){
             //setJannabiWithSword(screen);
+            curGunState = GunState.SWORD;
             Gdx.app.log("change to sword","");
         }
         if(gun == "pistol"){
-            setJannabiWithPistol(screen);
+            //setJannabiWithPistol(screen);
+            curGunState = GunState.PISTOL;
+            Gdx.app.log("change to pistol","");
         }
     }
 

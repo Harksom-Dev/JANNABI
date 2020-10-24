@@ -141,6 +141,8 @@ public class PlayScreen implements Screen {
             player.fire();
         }else if(Gdx.input.isKeyJustPressed(Input.Keys.Q)){
             player.changeGun("sword");
+        }else if(Gdx.input.isKeyJustPressed(Input.Keys.W)){
+            player.changeGun("pistol");
         }
 
     }
