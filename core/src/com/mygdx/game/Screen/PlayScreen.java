@@ -17,6 +17,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.Jannabi;
+import com.mygdx.game.Scenes.Hud;
 import com.mygdx.game.Sprites.Enemy;
 import com.mygdx.game.Sprites.Item.Item;
 import com.mygdx.game.Sprites.Item.ItemDef;
@@ -34,6 +35,8 @@ import java.util.concurrent.LinkedBlockingDeque;
 public class PlayScreen implements Screen {
     //create Texture for background
     Texture background;
+    //crear health bar texture
+    Texture blank;
 
     //implement main game camera and viewport
     private Jannabi game;
@@ -63,6 +66,9 @@ public class PlayScreen implements Screen {
     private Array<Item> items;
     private LinkedBlockingDeque<ItemDef> itemToSpawn;
 
+    //hud
+    private Hud hud;
+
     public PlayScreen(Jannabi game) {
 
         background = new Texture("Background/Stage1/stage1.png");
@@ -72,6 +78,9 @@ public class PlayScreen implements Screen {
 
         //set this class to current screen
         this.game = game;
+
+        //set health bar
+        blank = new Texture("blank.png");
 
         //set game camera
         gamecam = new OrthographicCamera();
@@ -101,6 +110,11 @@ public class PlayScreen implements Screen {
         //initialize item
         items = new Array<Item>();
         itemToSpawn = new LinkedBlockingDeque<ItemDef>();
+
+        //Hud
+        hud = new Hud(game.batch, player);
+
+
     }
 
     //create getter for texture atlas
@@ -221,6 +235,7 @@ public class PlayScreen implements Screen {
 
         game.batch.setProjectionMatrix(gamecam.combined);
 
+
         //need to draw background before render and render before player.draw
         game.batch.begin();
         //multiple width to increase background (now get commented to check box2d)
@@ -241,6 +256,11 @@ public class PlayScreen implements Screen {
             item.draw(game.batch);
         }
         game.batch.end();
+
+
+
+        //draw hud
+        hud.stage.draw();
 
 
 
