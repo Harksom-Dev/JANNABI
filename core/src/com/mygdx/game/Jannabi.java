@@ -19,6 +19,11 @@ public class Jannabi extends Game {
 	public static final int SMG_CLIP = 20;
 	public static final int SHOTGUN_CLIP = 8;
 
+	public static final float SWORD_HIT_DELAY = 0.2f;
+	public static final float PISTOL_FIRE_RATE = 0.5f;
+	public static final float SMG_FIRE_RATE = 0.1f;
+	public static final float SHOTGUN_FIRE_RATE = 0.5f;
+
 	//create bit category for collision
 	public static final short DEFAULT_BIT = 1;
 	public static final short JANNABI_BIT = 2;

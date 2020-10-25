@@ -17,11 +17,11 @@ public class Smg extends Gun {
         setRegion(img);
         //increase width and height to increase bullet size
         setBounds(x-1 / Jannabi.PPM,y, 40 / Jannabi.PPM, 20 / Jannabi.PPM);
-        definedWeapon();
+        definedBullet();
     }
 
     @Override
-    public void definedWeapon() {
+    public void definedBullet() {
         BodyDef bdef = new BodyDef();
         bdef.position.set(fireRight ? getX() + 12 / Jannabi.PPM : getX() - 12 / Jannabi.PPM, getY() +2 / Jannabi.PPM);
         bdef.type = BodyDef.BodyType.KinematicBody;
@@ -52,20 +52,20 @@ public class Smg extends Gun {
         }else if(aimUp && !aimDown){                                                    //aimUp
             b2body.setLinearVelocity(new Vector2(fireRight ? 10 : -10, 10));
             if(fireRight){
-                b2body.setTransform(b2body.getPosition().x- getWidth()/ 3.5f,b2body.getPosition().y- getHeight() / 10,58 / Jannabi.PPM);
+                b2body.setTransform(b2body.getPosition().x- (getWidth()/ 3.5f),b2body.getPosition().y- (getHeight() / 15f) ,60 / Jannabi.PPM);
             }else{
-                b2body.setTransform(b2body.getPosition().x- (getWidth()/ 50) + 3/ Jannabi.PPM,
-                        (b2body.getPosition().y- getHeight() / 10) +13 /Jannabi.PPM,-45);
+                b2body.setTransform(b2body.getPosition().x- (getWidth()/ 3.5f) + 28/ Jannabi.PPM,
+                        (b2body.getPosition().y- getHeight() / 15f),-45);
             }
 
         }else if(!aimUp && aimDown){                                                    //aimdown
             b2body.setLinearVelocity(new Vector2(fireRight ? 10 : -10, -10));
             if(fireRight){
-                b2body.setTransform(b2body.getPosition().x- (getWidth()/ 50) + 5/ Jannabi.PPM,
+                b2body.setTransform(b2body.getPosition().x- (getWidth()/ 50),
                         b2body.getPosition().y- getHeight() / 2,-45);
             }else{
-                b2body.setTransform(b2body.getPosition().x- (getWidth()/ 50) + 5/ Jannabi.PPM,
-                        b2body.getPosition().y- getHeight() / 2,45);
+                b2body.setTransform(b2body.getPosition().x- (getWidth()/ 50) + 12/ Jannabi.PPM,
+                        b2body.getPosition().y,45);
             }
 
 
@@ -89,10 +89,10 @@ public class Smg extends Gun {
             if(fireRight){
 
                 setRotation(45);
-                setPosition(b2body.getPosition().x - getWidth() / 19, b2body.getPosition().y - getHeight() / 1 );
+                setPosition(b2body.getPosition().x - (getWidth() / 10) - 1 / Jannabi.PPM, b2body.getPosition().y - (getHeight() / 2) - 9  /Jannabi.PPM  );
             }else{
-                setRotation(-58);
-                setPosition(b2body.getPosition().x - (getWidth() / 15) - 6.5f /Jannabi.PPM, b2body.getPosition().y - (getHeight() / 7) + 4/Jannabi.PPM);
+                setRotation(-45);
+                setPosition(b2body.getPosition().x - (getWidth() / 10) - 16 /Jannabi.PPM, b2body.getPosition().y - (getHeight() / 2) + 16 / Jannabi.PPM);
             }
 
             //aim down case

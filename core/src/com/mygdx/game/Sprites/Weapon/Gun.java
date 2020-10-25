@@ -39,7 +39,7 @@ public abstract class Gun extends Sprite {
         this.clip = clip;
     }
 
-    public abstract void definedWeapon();
+    public abstract void definedBullet();
     public abstract void update(float dt);
     public abstract void setToDestroy();
     public abstract boolean isDestroyed();

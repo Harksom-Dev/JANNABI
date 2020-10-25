@@ -17,11 +17,11 @@ public class Pistol extends Gun {
         setRegion(img);
         //increase width and height to increase bullet size
         setBounds(x-1 / Jannabi.PPM, y, 50 / Jannabi.PPM, 30 / Jannabi.PPM);
-        definedWeapon();
+        definedBullet();
     }
 
     @Override
-    public void definedWeapon() {
+    public void definedBullet() {
         BodyDef bdef = new BodyDef();
         bdef.position.set(fireRight ? getX() + 12 / Jannabi.PPM : getX() - 12 / Jannabi.PPM, getY() +2 / Jannabi.PPM);
         bdef.type = BodyDef.BodyType.KinematicBody;
@@ -134,8 +134,8 @@ public class Pistol extends Gun {
         return  destroyed;
     }
 
-    public int getDmg() {
+    /*public int getDmg() {
         return Dmg;
-    }
+    }*/
 
 }
