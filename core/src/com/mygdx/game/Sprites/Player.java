@@ -2,7 +2,6 @@ package com.mygdx.game.Sprites;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -10,7 +9,9 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.Jannabi;
 import com.mygdx.game.Screen.PlayScreen;
-import com.mygdx.game.Sprites.Weapon.pistol;
+import com.mygdx.game.Sprites.Weapon.Gun;
+import com.mygdx.game.Sprites.Weapon.Pistol;
+import com.mygdx.game.Sprites.Weapon.Smg;
 import com.mygdx.game.tools.LoadTexture;
 
 //this class is create for create main player create box2d sprite and further
@@ -53,7 +54,7 @@ public class Player extends Sprite {
     private boolean aimDown;
     PlayScreen screen;
     //pistol shot array
-    private Array<pistol> pistolsBullet;
+    private Array<Gun> Bullet;
 
     //hit count of our main character
     private int hp;
@@ -98,7 +99,7 @@ public class Player extends Sprite {
         reloadTime = 0;
         duplicateReloadCheck = false;
 
-        //create this class for shorter and easy access
+        //create this class for shorter and easy access for load all player texture
         loader = new LoadTexture(screen);
 
 
@@ -109,7 +110,7 @@ public class Player extends Sprite {
         setBounds(0,0,32 / Jannabi.PPM,32 / Jannabi.PPM);
         //setRegion(playerStand);
 
-        pistolsBullet = new Array<>();
+        Bullet = new Array<>();
         currentAmmo = pistolClip;
         allAmmo = 52;
     }
@@ -133,10 +134,10 @@ public class Player extends Sprite {
         }
 
 
-            for(pistol  bullet : pistolsBullet) {
+            for(Gun bullet : Bullet) {
                 bullet.update(dt);
                 if(bullet.isDestroyed())
-                    pistolsBullet.removeValue(bullet, true);
+                    Bullet.removeValue(bullet, true);
             }
 
 
@@ -353,9 +354,16 @@ public class Player extends Sprite {
     //fire method for pistol gun (temporary)
     public void fire(){
         if(currentAmmo > 0){
-            pistolsBullet.add(new pistol(screen, b2body.getPosition().x, b2body.getPosition().y, runningRight ? true : false, aimUp ? true:false,
-                    aimDown ? true : false,20));
-            currentAmmo--;
+            if(curGunState == GunState.PISTOL){
+                Bullet.add(new Pistol(screen, b2body.getPosition().x, b2body.getPosition().y, runningRight ? true : false, aimUp ? true:false,
+                        aimDown ? true : false,20,Jannabi.PISTOL_CLIP));
+                currentAmmo--;
+            }else if(curGunState == GunState.SMG){
+                Bullet.add(new Smg(screen, b2body.getPosition().x, b2body.getPosition().y, runningRight ? true : false, aimUp ? true:false,
+                        aimDown ? true : false,10,Jannabi.SMG_CLIP));
+                currentAmmo--;
+            }
+
         }else if(currentAmmo <= 0 && allAmmo > 0){
             //clink sound
             Gdx.app.log("ammo","need to reload");
@@ -363,7 +371,7 @@ public class Player extends Sprite {
 
         }else if(currentAmmo <= 0 && allAmmo <= 00){
             //clinksound
-            pistolsBullet.clear();
+            Bullet.clear();
             Gdx.app.log("ammo out","no bullet left");
         }
 
@@ -372,8 +380,9 @@ public class Player extends Sprite {
     private void reload(){
         //reload
         if(reloaded && allAmmo > 0){
-            pistolsBullet.clear();
+            Bullet.clear();
             Gdx.app.log("ammo","reload complete");
+            //change when different gunState
             allAmmo -= pistolClip;
             currentAmmo = pistolClip;
             reloaded = false;
@@ -383,7 +392,7 @@ public class Player extends Sprite {
     //draw each bullet
     public void draw(Batch batch){
         super.draw(batch);
-        for(pistol bullet:pistolsBullet){
+        for(Gun bullet: Bullet){
             bullet.draw(batch);
         }
     }

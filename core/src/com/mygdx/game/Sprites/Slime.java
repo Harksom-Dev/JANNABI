@@ -1,7 +1,6 @@
 package com.mygdx.game.Sprites;
 
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -14,7 +13,8 @@ import com.mygdx.game.Jannabi;
 import com.mygdx.game.Screen.PlayScreen;
 import com.mygdx.game.Sprites.Item.ItemDef;
 import com.mygdx.game.Sprites.Item.Potion;
-import com.mygdx.game.Sprites.Weapon.pistol;
+import com.mygdx.game.Sprites.Weapon.Gun;
+import com.mygdx.game.Sprites.Weapon.Pistol;
 
 public class Slime extends Enemy {
 
@@ -137,11 +137,11 @@ public class Slime extends Enemy {
     }
 
 
-    public void getHit(pistol pistol) {
+    public void getHit(Gun gun) {
         //setRegion(tempHitAnimation.getKeyFrame(0.5f,true));
         //b2body.setLinearVelocity(3,2);
 
-        Hp -= pistol.getDmg();
+        Hp -= gun.getDmg();
         beenHit = true;
         if(Hp <= 0){
             setToDestroy = true;
