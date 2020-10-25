@@ -64,6 +64,7 @@ public class Player extends Sprite {
 
     //float for  reload delayTime
     private float reloadTime;
+    private boolean duplicateReloadCheck;
 
     private int pistolClip = 13;
     private int currentAmmo;
@@ -95,7 +96,7 @@ public class Player extends Sprite {
         animateDelay = 0;
 
         reloadTime = 0;
-
+        duplicateReloadCheck = false;
 
         //create this class for shorter and easy access
         loader = new LoadTexture(screen);
@@ -259,22 +260,31 @@ public class Player extends Sprite {
             aimUp = false;
             aimDown = false;
             reloadTime += dt;
-            Gdx.app.log("press more","" + reloadTime);
-            if(curGunState == GunState.SWORD){
-                return State.STANDING;
-            }else{
-                if(reloadTime > 0.7f){
-                    Gdx.app.log("reloadcomplete","");
-                    reloaded = true;
-                    reloadTime = 0;
+            if(allAmmo > 0){
+                if(curGunState == GunState.SWORD){
+                    return State.STANDING;
+                }else{
+                    if(reloadTime > 0.7f && !duplicateReloadCheck){
+                        duplicateReloadCheck = true;
+                        reloaded = true;
+                        reload();
+                        Gdx.app.log("reloadcomplete","");
+                    }
+
+                    return State.RELOAD;
                 }
-                return State.RELOAD;
+            }else{
+                return State.STANDING;
             }
+
 
 
         }else{
             aimUp = false;
             aimDown = false;
+            // reloadtime and duplicate is use to prevent when user hold reload key
+            reloadTime = 0;
+            duplicateReloadCheck = false;
             return State.STANDING;
         }
     }
@@ -343,29 +353,13 @@ public class Player extends Sprite {
     //fire method for pistol gun (temporary)
     public void fire(){
         if(currentAmmo > 0){
-            if(reloaded){
-                pistolsBullet.clear();
-                Gdx.app.log("ammo","reload complete");
-                allAmmo -= pistolClip;
-                currentAmmo = pistolClip;
-                reloaded = false;
-                Gdx.app.log("ammo = "+allAmmo,"ammoleft ");
-            }
             pistolsBullet.add(new pistol(screen, b2body.getPosition().x, b2body.getPosition().y, runningRight ? true : false, aimUp ? true:false,
                     aimDown ? true : false,20));
             currentAmmo--;
-        }else if(allAmmo > 0){
+        }else if(currentAmmo <= 0 && allAmmo > 0){
             //clink sound
             Gdx.app.log("ammo","need to reload");
-            //reload
-            if(reloaded){
-                pistolsBullet.clear();
-                Gdx.app.log("ammo","reload complete");
-                allAmmo -= pistolClip;
-                currentAmmo = pistolClip;
-                reloaded = false;
-                Gdx.app.log("ammo = "+allAmmo,"ammoleft ");
-            }
+
 
         }else if(currentAmmo <= 0 && allAmmo <= 00){
             //clinksound
@@ -373,6 +367,18 @@ public class Player extends Sprite {
             Gdx.app.log("ammo out","no bullet left");
         }
 
+    }
+
+    private void reload(){
+        //reload
+        if(reloaded && allAmmo > 0){
+            pistolsBullet.clear();
+            Gdx.app.log("ammo","reload complete");
+            allAmmo -= pistolClip;
+            currentAmmo = pistolClip;
+            reloaded = false;
+            Gdx.app.log("ammo = "+allAmmo,"ammoleft ");
+        }
     }
     //draw each bullet
     public void draw(Batch batch){
@@ -420,12 +426,4 @@ public class Player extends Sprite {
         }
     }
 
-    private TextureRegion loadRegion(){
-
-        return null;
-    }
-
-    private Animation<TextureRegion> loadAnimation(){
-        return null;
-    }
 }

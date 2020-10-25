@@ -92,7 +92,7 @@ public class LoadTexture extends Sprite {
         playerRunAimDown = individualAnimationLoad(screen, 4,3,"playerRunAimDown",new Vector2(32,0),32,32,0.12f);
 
         //get reload animation
-        playerReload = individualAnimationLoad(screen, 4,3,"playerReload",new Vector2(32,0),32,32,0.1f);
+        playerReload = individualAnimationLoad(screen, 5,3,"playerReload",new Vector2(32,0),32,32,0.1f);
     }
     //getter
     public TextureRegion getRegion(Player.State state, Player.GunState gunState, float stateTimer){
