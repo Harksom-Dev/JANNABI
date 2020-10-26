@@ -28,11 +28,10 @@ public abstract class Gun extends Sprite {
 
     protected int Dmg;
     protected int clip;
-    //TextureRegion region;
+
     TextureRegion img;
 
-    //for further use
-    //public ArrayList<ammo> activeAmmo;
+
 
     public Gun(PlayScreen screen, float x, float y, boolean fireRight, boolean aimUp, boolean aimDown, int Dmg, int clip){
         this.world = screen.getWorld();
