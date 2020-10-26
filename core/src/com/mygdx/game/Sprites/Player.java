@@ -2,6 +2,8 @@ package com.mygdx.game.Sprites;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -20,7 +22,7 @@ public class Player extends Sprite {
 
     //enum for checkState
     public enum State {FALLING,JUMPING,STANDING,RUNNING,STAND_AIM_UP,STAND_AIM_DOWN,RUNNING_AIM_UP,RUNNING_AIM_DOWN,
-                        JUMP_AIM_UP,JUMP_AIM_DOWN,RELOAD,DEAD,GETHIT};
+                        JUMP_AIM_UP,JUMP_AIM_DOWN,RELOAD,DEAD,GETHIT}
 
     public enum GunState {SWORD,PISTOL,SMG,SHOTGUN}
     public GunState curGunState;
@@ -63,12 +65,14 @@ public class Player extends Sprite {
     private boolean beenHit;
 
     private float animateDelay;
+    private float reloadDelay;
 
     private int pistolClip = 13;
     private int currentAmmo;
     private int allAmmo;
     private boolean reloaded;
     private LoadTexture loader;
+
 
     //create Constructor
     public Player( PlayScreen screen){
@@ -92,6 +96,7 @@ public class Player extends Sprite {
         beenHit = false;
         reloaded = false;
         animateDelay = 0;
+        reloadDelay =0;
 
 
         //create this class for shorter constructor that implement all pistol animation
@@ -176,7 +181,6 @@ public class Player extends Sprite {
         playerPistolGetHit = new Animation<TextureRegion>(0.5f,frames);
     }
 
-
     public void update(float dt){
 
         //set position of sprite here
@@ -196,6 +200,7 @@ public class Player extends Sprite {
 
 
             for(pistol  bullet : pistolsBullet) {
+                animateDelay += dt;
                 bullet.update(dt);
                 if(bullet.isDestroyed())
                     pistolsBullet.removeValue(bullet, true);
@@ -269,6 +274,7 @@ public class Player extends Sprite {
 
     //this class check that we jump or do other animation
     private State getState(){
+
         if(hp <= 0){
             return State.DEAD;
         }else if(beenHit){
@@ -316,7 +322,8 @@ public class Player extends Sprite {
         }else if(Gdx.input.isKeyPressed(Input.Keys.DOWN)){
             aimDown = true;
             return State.STAND_AIM_DOWN;
-        }else if(Gdx.input.isKeyPressed(Input.Keys.F)){
+        }else if(Gdx.input.isKeyPressed(Input.Keys.F) ){
+            Jannabi.manager.get("Audio/Sound/Weapons/pistolReload.mp3",Sound.class).play();
             aimUp = false;
             aimDown = false;
             reloaded = true;
@@ -392,6 +399,7 @@ public class Player extends Sprite {
     //fire method for pistol gun (temporary)
     public void fire(){
         if(currentAmmo > 0){
+            Jannabi.manager.get("Audio/Sound/Weapons/Gun.wav",Sound.class).play();
             if(reloaded){
                 pistolsBullet.clear();
                 Gdx.app.log("ammo","reload complete");
@@ -418,6 +426,7 @@ public class Player extends Sprite {
 
         }else if(currentAmmo <= 0 && allAmmo <= 00){
             //clinksound
+
             pistolsBullet.clear();
             Gdx.app.log("ammo out","no bullet left");
         }
@@ -430,10 +439,14 @@ public class Player extends Sprite {
             bullet.draw(batch);
         }
     }
-
+    public float getStateTimer(){
+        return stateTimer;
+    }
 
     public void getHit(){
         hp--;
+        Jannabi.manager.get("Audio/Sound/Player/beenHit.wav",Sound.class).play();
+        if (hp == 0 ){Jannabi.manager.get("Audio/Sound/GameOver/GameOver.mp3",Sound.class).play();}
         //hp -= 1;
         beenHit = true;
         //push back when hit
@@ -444,6 +457,7 @@ public class Player extends Sprite {
 
     public void getPotion(){
         hp+= 3;
+        Jannabi.manager.get("Audio/Sound/Slime/PickupPotion.mp3", Sound.class).play();
         Gdx.app.log("hp Up","cur hp is" + hp);
     }
 

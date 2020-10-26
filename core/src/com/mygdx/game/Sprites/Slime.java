@@ -2,6 +2,8 @@ package com.mygdx.game.Sprites;
 
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -72,6 +74,7 @@ public class Slime extends Enemy {
         beenHit = false;
         drop = false;
 
+
     }
 
     public void update(float dt){
@@ -90,6 +93,7 @@ public class Slime extends Enemy {
             //check if slime get hit change animation
             if(beenHit){
                 animateGetHit(dt);
+
 
             }else{
                 setRegion(stayAnimation.getKeyFrame(stateTime,true));
@@ -136,15 +140,16 @@ public class Slime extends Enemy {
 
     }
 
-
     public void getHit(pistol pistol) {
         //setRegion(tempHitAnimation.getKeyFrame(0.5f,true));
         //b2body.setLinearVelocity(3,2);
-
+        Jannabi.manager.get("Audio/Sound/Slime/hit.mp3",Sound.class).play();
         Hp -= pistol.getDmg();
         beenHit = true;
         if(Hp <= 0){
             setToDestroy = true;
+            Jannabi.manager.get("Audio/Sound/Slime/SlimeBeenHit.mp3",Sound.class).play();
+
             //define drop condition
             if(!drop){
                 screen.spawnItem(new ItemDef(new Vector2(b2body.getPosition().x,b2body.getPosition().y + 25),Potion.class));
@@ -204,4 +209,6 @@ public class Slime extends Enemy {
     public float getStateTime() {
         return stateTime;
     }
+
 }
+

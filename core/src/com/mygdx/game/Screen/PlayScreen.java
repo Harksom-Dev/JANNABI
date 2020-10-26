@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.ai.GdxAI;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -64,6 +66,9 @@ public class PlayScreen implements Screen {
     private Array<Item> items;
     private LinkedBlockingDeque<ItemDef> itemToSpawn;
 
+    //background music player
+    private Music music;
+
 
     public PlayScreen(Jannabi game) {
 
@@ -106,6 +111,10 @@ public class PlayScreen implements Screen {
         //initialize item
         items = new Array<Item>();
         itemToSpawn = new LinkedBlockingDeque<ItemDef>();
+
+        //music
+
+
     }
 
     //create getter for texture atlas
@@ -134,6 +143,7 @@ public class PlayScreen implements Screen {
     //create handle input when we get input from user
     public void handleInput( float dt){
         if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && player.b2body.getLinearVelocity().y == 0){
+            Jannabi.manager.get("Audio/Sound/Player/Jump.mp3",Sound.class).play();
             player.b2body.applyLinearImpulse(new Vector2(0,3),player.b2body.getWorldCenter(),true);
         }
         if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.b2body.getLinearVelocity().x <= 2){
@@ -242,7 +252,7 @@ public class PlayScreen implements Screen {
         game.batch.begin();
         //multiple width to increase background (now get commented to check box2d)
         //can comment background  to check collision
-        //game.batch.draw(background,0,0,(Jannabi.V_WIDTH /Jannabi.PPM) * 8,Jannabi.V_HEIGHT / Jannabi.PPM);
+        game.batch.draw(background,0,0,(Jannabi.V_WIDTH /Jannabi.PPM) * 8,Jannabi.V_HEIGHT / Jannabi.PPM);
         game.batch.end();
 
         //need to render after background
@@ -257,25 +267,19 @@ public class PlayScreen implements Screen {
         for(Item item : items){
             item.draw(game.batch);
         }
-        if (player.getHp() <= 0){
-            Gdx.app.log("IAM in IF CHECK PLAYER DIE", "DAMNNNN");
-            this.dispose();
+        if (gameOver() ){
             game.setScreen(new GameOverScreen(game));
-            //game.setScreen(new MainMenuScreen(game));
+
         }
-//        if (gameOver() ){
-//            game.setScreen(new GameOverScreen(game));
-//        }
         game.batch.end();
-
-
 
     }
 
     public boolean gameOver(){
-        if (player.currentState == Player.State.DEAD ){
+        if (player.currentState == Player.State.DEAD && player.getStateTimer() > 2  ){
             return true;
-        }else{ return false;}
+        }else
+            return false;
     }
 
     @Override

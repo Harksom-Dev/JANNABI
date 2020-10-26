@@ -1,7 +1,7 @@
 package com.mygdx.game.Screen;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.*;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -11,12 +11,13 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.Jannabi;
+import org.w3c.dom.Text;
 
 public class MainMenuScreen implements Screen {
 
+    Jannabi game;
     private static final int START_BUTTON_WIDTH = 88 ;
     private static final int START_BUTTON_HEIGHT = 356;
-    //870
     private static final int ABOUT_BUTTON_WIDTH = 88 ;
     private static final int ABOUT_BUTTON_HEIGHT = 262 ;
     private static final int EXIT_BUTTON_WIDTH = 88 ;
@@ -25,11 +26,19 @@ public class MainMenuScreen implements Screen {
     private static final int HOW_BUTTON_HEIGHT = 307;
     private static final int SCREEN_WIDTH = 1280;
     private static final int SCREEN_HEIGHT = 720;
+    private static final int MUTE_BUTTON_WIDTH = 1207;
+    private static final int MUTE_BUTTON_HEIGHT = 31;
 
     private Viewport viewport;
     private Stage stage;
-    private OrthographicCamera cam;
-    Jannabi game;
+    private OrthographicCamera cam;;
+    private Music music , sound;
+    private float loadingScreen;
+    private boolean mutepress = false;
+    private float loadingTime;
+
+
+
 
     Texture MainMenuWallpaper;
     Texture PlayButtonActive;
@@ -40,14 +49,14 @@ public class MainMenuScreen implements Screen {
     Texture AboutButtonInactive;
     Texture ExitButtonActive;
     Texture ExitButtonInactive;
+    Texture MuteButton;
+    Texture UnmuteButton;
 
     public MainMenuScreen (Jannabi game){
         this.game = game;
         viewport = new FitViewport(SCREEN_WIDTH, SCREEN_HEIGHT,new OrthographicCamera());
         stage = new Stage(viewport,((Jannabi) game).batch);
         cam = new OrthographicCamera();
-
-
 
         PlayButtonActive = new Texture("MainMenu/StartActive.png");
         PlayButtonInactive = new Texture("MainMenu/StartInactive.png");
@@ -58,19 +67,33 @@ public class MainMenuScreen implements Screen {
         HowtoplayActive = new Texture("MainMenu/HowtoplayActive.png");
         HowtoplayInactive = new Texture("MainMenu/HowtoplayInactive.png");
         MainMenuWallpaper = new Texture("MainMenu/MainWallpaper.png");
-        //MainMenuWallpaper = new Texture("MainMenu/giphy.gif");
-;
+        MuteButton = new Texture("MainMenu/mute.png");
+        UnmuteButton = new Texture("MainMenu/unmute.png");
+
+        //music background
+        music = Jannabi.manager.get("Audio/Music/i.mp3",Music.class);
+        music.setLooping(true);
+        music.play();
 
     }
-
-
-
 
     @Override
     public void show() {
 
     }
 
+    public void muteMusic() {
+        if (mutepress == true){ game.batch.draw(MuteButton,MUTE_BUTTON_WIDTH,MUTE_BUTTON_HEIGHT);}
+        else {game.batch.draw(UnmuteButton,MUTE_BUTTON_WIDTH,MUTE_BUTTON_HEIGHT);}
+ //       if (Gdx.input.getX() >1207 && Gdx.input.getX() < 1257 && Gdx.input.getY() > 30 && Gdx.input.getY() < 80){
+            if (Gdx.input.justTouched()){
+                if (mutepress == true){mutepress = false; music.play();}
+                else {mutepress = true; music.pause();}
+            }
+  //      }
+    }
+    public void touchButtonSound(){ Jannabi.manager.get("Audio/Sound/MainMenu/Select.mp3",Sound.class).play(); }
+    public  void isClicked(){ Jannabi.manager.get("Audio/Sound/MainMenu/Selected.mp3",Sound.class).play(); }
 
     @Override
     public void render(float delta) {
@@ -80,65 +103,76 @@ public class MainMenuScreen implements Screen {
         stage.draw();
         game.batch.begin();
         game.batch.draw(MainMenuWallpaper,0,0);
+
         /// START GAME
         if (Gdx.input.getX() > 88 && Gdx.input.getX() < 417 && Gdx.input.getY() > 327&& Gdx.input.getY() < 364) {
             game.batch.draw(PlayButtonActive, START_BUTTON_WIDTH, START_BUTTON_HEIGHT);
+           touchButtonSound();
             if (Gdx.input.isTouched()){
-                game.setScreen(new PlayScreen(game));
+                isClicked();
+                game.setScreen(new EmptyScreen(game));
+                this.dispose();
+                game.batch.end();
+                return;
             }
-        }
-        else
-            {game.batch.draw(PlayButtonInactive, START_BUTTON_WIDTH, START_BUTTON_HEIGHT);}
+        } else {game.batch.draw(PlayButtonInactive, START_BUTTON_WIDTH, START_BUTTON_HEIGHT); }
+
         /// HOW TO PLAY
         if (Gdx.input.getX() > 88 && Gdx.input.getX() < 417 && Gdx.input.getY() > 373&& Gdx.input.getY() < 410) {
             game.batch.draw(HowtoplayActive, HOW_BUTTON_WIDTE, HOW_BUTTON_HEIGHT);
-            if (Gdx.input.isTouched()){
-                game.setScreen(new GameOverScreen(game));
+            touchButtonSound();
+            if (Gdx.input.justTouched()){
+                isClicked();
+                this.dispose();
+                game.batch.end();
+                game.setScreen(new EmptyScreen(game));
+                return;
             }
-        }
-        else
-        {game.batch.draw(HowtoplayInactive, HOW_BUTTON_WIDTE, HOW_BUTTON_HEIGHT);}
+        } else {game.batch.draw(HowtoplayInactive, HOW_BUTTON_WIDTE, HOW_BUTTON_HEIGHT);}
+
         ///ABOUT
         if (Gdx.input.getX() > 88 && Gdx.input.getX() < 417 && Gdx.input.getY() > 420 && Gdx.input.getY() < 460) {
+            touchButtonSound();
             game.batch.draw(AboutButtonActive,ABOUT_BUTTON_WIDTH,ABOUT_BUTTON_HEIGHT);
-        }
-        else
-        {game.batch.draw(AboutButtonInactive,ABOUT_BUTTON_WIDTH,ABOUT_BUTTON_HEIGHT);}
+            if (Gdx.input.justTouched()){
+                isClicked();
+                this.dispose();
+                game.batch.end();
+                game.setScreen(new Credits(game));
+                return;
+            }
+        } else {game.batch.draw(AboutButtonInactive,ABOUT_BUTTON_WIDTH,ABOUT_BUTTON_HEIGHT);}
+
         /// EXIT
         if (Gdx.input.getX() > 88 && Gdx.input.getX() < 417 && Gdx.input.getY() > 470 && Gdx.input.getY() < 510) {
             game.batch.draw(ExitButtonActive,EXIT_BUTTON_WIDTH,EXIT_BUTTON_HEIGHT);
+            touchButtonSound();
             if (Gdx.input.isTouched()){
                 Gdx.app.exit();
             }
-        }
-        else
-        {game.batch.draw(ExitButtonInactive,EXIT_BUTTON_WIDTH,EXIT_BUTTON_HEIGHT);}
+        } else {game.batch.draw(ExitButtonInactive,EXIT_BUTTON_WIDTH,EXIT_BUTTON_HEIGHT);}
+
+        /// MUTE BUTTON
+        muteMusic();
+
         game.batch.end();
     }
 
     @Override
-    public void resize(int width, int height) {
-
-    }
+    public void resize(int width, int height) { }
 
     @Override
-    public void pause() {
-
-    }
+    public void pause() { }
 
     @Override
-    public void resume() {
-
-    }
+    public void resume() { }
 
     @Override
-    public void hide() {
-
-    }
+    public void hide() { }
 
     @Override
     public void dispose() {
-
+        music.dispose();
     }
 }
 

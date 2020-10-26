@@ -2,6 +2,7 @@ package com.mygdx.game.Screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -28,6 +29,8 @@ public class GameOverScreen implements Screen {
     private Viewport viewport;
     private Stage stage;
     private OrthographicCamera cam;
+    private Music music;
+
 
 
     Jannabi game ;
@@ -57,6 +60,9 @@ public class GameOverScreen implements Screen {
         QuitButtonActive = new Texture("GameOver/QuitActive.png");
         QuitButtonInactive = new Texture("GameOver/QuitInactive.png");
         Test = new Texture("MainMenu/MainWallpaper.png");
+        music = Jannabi.manager.get("Audio/Music/GameOverMusic.mp3",Music.class);
+        music.setLooping(true);
+        music.play();
     }
 
 
@@ -141,6 +147,7 @@ public class GameOverScreen implements Screen {
 
     @Override
     public void dispose() {
+        music.dispose();
 
     }
 }
