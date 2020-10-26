@@ -1,5 +1,9 @@
 package com.mygdx.game.Sprites.Weapon;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -12,27 +16,34 @@ import com.mygdx.game.Screen.PlayScreen;
 
 public class Shotgun extends Gun {
 
-    private Body bullet1;
-    private Body bullet2;
-    private Body bullet3;
+    Sprite sprite;
 
     public Shotgun(PlayScreen screen, float x, float y, boolean fireRight, boolean aimUp, boolean aimDown, int Dmg, int clip) {
         super(screen, x, y, fireRight, aimUp, aimDown, Dmg, clip);
         this.reloaded = true;
 
+
         img = new TextureRegion(screen.getAtlas().findRegion("bullet"),32,0,16,16);
-        setRegion(img);
+        //setRegion(img);
+
+        sprite = new Sprite(img);
         //increase width and height to increase bullet size
+        sprite.setBounds(x-1 / Jannabi.PPM, y, 30 / Jannabi.PPM, 20 / Jannabi.PPM);
         setBounds(x-1 / Jannabi.PPM, y, 30 / Jannabi.PPM, 20 / Jannabi.PPM);
-        /*definedBullet(bullet1,0,10,-10,0);
-        definedBullet(bullet2,1,15,-8,15 / Jannabi.PPM);
-        definedBullet(bullet3,-1,8,-13,-15/Jannabi.PPM);*/
+        //definedBullet(b2body,0,10,-10,0);
+        /*definedBullet(bullet2,1,15,-8,+15 / Jannabi.PPM);
+        definedBullet(bullet3,-1,8,-13,-15/Jannabi.PPM);
+*/
         definedBullet();
+        /*definedBullet2();
+        definedBullet3();*/
     }
 
 
 
-    public void definedBullet(Body body,float normalVeloY,float aimUpVeloY,float aimDownVeloy,float angle) {
+
+    protected void definedBullet(Body body,float normalVeloY, float aimUpVeloY, float aimDownVeloy, float angle) {
+
         BodyDef bdef = new BodyDef();
         bdef.position.set(fireRight ? getX() + 12 / Jannabi.PPM : getX() - 12 / Jannabi.PPM, getY() +2 / Jannabi.PPM);
         bdef.type = BodyDef.BodyType.KinematicBody;
@@ -61,16 +72,16 @@ public class Shotgun extends Gun {
             body.setLinearVelocity(new Vector2(fireRight ? 10 : -10, normalVeloY));
             if(angle != 0){
                 if(fireRight){
-                    body.setTransform((body.getPosition().x- getWidth()/ 2) + 3.5f / Jannabi.PPM,(body.getPosition().y- getHeight() / 2) + 8 / Jannabi.PPM,-angle);
+                    body.setTransform((body.getPosition().x- getWidth()/ 2) + 3.5f / Jannabi.PPM,(body.getPosition().y- getHeight() / 2) + 8 / Jannabi.PPM,+angle);
                 }else{
                     body.setTransform(body.getPosition().x- (getWidth()/ 2) + 25 / Jannabi.PPM,
-                            (body.getPosition().y- getHeight() / 2)+ 12 / Jannabi.PPM,angle);
+                            (body.getPosition().y- getHeight() / 2)+ 12 / Jannabi.PPM,-angle);
                 }
             }
 
 
         }else if(aimUp && !aimDown){
-            body.setLinearVelocity(new Vector2(fireRight ? 10 : -10, normalVeloY));
+            body.setLinearVelocity(new Vector2(fireRight ? 10 : -10, aimUpVeloY));
             if(fireRight){
                 body.setTransform((body.getPosition().x- getWidth()/ 2) + 3.5f / Jannabi.PPM,(body.getPosition().y- getHeight() / 2) + 8 / Jannabi.PPM,45 + angle);
             }else{
@@ -79,7 +90,7 @@ public class Shotgun extends Gun {
             }
 
         }else if(!aimUp && aimDown){
-            body.setLinearVelocity(new Vector2(fireRight ? 10 : -10, aimDownVeloy));
+            b2body.setLinearVelocity(new Vector2(fireRight ? 10 : -10, aimDownVeloy));
             if(fireRight){
                 body.setTransform(body.getPosition().x- (getWidth()/ 2) + 5/ Jannabi.PPM,
                         (body.getPosition().y- getHeight() / 2)+ 8 / Jannabi.PPM ,-45 + angle);
@@ -147,12 +158,12 @@ public class Shotgun extends Gun {
     }
 
 
-    /*public void definedBullet2() {
+    public void definedBullet2() {
         BodyDef bdef = new BodyDef();
         bdef.position.set(fireRight ? getX() + 12 / Jannabi.PPM : getX() - 12 / Jannabi.PPM, getY() +2 / Jannabi.PPM);
         bdef.type = BodyDef.BodyType.KinematicBody;
         if(!world.isLocked())
-            b2body = world.createBody(bdef);
+            b2body2 = world.createBody(bdef);
 
 
         FixtureDef fdef = new FixtureDef();
@@ -167,37 +178,37 @@ public class Shotgun extends Gun {
         //fdef.friction = 1;
         fdef.density = 0.02f;
         fdef.isSensor = true;
-        b2body.createFixture(fdef).setUserData(this);
+        b2body2.createFixture(fdef).setUserData(this);
         //b2body.setBullet(true);
 
 
         /////////////////////////Set position when fire with different angle/////////////////////////////////////////////
         if(!aimUp && !aimDown){
-            b2body.setLinearVelocity(new Vector2(fireRight ? 10 : -10, 1));
+            b2body2.setLinearVelocity(new Vector2(fireRight ? 10 : -10, 1));
             if(fireRight){
-                b2body.setTransform((b2body.getPosition().x- getWidth()/ 2) + 3.5f / Jannabi.PPM,(b2body.getPosition().y- getHeight() / 2) + 8 / Jannabi.PPM,15 / Jannabi.PPM);
+                b2body2.setTransform((b2body2.getPosition().x- getWidth()/ 2) + 3.5f / Jannabi.PPM,(b2body2.getPosition().y- getHeight() / 2) + 8 / Jannabi.PPM,15 / Jannabi.PPM);
             }else{
-                b2body.setTransform(b2body.getPosition().x- (getWidth()/ 2) + 25 / Jannabi.PPM,
-                        (b2body.getPosition().y- getHeight() / 2)+ 12 / Jannabi.PPM,-15 / Jannabi.PPM);
+                b2body2.setTransform(b2body2.getPosition().x- (getWidth()/ 2) + 25 / Jannabi.PPM,
+                        (b2body2.getPosition().y- getHeight() / 2)+ 12 / Jannabi.PPM,-15 / Jannabi.PPM);
             }
 
         }else if(aimUp && !aimDown){
-            b2body.setLinearVelocity(new Vector2(fireRight ? 10 : -10, 15));
+            b2body2.setLinearVelocity(new Vector2(fireRight ? 10 : -10, 15));
             if(fireRight){
-                b2body.setTransform((b2body.getPosition().x- getWidth()/ 2) + 3.5f / Jannabi.PPM,(b2body.getPosition().y- getHeight() / 2) + 8 / Jannabi.PPM,45 + 15 / Jannabi.PPM);
+                b2body2.setTransform((b2body2.getPosition().x- getWidth()/ 2) + 3.5f / Jannabi.PPM,(b2body2.getPosition().y- getHeight() / 2) + 8 / Jannabi.PPM,45 + 15 / Jannabi.PPM);
             }else{
-                b2body.setTransform(b2body.getPosition().x- (getWidth()/ 2) + 25 / Jannabi.PPM,
-                        (b2body.getPosition().y- getHeight() / 2)+ 12 / Jannabi.PPM,-45 - 15 / Jannabi.PPM);
+                b2body2.setTransform(b2body2.getPosition().x- (getWidth()/ 2) + 25 / Jannabi.PPM,
+                        (b2body2.getPosition().y- getHeight() / 2)+ 12 / Jannabi.PPM,-45 - 15 / Jannabi.PPM);
             }
 
         }else if(!aimUp && aimDown){
-            b2body.setLinearVelocity(new Vector2(fireRight ? 10 : -10, -8));
+            b2body2.setLinearVelocity(new Vector2(fireRight ? 10 : -10, -8));
             if(fireRight){
-                b2body.setTransform(b2body.getPosition().x- (getWidth()/ 2) + 5/ Jannabi.PPM,
-                        (b2body.getPosition().y- getHeight() / 2)+ 8 / Jannabi.PPM ,-45 + 15/Jannabi.PPM);
+                b2body2.setTransform(b2body2.getPosition().x- (getWidth()/ 2) + 5/ Jannabi.PPM,
+                        (b2body2.getPosition().y- getHeight() / 2)+ 8 / Jannabi.PPM ,-45 + 15/Jannabi.PPM);
             }else{
-                b2body.setTransform(b2body.getPosition().x- (getWidth()/ 2) + 25/ Jannabi.PPM,
-                        (b2body.getPosition().y- getHeight() / 2) + 12 / Jannabi.PPM,45 - 15/ Jannabi.PPM);
+                b2body2.setTransform(b2body2.getPosition().x- (getWidth()/ 2) + 25/ Jannabi.PPM,
+                        (b2body2.getPosition().y- getHeight() / 2) + 12 / Jannabi.PPM,45 - 15/ Jannabi.PPM);
             }
 
 
@@ -210,7 +221,7 @@ public class Shotgun extends Gun {
         bdef.position.set(fireRight ? getX() + 12 / Jannabi.PPM : getX() - 12 / Jannabi.PPM, getY() +2 / Jannabi.PPM);
         bdef.type = BodyDef.BodyType.KinematicBody;
         if(!world.isLocked())
-            b2body = world.createBody(bdef);
+            b2body3 = world.createBody(bdef);
 
 
         FixtureDef fdef = new FixtureDef();
@@ -225,65 +236,71 @@ public class Shotgun extends Gun {
         //fdef.friction = 1;
         fdef.density = 0.02f;
         fdef.isSensor = true;
-        b2body.createFixture(fdef).setUserData(this);
+        b2body3.createFixture(fdef).setUserData(this);
         //b2body.setBullet(true);
 
 
         /////////////////////////Set position when fire with different angle/////////////////////////////////////////////
         if(!aimUp && !aimDown){
-            b2body.setLinearVelocity(new Vector2(fireRight ? 10 : -10, -1));
+            b2body3.setLinearVelocity(new Vector2(fireRight ? 10 : -10, -1));
             if(fireRight){
-                b2body.setTransform((b2body.getPosition().x- getWidth()/ 2) + 3.5f / Jannabi.PPM,(b2body.getPosition().y- getHeight() / 2) + 8 / Jannabi.PPM,-15 / Jannabi.PPM);
+                b2body3.setTransform((b2body3.getPosition().x- getWidth()/ 2) + 3.5f / Jannabi.PPM,(b2body3.getPosition().y- getHeight() / 2) + 8 / Jannabi.PPM,-15 / Jannabi.PPM);
             }else{
-                b2body.setTransform(b2body.getPosition().x- (getWidth()/ 2) + 25 / Jannabi.PPM,
-                        (b2body.getPosition().y- getHeight() / 2)+ 12 / Jannabi.PPM,15 / Jannabi.PPM);
+                b2body3.setTransform(b2body3.getPosition().x- (getWidth()/ 2) + 25 / Jannabi.PPM,
+                        (b2body3.getPosition().y- getHeight() / 2)+ 12 / Jannabi.PPM,15 / Jannabi.PPM);
             }
 
         }else if(aimUp && !aimDown){
-            b2body.setLinearVelocity(new Vector2(fireRight ? 10 : -10, 8));
+            b2body3.setLinearVelocity(new Vector2(fireRight ? 10 : -10, 8));
             if(fireRight){
-                b2body.setTransform((b2body.getPosition().x- getWidth()/ 2) + 3.5f / Jannabi.PPM,(b2body.getPosition().y- getHeight() / 2) + 8 / Jannabi.PPM,45 - 15 / Jannabi.PPM);
+                b2body3.setTransform((b2body3.getPosition().x- getWidth()/ 2) + 3.5f / Jannabi.PPM,(b2body3.getPosition().y- getHeight() / 2) + 8 / Jannabi.PPM,45 - 15 / Jannabi.PPM);
             }else{
-                b2body.setTransform(b2body.getPosition().x- (getWidth()/ 2) + 25 / Jannabi.PPM,
-                        (b2body.getPosition().y- getHeight() / 2)+ 12 / Jannabi.PPM,-45 + 15 / Jannabi.PPM);
+                b2body3.setTransform(b2body3.getPosition().x- (getWidth()/ 2) + 25 / Jannabi.PPM,
+                        (b2body3.getPosition().y- getHeight() / 2)+ 12 / Jannabi.PPM,-45 + 15 / Jannabi.PPM);
             }
 
         }else if(!aimUp && aimDown){
-            b2body.setLinearVelocity(new Vector2(fireRight ? 10 : -10, -13));
+            b2body3.setLinearVelocity(new Vector2(fireRight ? 10 : -10, -13));
             if(fireRight){
-                b2body.setTransform(b2body.getPosition().x- (getWidth()/ 2) + 5/ Jannabi.PPM,
-                        (b2body.getPosition().y- getHeight() / 2)+ 8 / Jannabi.PPM ,-45 - 15 / Jannabi.PPM);
+                b2body3.setTransform(b2body3.getPosition().x- (getWidth()/ 2) + 5/ Jannabi.PPM,
+                        (b2body3.getPosition().y- getHeight() / 2)+ 8 / Jannabi.PPM ,-45 - 15 / Jannabi.PPM);
             }else{
-                b2body.setTransform(b2body.getPosition().x- (getWidth()/ 2) + 25/ Jannabi.PPM,
-                        (b2body.getPosition().y- getHeight() / 2) + 12 / Jannabi.PPM,45 + 15 / Jannabi.PPM);
+                b2body3.setTransform(b2body3.getPosition().x- (getWidth()/ 2) + 25/ Jannabi.PPM,
+                        (b2body3.getPosition().y- getHeight() / 2) + 12 / Jannabi.PPM,45 + 15 / Jannabi.PPM);
             }
 
 
         }
         /////////////////////////Set position when fire with different angle/////////////////////////////////////////////
 
-    }*/
+    }
 
     @Override
     public void update(float dt) {
+        /*stateTime += dt;
+        bulletUpdate(dt,b2body);*/
+        //bulletUpdate(dt,b2body);
+        //bulletUpdate(dt,b2body);
         stateTime += dt;
-        //setRegion(fireAnimation.getKeyFrame(stateTime, true));
+        bulletUpdate(b2body);
+        //bulletUpdate(b2body2);
+        //bulletUpdate(b2body3);
 
 
         //change position of sprite here
-        if(!aimUp && !aimDown){
+        /*if(!aimUp && !aimDown){
             //normal case
-            setPosition(b2body.getPosition().x - (getWidth() / 2) + 1/Jannabi.PPM, b2body.getPosition().y - getHeight() / 2.1f);
+            setPosition(bullet1.getPosition().x - (getWidth() / 2) + 1/Jannabi.PPM, bullet1.getPosition().y - getHeight() / 2.1f);
 
             //aim up case
         }else if(aimUp && !aimDown){
             if(fireRight){
 
                 setRotation(58);
-                setPosition(b2body.getPosition().x - (getWidth() / 2) + 15.5f / Jannabi.PPM, b2body.getPosition().y - (getHeight() / 2) - 7 / Jannabi.PPM  );
+                setPosition(bullet1.getPosition().x - (getWidth() / 2) + 15.5f / Jannabi.PPM, bullet1.getPosition().y - (getHeight() / 2) - 7 / Jannabi.PPM  );
             }else{
                 setRotation(-58);
-                setPosition(b2body.getPosition().x - (getWidth() / 2) , b2body.getPosition().y - (getHeight() / 2) + 16/Jannabi.PPM);
+                setPosition(bullet1.getPosition().x - (getWidth() / 2) , bullet1.getPosition().y - (getHeight() / 2) + 16/Jannabi.PPM);
             }
 
             //aim down case
@@ -291,10 +308,10 @@ public class Shotgun extends Gun {
 
             if(fireRight){
                 setRotation(-58);
-                setPosition(b2body.getPosition().x - getWidth() / 2  , (b2body.getPosition().y - getHeight() / 2) +16 / Jannabi.PPM );
+                setPosition(bullet1.getPosition().x - getWidth() / 2  , (bullet1.getPosition().y - getHeight() / 2) +16 / Jannabi.PPM );
             }else{
                 setRotation(58);
-                setPosition((b2body.getPosition().x - getWidth() / 2) + 15 / Jannabi.PPM  , (b2body.getPosition().y - getHeight() / 2) - 8 / Jannabi.PPM );
+                setPosition((bullet1.getPosition().x - getWidth() / 2) + 15 / Jannabi.PPM  , (bullet1.getPosition().y - getHeight() / 2) - 8 / Jannabi.PPM );
             }
 
 
@@ -304,14 +321,67 @@ public class Shotgun extends Gun {
 
         //setPosition(b2body.getPosition().x - getWidth() / 1.88697f, b2body.getPosition().y - getHeight() / 2.1f);
         if((stateTime > 3f || setToDestroy) && !destroyed) {
-            world.destroyBody(b2body);
+            world.destroyBody(bullet1);
             destroyed = true;
         }
-        /*if(b2body.getLinearVelocity().y > 2f)
-            b2body.setLinearVelocity(b2body.getLinearVelocity().x, 0.1f);*/
-        if((fireRight && b2body.getLinearVelocity().x < 0) || (!fireRight && b2body.getLinearVelocity().x > 0))
+        if((fireRight && bullet1.getLinearVelocity().x < 0) || (!fireRight && bullet1.getLinearVelocity().x > 0))
+            setToDestroy();*/
+    }
+
+    @Override
+    public void draw(Batch batch) {
+        sprite.draw(batch);
+    }
+
+    private void bulletUpdate(Body bulletBody){
+
+        //setRegion(fireAnimation.getKeyFrame(stateTime, true));
+
+
+        //change position of sprite here
+        if(!aimUp && !aimDown){
+            //normal case
+            sprite.setPosition(bulletBody.getPosition().x - (sprite.getWidth() / 2) + 1/Jannabi.PPM, bulletBody.getPosition().y - sprite.getHeight() / 2.1f);
+
+            //aim up case
+        }else if(aimUp && !aimDown){
+            if(fireRight){
+
+               sprite.setRotation(58);
+                sprite.setPosition(bulletBody.getPosition().x - (sprite.getWidth() / 2) + 15.5f / Jannabi.PPM, bulletBody.getPosition().y - (sprite.getHeight() / 2) - 7 / Jannabi.PPM  );
+            }else{
+                sprite.setRotation(-58);
+                sprite.setPosition(bulletBody.getPosition().x - (sprite.getWidth() / 2) , bulletBody.getPosition().y - (sprite.getHeight() / 2) + 16/Jannabi.PPM);
+            }
+
+            //aim down case
+        }else if(!aimUp && aimDown){
+
+            if(fireRight){
+                sprite.setRotation(-58);
+                sprite.setPosition(bulletBody.getPosition().x - sprite.getWidth() / 2  , (bulletBody.getPosition().y - sprite.getHeight() / 2) +16 / Jannabi.PPM );
+            }else{
+                sprite.setRotation(58);
+                sprite.setPosition((bulletBody.getPosition().x - sprite.getWidth() / 2) + 15 / Jannabi.PPM  , (bulletBody.getPosition().y - sprite.getHeight() / 2) - 8 / Jannabi.PPM );
+            }
+
+
+
+        }
+
+
+        //setPosition(b2body.getPosition().x - getWidth() / 1.88697f, b2body.getPosition().y - getHeight() / 2.1f);
+        if((stateTime > 3f || setToDestroy) && !destroyed) {
+            world.destroyBody(bulletBody);
+            destroyed = true;
+        }
+        if(bulletBody.getLinearVelocity().y > 2f)
+            bulletBody.setLinearVelocity(bulletBody.getLinearVelocity().x, 0.1f);
+        if((fireRight && bulletBody.getLinearVelocity().x < 0) || (!fireRight && bulletBody.getLinearVelocity().x > 0))
             setToDestroy();
     }
+
+
 
     @Override
     public void setToDestroy() {
