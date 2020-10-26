@@ -20,10 +20,10 @@ public class LoadTexture extends Sprite {
     private Animation<TextureRegion>[] playerRunAimUp;
     private Animation<TextureRegion>[] playerRunAimDown;
     private Animation<TextureRegion>[] playerReload;
+    private Animation<TextureRegion>[] playerSwordAttack;
 
 
     public LoadTexture(PlayScreen screen){
-        //atlas = new TextureAtlas("Sprite/allCharacter/newCharacterpack.pack");
         loadRegion(screen);
         loadAnimation(screen,32,32);
     }
@@ -93,6 +93,10 @@ public class LoadTexture extends Sprite {
 
         //get reload animation
         playerReload = individualAnimationLoad(screen, 5,3,"playerReload",new Vector2(32,0),32,32,0.1f);
+
+        //stand sword attack animation
+        playerSwordAttack = individualAnimationLoad(screen,3,1,"sword_standattack",new Vector2(32,0),32,32,0.1f);
+
     }
     //getter
     public TextureRegion getRegion(Player.State state, Player.GunState gunState, float stateTimer){
@@ -146,6 +150,9 @@ public class LoadTexture extends Sprite {
             case DEAD:
                 region = playerGetHit[index];
                 break;
+            case SWORD_ATTACK:
+                region = playerSwordAttack[0].getKeyFrame(stateTimer,false);
+                break;
             case FALLING:
             case STANDING:
             default:
@@ -155,7 +162,7 @@ public class LoadTexture extends Sprite {
         return region;
     }
     //getter
-    public TextureRegion getIndividualRegion(Player.GunState gunState){
+    public TextureRegion getPlayerGetHitRegion(Player.GunState gunState){
         int index = 0;
         TextureRegion region;
         switch (gunState){
@@ -175,6 +182,10 @@ public class LoadTexture extends Sprite {
         }
 
         return playerGetHit[index];
+    }
+
+    public TextureRegion getPlayerSwordAttack(float stateTimer){
+        return playerSwordAttack[0].getKeyFrame(stateTimer,false);
     }
 
 }

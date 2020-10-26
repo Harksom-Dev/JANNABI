@@ -35,7 +35,6 @@ import com.mygdx.game.tools.worldContactListener;
 import com.mygdx.game.Sprites.Player;
 
 import java.util.Iterator;
-import java.util.PriorityQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 
 
@@ -171,15 +170,15 @@ public class PlayScreen implements Screen {
             player.b2body.applyLinearImpulse(new Vector2(-0.07f,0),player.b2body.getWorldCenter(),true);
         }
         if(Gdx.input.isKeyPressed(Input.Keys.C)){
-            player.fire(dt);
+            player.attack(dt);
         }else if(Gdx.input.isKeyJustPressed(Input.Keys.Q)){
-            player.changeGun("sword");
+            player.changeWeapon("sword");
         }else if(Gdx.input.isKeyJustPressed(Input.Keys.W)){
-            player.changeGun("pistol");
+            player.changeWeapon("pistol");
         }else if(Gdx.input.isKeyJustPressed(Input.Keys.E)){
-            player.changeGun("smg");
+            player.changeWeapon("smg");
         }else if(Gdx.input.isKeyJustPressed(Input.Keys.R)){
-            player.changeGun("shotgun");
+            player.changeWeapon("shotgun");
         }else{
             player.setFirstShot(false);
         }
