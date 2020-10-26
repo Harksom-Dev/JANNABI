@@ -12,6 +12,9 @@ public abstract class Gun extends Sprite {
     protected World world;
     protected PlayScreen screen;
     public Body b2body;
+    public Body b2body2;
+    public Body b2body3;
+
     protected int ammoCount;
     float stateTime;
     float fireRate;
@@ -30,6 +33,8 @@ public abstract class Gun extends Sprite {
     protected int clip;
     //TextureRegion region;
     TextureRegion img;
+    TextureRegion img2;
+    TextureRegion img3;
     //for further use
     //public ArrayList<ammo> activeAmmo;
 
