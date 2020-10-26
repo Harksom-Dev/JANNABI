@@ -5,8 +5,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.Screen.PlayScreen;
-import com.mygdx.game.Sprites.Weapon.pistol;
-import com.mygdx.game.Sprites.Weapon.weapons;
+import com.mygdx.game.Sprites.Weapon.Gun;
+import com.mygdx.game.Sprites.Weapon.Pistol;
 
 public abstract class Enemy extends Sprite {
     protected World world;
@@ -30,7 +30,7 @@ public abstract class Enemy extends Sprite {
 
     protected abstract void defineEnemy();
     public abstract void update(float dt);
-    public abstract void getHit(pistol pistol);
+    public abstract void getHit(Gun gun);
     protected abstract void randomMove(float dt);
     protected abstract void animateGetHit(float dt);
 

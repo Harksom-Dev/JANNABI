@@ -1,9 +1,7 @@
 package com.mygdx.game.tools;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -23,47 +21,46 @@ public class LoadTexture extends Sprite {
     private Animation<TextureRegion>[] playerRunAimDown;
     private Animation<TextureRegion>[] playerReload;
 
-    private TextureAtlas atlas;
 
     public LoadTexture(PlayScreen screen){
         //atlas = new TextureAtlas("Sprite/allCharacter/newCharacterpack.pack");
-        loadRegion(screen,32,32);
+        loadRegion(screen);
         loadAnimation(screen,32,32);
     }
 
-    private void loadRegion(PlayScreen screen,int width,int height){
+    private void loadRegion(PlayScreen screen){
 
         //get jump Texture
-        playerJump= individualRegionLoad(screen, 4,"playerJump",new Vector2(32,0),32,32);
+        playerJump= individualRegionLoad(screen, 4,"playerJump",new Vector2(32,0));
 
 
         //get stand aim texture
         //aim up
-        playerStandAimUp = individualRegionLoad(screen, 4,"playerStandAimUp",new Vector2(32,0),32,32);
+        playerStandAimUp = individualRegionLoad(screen, 4,"playerStandAimUp",new Vector2(32,0));
         //aim down
-        playerStandAimDown = individualRegionLoad(screen, 4,"playerStandAimDown",new Vector2(32,0),32,32);
+        playerStandAimDown = individualRegionLoad(screen, 4,"playerStandAimDown",new Vector2(32,0));
 
         //get jump & aim
         //jump & aim up
-        playerJumAimUp = individualRegionLoad(screen, 4,"playerJumpAimUp",new Vector2(32,0),32,32);
+        playerJumAimUp = individualRegionLoad(screen, 4,"playerJumpAimUp",new Vector2(32,0));
         //jump & aim down
-        playerJumAimDown = individualRegionLoad(screen, 4,"playerJumpAimDown",new Vector2(32,0),32,32);
+        playerJumAimDown = individualRegionLoad(screen, 4,"playerJumpAimDown",new Vector2(32,0));
 
         //gethit
-        playerGetHit = individualRegionLoad(screen, 4,"playerGetHit",new Vector2(32,0),32,32);
+        playerGetHit = individualRegionLoad(screen, 4,"playerGetHit",new Vector2(32,0));
 
     }
 
-    private TextureRegion[] individualRegionLoad(PlayScreen screen, int index, String textureName, Vector2 position, int width, int height){
+    private TextureRegion[] individualRegionLoad(PlayScreen screen, int index, String textureName, Vector2 position){
         TextureRegion[] regions = new TextureRegion[index];
         for(int i =0;i < index; i++){
-            regions[i] = new TextureRegion(screen.getAtlas().findRegion(textureName),(int)position.x * i, (int) position.y,width,height);
+            regions[i] = new TextureRegion(screen.getAtlas().findRegion(textureName),(int)position.x * i, (int) position.y, 32, 32);
         }
         return regions;
     }
 
     private Animation<TextureRegion>[] individualAnimationLoad(PlayScreen screen, int framesCount
-            , int index, String textureName, Vector2 position, int width, int height){
+            , int index, String textureName, Vector2 position, int width, int height,float frameDuration){
         Animation<TextureRegion>[] animations = new Animation[index];
         com.badlogic.gdx.utils.Array<TextureRegion> frames = new Array<TextureRegion>();
         int framePerAnimate = framesCount;
@@ -73,9 +70,8 @@ public class LoadTexture extends Sprite {
                 frames.add(new TextureRegion(screen.getAtlas().findRegion(textureName),(int)position.x * j,(int)position.y,width,height));
                 currentFrame++;
             }
-            currentFrame++;
             framePerAnimate += framesCount;
-            animations[i] = new Animation<TextureRegion>(0.12f,frames);
+            animations[i] = new Animation<TextureRegion>(frameDuration,frames);
             frames.clear();
 
         }
@@ -85,18 +81,18 @@ public class LoadTexture extends Sprite {
     private void loadAnimation(PlayScreen screen,int width,int height){
         com.badlogic.gdx.utils.Array<TextureRegion> frames = new Array<TextureRegion>();
         //loop for get runAnimation
-        playerRun = individualAnimationLoad(screen, 4,4,"playerRun",new Vector2(32,0),32,32);
+        playerRun = individualAnimationLoad(screen, 4,4,"playerRun",new Vector2(32,0),32,32,0.12f);
 
         //get stand texture
-        playerStand = individualAnimationLoad(screen, 2,4,"playerStand",new Vector2(32,0),32,32);
+        playerStand = individualAnimationLoad(screen, 2,4,"playerStand",new Vector2(32,0),32,32,0.5f);
         //get aim&run
         //aimUp&run
-        playerRunAimUp = individualAnimationLoad(screen, 4,3,"playerRunAimUp",new Vector2(32,0),32,32);
+        playerRunAimUp = individualAnimationLoad(screen, 4,3,"playerRunAimUp",new Vector2(32,0),32,32,0.12f);
         //aimDown&run
-        playerRunAimDown = individualAnimationLoad(screen, 4,3,"playerRunAimDown",new Vector2(32,0),32,32);
+        playerRunAimDown = individualAnimationLoad(screen, 4,3,"playerRunAimDown",new Vector2(32,0),32,32,0.12f);
 
         //get reload animation
-        playerReload = individualAnimationLoad(screen, 4,3,"playerReload",new Vector2(32,0),32,32);
+        playerReload = individualAnimationLoad(screen, 5,3,"playerReload",new Vector2(32,0),32,32,0.1f);
     }
     //getter
     public TextureRegion getRegion(Player.State state, Player.GunState gunState, float stateTimer){
@@ -121,11 +117,6 @@ public class LoadTexture extends Sprite {
         switch (state){
             case JUMPING:
                 region = playerJump[index];
-                if(index == 0){
-                    Gdx.app.log("Weapons","Sword!!!!");
-                }else{
-                    Gdx.app.log("Weapons","Something");
-                }
                 break;
             case JUMP_AIM_UP:
                 region = playerJumAimUp[index];
@@ -149,7 +140,7 @@ public class LoadTexture extends Sprite {
                 region = playerStandAimDown[index];
                 break;
             case RELOAD:
-                region = playerReload[index-1].getKeyFrame(stateTimer);
+                region = playerReload[index-1].getKeyFrame(stateTimer,false);
                 break;
             case GETHIT:
             case DEAD:

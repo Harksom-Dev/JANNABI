@@ -1,283 +1,201 @@
 
-character_all.png
+character_pack.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
 boss_attack
   rotate: false
-  xy: 0, 224
+  xy: 1, 224
   size: 512, 32
   orig: 512, 32
   offset: 0, 0
   index: -1
 boss_walk
   rotate: false
-  xy: 512, 224
+  xy: 1, 192
+  size: 512, 32
+  orig: 512, 32
+  offset: 0, 0
+  index: -1
+playerReload
+  rotate: false
+  xy: 1, 160
+  size: 512, 32
+  orig: 512, 32
+  offset: 0, 0
+  index: -1
+playerRun
+  rotate: false
+  xy: 1, 128
+  size: 512, 32
+  orig: 512, 32
+  offset: 0, 0
+  index: -1
+playerRunAimDown
+  rotate: false
+  xy: 1, 96
+  size: 512, 32
+  orig: 512, 32
+  offset: 0, 0
+  index: -1
+playerRunAimUp
+  rotate: false
+  xy: 1, 64
   size: 512, 32
   orig: 512, 32
   offset: 0, 0
   index: -1
 slime_attack
   rotate: false
-  xy: 0, 192
+  xy: 1, 32
   size: 512, 32
   orig: 512, 32
   offset: 0, 0
   index: -1
-normal_reload
+playerStand
   rotate: false
-  xy: 0, 160
-  size: 256, 32
-  orig: 256, 32
-  offset: 0, 0
-  index: -1
-pistol_run
-  rotate: false
-  xy: 512, 192
+  xy: 1, 0
   size: 256, 32
   orig: 256, 32
   offset: 0, 0
   index: -1
 princess
   rotate: false
-  xy: 768, 192
-  size: 256, 32
-  orig: 256, 32
-  offset: 0, 0
-  index: -1
-run_aim
-  rotate: false
-  xy: 0, 128
-  size: 256, 32
-  orig: 256, 32
-  offset: 0, 0
-  index: -1
-shotgun_reload
-  rotate: false
-  xy: 256, 160
-  size: 256, 32
-  orig: 256, 32
-  offset: 0, 0
-  index: -1
-shotgun_rundandAim
-  rotate: false
-  xy: 0, 96
-  size: 256, 32
-  orig: 256, 32
-  offset: 0, 0
-  index: -1
-smg_reload
-  rotate: false
-  xy: 256, 128
-  size: 256, 32
-  orig: 256, 32
-  offset: 0, 0
-  index: -1
-smg_runAndAim
-  rotate: false
-  xy: 512, 160
-  size: 256, 32
-  orig: 256, 32
-  offset: 0, 0
-  index: -1
-stand_aim
-  rotate: false
-  xy: 768, 160
-  size: 256, 32
-  orig: 256, 32
-  offset: 0, 0
-  index: -1
-sword_jumpAndHit
-  rotate: false
-  xy: 0, 64
+  xy: 259, 0
   size: 256, 32
   orig: 256, 32
   offset: 0, 0
   index: -1
 tamruot_walk
   rotate: false
-  xy: 256, 96
+  xy: 515, 224
   size: 256, 32
   orig: 256, 32
   offset: 0, 0
   index: -1
 boss_gethit
   rotate: false
-  xy: 512, 128
+  xy: 515, 192
   size: 128, 32
   orig: 128, 32
   offset: 0, 0
   index: -1
-jump_aim
+playerGetHit
   rotate: false
-  xy: 0, 32
+  xy: 773, 224
   size: 128, 32
   orig: 128, 32
   offset: 0, 0
   index: -1
-shotgun_jumpandAim
+playerJump
   rotate: false
-  xy: 0, 0
+  xy: 515, 160
   size: 128, 32
   orig: 128, 32
   offset: 0, 0
   index: -1
-shotgun_run
+playerJumpAimDown
   rotate: false
-  xy: 256, 64
+  xy: 645, 192
   size: 128, 32
   orig: 128, 32
   offset: 0, 0
   index: -1
-shotgun_stand
+playerJumpAimUp
   rotate: false
-  xy: 512, 96
+  xy: 515, 128
+  size: 128, 32
+  orig: 128, 32
+  offset: 0, 0
+  index: -1
+playerStandAimDown
+  rotate: false
+  xy: 645, 160
+  size: 128, 32
+  orig: 128, 32
+  offset: 0, 0
+  index: -1
+playerStandAimUp
+  rotate: false
+  xy: 515, 96
+  size: 128, 32
+  orig: 128, 32
+  offset: 0, 0
+  index: -1
+player_swodJumpAttack
+  rotate: false
+  xy: 645, 128
   size: 128, 32
   orig: 128, 32
   offset: 0, 0
   index: -1
 slime_dead
   rotate: false
-  xy: 640, 128
+  xy: 515, 64
   size: 128, 32
   orig: 128, 32
   offset: 0, 0
   index: -1
 slime_gethit
   rotate: false
-  xy: 128, 32
+  xy: 515, 32
   size: 128, 32
   orig: 128, 32
   offset: 0, 0
   index: -1
 slime_stay
   rotate: false
-  xy: 128, 0
-  size: 128, 32
-  orig: 128, 32
-  offset: 0, 0
-  index: -1
-smg_jumpandAim
-  rotate: false
-  xy: 384, 64
-  size: 128, 32
-  orig: 128, 32
-  offset: 0, 0
-  index: -1
-smg_run
-  rotate: false
-  xy: 640, 96
-  size: 128, 32
-  orig: 128, 32
-  offset: 0, 0
-  index: -1
-smg_stand
-  rotate: false
-  xy: 768, 128
-  size: 128, 32
-  orig: 128, 32
-  offset: 0, 0
-  index: -1
-sword_run
-  rotate: false
-  xy: 896, 128
+  xy: 517, 0
   size: 128, 32
   orig: 128, 32
   offset: 0, 0
   index: -1
 sword_standattack
   rotate: false
-  xy: 256, 32
+  xy: 645, 96
   size: 128, 32
   orig: 128, 32
   offset: 0, 0
   index: -1
-sword_gethit
-  rotate: false
-  xy: 256, 0
-  size: 64, 32
-  orig: 64, 32
-  offset: 0, 0
-  index: -1
-sword_stand
-  rotate: false
-  xy: 320, 0
-  size: 64, 32
-  orig: 64, 32
-  offset: 0, 0
-  index: -1
 tamruot_hit
   rotate: false
-  xy: 512, 64
+  xy: 903, 224
   size: 64, 32
   orig: 64, 32
   offset: 0, 0
   index: -1
 tamruot_stand
   rotate: false
-  xy: 768, 96
+  xy: 775, 192
   size: 64, 32
   orig: 64, 32
   offset: 0, 0
   index: -1
 bullet
   rotate: false
-  xy: 384, 48
+  xy: 645, 80
   size: 64, 16
   orig: 64, 16
   offset: 0, 0
   index: -1
 clip
   rotate: false
-  xy: 576, 80
+  xy: 775, 176
   size: 64, 16
   orig: 64, 16
   offset: 0, 0
   index: -1
 potion
   rotate: false
-  xy: 832, 112
+  xy: 841, 208
   size: 64, 16
   orig: 64, 16
   offset: 0, 0
   index: -1
-pistol_gethit
-  rotate: false
-  xy: 384, 16
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
-shotgun_getHit
-  rotate: false
-  xy: 416, 16
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
-smg_getHit
-  rotate: false
-  xy: 448, 32
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
 tamruot_gethit
   rotate: false
-  xy: 448, 0
+  xy: 969, 224
   size: 32, 32
   orig: 32, 32
-  offset: 0, 0
-  index: -1
-
-character_all2.png
-format: RGBA8888
-filter: Nearest,Nearest
-repeat: none
-character/character_gdx
-  rotate: false
-  xy: 0, 0
-  size: 1024, 128
-  orig: 1024, 128
   offset: 0, 0
   index: -1

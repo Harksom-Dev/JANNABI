@@ -2,19 +2,17 @@ package com.mygdx.game.Sprites;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.Jannabi;
-import com.mygdx.game.Screen.GameOverScreen;
-import com.mygdx.game.Screen.MainMenuScreen;
 import com.mygdx.game.Screen.PlayScreen;
-import com.mygdx.game.Sprites.Weapon.pistol;
+import com.mygdx.game.Sprites.Weapon.Gun;
+import com.mygdx.game.Sprites.Weapon.Pistol;
+import com.mygdx.game.Sprites.Weapon.Shotgun;
+import com.mygdx.game.Sprites.Weapon.Smg;
 import com.mygdx.game.tools.LoadTexture;
 
 //this class is create for create main player create box2d sprite and further
@@ -22,7 +20,7 @@ public class Player extends Sprite {
 
     //enum for checkState
     public enum State {FALLING,JUMPING,STANDING,RUNNING,STAND_AIM_UP,STAND_AIM_DOWN,RUNNING_AIM_UP,RUNNING_AIM_DOWN,
-                        JUMP_AIM_UP,JUMP_AIM_DOWN,RELOAD,DEAD,GETHIT}
+                        JUMP_AIM_UP,JUMP_AIM_DOWN,RELOAD,DEAD,GETHIT};
 
     public enum GunState {SWORD,PISTOL,SMG,SHOTGUN}
     public GunState curGunState;
@@ -36,20 +34,6 @@ public class Player extends Sprite {
     public World world;
     public Body b2body;
 
-    //implement texture or animation for character
-    private Animation<TextureRegion> playerStand;
-    private TextureRegion playerJump;
-    private TextureRegion playerStandAimUp;
-    private TextureRegion playerStandAimDown;
-    private TextureRegion playerJumAimUp;
-    private TextureRegion playerJumAimDown;
-    private Animation<TextureRegion> playerPistolGetHit;
-    private Animation<TextureRegion> playerRun;
-    private Animation<TextureRegion> playerRunAimUp;
-    private Animation<TextureRegion> playerRunAimDown;
-    private Animation<TextureRegion> playerReload;
-
-
     //implement StateTime for something(don't Know yet) and boolean check that we running right or not
     private float stateTimer;
     private boolean runningRight;
@@ -57,7 +41,7 @@ public class Player extends Sprite {
     private boolean aimDown;
     PlayScreen screen;
     //pistol shot array
-    private Array<pistol> pistolsBullet;
+    private Array<Gun> Bullet;
 
     //hit count of our main character
     private int hp;
@@ -65,14 +49,20 @@ public class Player extends Sprite {
     private boolean beenHit;
 
     private float animateDelay;
-    private float reloadDelay;
+
+    //float for  reload delayTime
+    private float reloadTime;
+    private boolean duplicateReloadCheck;
+
+    //variable for firerate
+    private float fireDelay;
+    private boolean firstShot;
 
     private int pistolClip = 13;
     private int currentAmmo;
     private int allAmmo;
     private boolean reloaded;
     private LoadTexture loader;
-
 
     //create Constructor
     public Player( PlayScreen screen){
@@ -86,21 +76,25 @@ public class Player extends Sprite {
         currentState = State.STANDING;
         previousState = State.STANDING;
         stateTimer = 0;
-        curGunState = GunState.PISTOL;
+        curGunState = GunState.SHOTGUN;
 
         //all boolean and vaule for animation
         runningRight = true;
         aimUp = false;
         aimDown = false;
-        hp = 3;
+        hp = 10;
         beenHit = false;
         reloaded = false;
         animateDelay = 0;
-        reloadDelay =0;
 
+        reloadTime = 0;
+        duplicateReloadCheck = false;
 
-        //create this class for shorter constructor that implement all pistol animation
-        //setJannabiWithPistol(screen);
+        //ini for fireDelay
+        fireDelay = 0;
+        firstShot = false;
+
+        //create this class for shorter and easy access for load all player texture
         loader = new LoadTexture(screen);
 
 
@@ -111,75 +105,11 @@ public class Player extends Sprite {
         setBounds(0,0,32 / Jannabi.PPM,32 / Jannabi.PPM);
         //setRegion(playerStand);
 
-        pistolsBullet = new Array<>();
-        currentAmmo = pistolClip;
+        Bullet = new Array<>();
+        currentAmmo = Jannabi.SHOTGUN_CLIP;
         allAmmo = 52;
     }
 
-    //create methods for implement all animation
-    private void setJannabiWithPistol(PlayScreen screen){
-        //create Array to store all image to use to animation
-        com.badlogic.gdx.utils.Array<TextureRegion> frames = new Array<TextureRegion>();
-        //loop for get runAnimation
-        for(int i = 1; i < 4 ; i++){
-            frames.add(new TextureRegion(screen.getAtlas().findRegion("pistol_run"),i*32,0,32,32));
-        }
-        playerRun = new Animation<TextureRegion>(0.12f,frames);
-        frames.clear();
-
-        //get jump animation
-        playerJump = new TextureRegion(screen.getAtlas().findRegion("jump_aim"),64,0,32,32);
-
-
-        //get stand texture
-        for(int i = 0;i < 2;i++){
-            frames.add(new TextureRegion(screen.getAtlas().findRegion("stand_aim"),i*32,0,32,32));
-        }
-        playerStand = new Animation<TextureRegion>(0.5f,frames);
-        frames.clear();
-        //playerStand = new TextureRegion(screen.getAtlas().findRegion("stand_aim"),0,0,32,32);
-
-        //get stand aim texture
-        //aim up
-        playerStandAimUp = new TextureRegion(screen.getAtlas().findRegion("stand_aim"),64,0,32,32);
-        //aim down
-        playerStandAimDown = new TextureRegion(screen.getAtlas().findRegion("stand_aim"),96,0,32,32);
-
-        //get aim&run
-        //aimUp&run
-        for(int i = 0;i < 4;i++){
-            frames.add(new TextureRegion(screen.getAtlas().findRegion("run_aim"),i*32,0,32,32));
-        }
-        playerRunAimUp = new Animation<TextureRegion>(0.12f,frames);
-        frames.clear();
-        //aimDown&run
-        for(int i = 4;i < 8;i++){
-            frames.add(new TextureRegion(screen.getAtlas().findRegion("run_aim"),i*32,0,32,32));
-        }
-        playerRunAimDown = new Animation<TextureRegion>(0.12f,frames);
-        frames.clear();
-
-        //get jump & aim
-        //jump & aim up
-        playerJumAimUp = new TextureRegion(screen.getAtlas().findRegion("jump_aim"),0,0,32,32);
-        //jump & aim down
-        playerJumAimDown = new TextureRegion(screen.getAtlas().findRegion("jump_aim"),32,0,32,32);
-
-        //get reload animation
-        for(int i = 0;i < 5;i++){
-            frames.add(new TextureRegion(screen.getAtlas().findRegion("normal_reload"),i*32,0,32,32));
-
-        }
-        frames.add(new TextureRegion(screen.getAtlas().findRegion("stand_aim"),0,0,32,32));
-        playerReload = new Animation<TextureRegion>(0.1f,frames);
-        frames.clear();
-
-        //get hit animation
-        //playerPistolGetHit = new TextureRegion(screen.getAtlas().findRegion("pistol_gethit"),0,0,32,32);
-        frames.add(new TextureRegion(screen.getAtlas().findRegion("pistol_gethit"),0,0,32,32));
-        frames.add(new TextureRegion(screen.getAtlas().findRegion("pistol_gethit"),0,0,32,32));
-        playerPistolGetHit = new Animation<TextureRegion>(0.5f,frames);
-    }
 
     public void update(float dt){
 
@@ -197,13 +127,10 @@ public class Player extends Sprite {
         }else{
             setRegion(getFrame(dt));
         }
-
-
-            for(pistol  bullet : pistolsBullet) {
-                animateDelay += dt;
+            for(Gun bullet : Bullet) {
                 bullet.update(dt);
                 if(bullet.isDestroyed())
-                    pistolsBullet.removeValue(bullet, true);
+                    Bullet.removeValue(bullet, true);
             }
 
 
@@ -212,47 +139,11 @@ public class Player extends Sprite {
 
     //checkState
     private TextureRegion getFrame(float dt){
-        currentState = getState();
+        currentState = getState(dt);
         TextureRegion region;
+
         region = loader.getRegion(currentState,curGunState,stateTimer);
-        /*switch (currentState){
-            case JUMPING:
-                region = playerJump;
-                break;
-            case JUMP_AIM_UP:
-                region = playerJumAimUp;
-                break;
-            case JUMP_AIM_DOWN:
-                region = playerJumAimDown;
-                break;
-            case RUNNING:
-                region = playerRun.getKeyFrame(stateTimer,true);
-                break;
-            case RUNNING_AIM_UP:
-                region = playerRunAimUp.getKeyFrame(stateTimer,true);
-                break;
-            case RUNNING_AIM_DOWN:
-                region = playerRunAimDown.getKeyFrame(stateTimer,true);
-                break;
-            case STAND_AIM_UP:
-                region = playerStandAimUp;
-                break;
-            case STAND_AIM_DOWN:
-                region = playerStandAimDown;
-                break;
-            case RELOAD:
-                region = playerReload.getKeyFrame(stateTimer);
-                break;
-            case GETHIT:
-            case DEAD:
-                region = playerPistolGetHit.getKeyFrame(stateTimer);
-                break;
-            case FALLING:
-            case STANDING:
-            default:
-                region = playerStand.getKeyFrame(stateTimer,true);
-                break;
-        }*/
+
 
         //check now we running to the right or left
         if((b2body.getLinearVelocity().x < 0 || !runningRight) && !region.isFlipX()){
@@ -273,8 +164,7 @@ public class Player extends Sprite {
     }
 
     //this class check that we jump or do other animation
-    private State getState(){
-
+    private State getState(float dt){
         if(hp <= 0){
             return State.DEAD;
         }else if(beenHit){
@@ -283,10 +173,19 @@ public class Player extends Sprite {
         }else if(b2body.getLinearVelocity().y > 0 || (b2body.getLinearVelocity().y < 0 && previousState == State.JUMPING)){
             if(Gdx.input.isKeyPressed(Input.Keys.UP)){
                 aimUp = true;
-                return State.JUMP_AIM_UP;
+                if(curGunState == GunState.SWORD ){
+                    return State.JUMPING;
+                }else{
+                    return State.JUMP_AIM_UP;
+                }
+
             }else if(Gdx.input.isKeyPressed(Input.Keys.DOWN)){
                 aimDown = true;
-                return State.JUMP_AIM_DOWN;
+                if(curGunState == GunState.SWORD ){
+                    return State.JUMPING;
+                }else{
+                    return State.JUMP_AIM_DOWN;
+                }
             }else {
                 aimUp = false;
                 aimDown = false;
@@ -295,10 +194,19 @@ public class Player extends Sprite {
         }else if(b2body.getLinearVelocity().y < 0){
             if(Gdx.input.isKeyPressed(Input.Keys.UP)){
                 aimUp = true;
-                return State.JUMP_AIM_UP;
+                if(curGunState == GunState.SWORD ){
+                    return State.JUMPING;
+                }else{
+                    return State.JUMP_AIM_UP;
+                }
             }else if(Gdx.input.isKeyPressed(Input.Keys.DOWN)){
                 aimDown = true;
-                return State.JUMP_AIM_DOWN;
+                if(curGunState == GunState.SWORD ){
+                    return State.JUMPING;
+                }else{
+                    return State.JUMP_AIM_DOWN;
+                }
+
             }else {
                 aimUp = false;
                 aimDown = false;
@@ -307,10 +215,20 @@ public class Player extends Sprite {
         }else if(b2body.getLinearVelocity().x != 0){
             if(Gdx.input.isKeyPressed(Input.Keys.UP)){
                 aimUp = true;
-                return State.RUNNING_AIM_UP;
+                if(curGunState == GunState.SWORD){
+                    return State.RUNNING;
+                }else{
+                    return State.RUNNING_AIM_UP;
+                }
+
             }else if(Gdx.input.isKeyPressed(Input.Keys.DOWN)){
                 aimDown = true;
-                return State.RUNNING_AIM_DOWN;
+                if(curGunState == GunState.SWORD){
+                    return State.RUNNING;
+                }else{
+                    return State.RUNNING_AIM_DOWN;
+                }
+
             }else{
                 aimUp = false;
                 aimDown = false;
@@ -318,19 +236,49 @@ public class Player extends Sprite {
             }
         }else if(Gdx.input.isKeyPressed(Input.Keys.UP)){
             aimUp = true;
-            return State.STAND_AIM_UP;
+            if(curGunState == GunState.SWORD){
+                return State.STANDING;
+            }else{
+                return State.STAND_AIM_UP;
+            }
+
         }else if(Gdx.input.isKeyPressed(Input.Keys.DOWN)){
             aimDown = true;
-            return State.STAND_AIM_DOWN;
-        }else if(Gdx.input.isKeyPressed(Input.Keys.F) ){
-            Jannabi.manager.get("Audio/Sound/Weapons/pistolReload.mp3",Sound.class).play();
+            if(curGunState == GunState.SWORD){
+                return State.STANDING;
+            }else{
+                return State.STAND_AIM_DOWN;
+            }
+
+        }else if(Gdx.input.isKeyPressed(Input.Keys.F)){
             aimUp = false;
             aimDown = false;
-            reloaded = true;
-            return State.RELOAD;
+            reloadTime += dt;
+            if(allAmmo > 0){
+                if(curGunState == GunState.SWORD){
+                    return State.STANDING;
+                }else{
+                    if(reloadTime > 0.6f && !duplicateReloadCheck){
+                        duplicateReloadCheck = true;
+                        reloaded = true;
+                        reload();
+                        Gdx.app.log("reloadcomplete","");
+                    }
+
+                    return State.RELOAD;
+                }
+            }else{
+                return State.STANDING;
+            }
+
+
+
         }else{
             aimUp = false;
             aimDown = false;
+            // reloadtime and duplicate is use to prevent when user hold reload key
+            reloadTime = 0;
+            duplicateReloadCheck = false;
             return State.STANDING;
         }
     }
@@ -397,57 +345,98 @@ public class Player extends Sprite {
 
     }
     //fire method for pistol gun (temporary)
-    public void fire(){
+    public void fire(float dt){
         if(currentAmmo > 0){
-            Jannabi.manager.get("Audio/Sound/Weapons/Gun.wav",Sound.class).play();
-            if(reloaded){
-                pistolsBullet.clear();
-                Gdx.app.log("ammo","reload complete");
-                allAmmo -= pistolClip;
-                currentAmmo = pistolClip;
-                reloaded = false;
-                Gdx.app.log("ammo = "+allAmmo,"ammoleft ");
+            fireDelay += dt;
+            if(curGunState == GunState.PISTOL){
+                if(fireDelay > Jannabi.PISTOL_FIRE_RATE){
+                    Bullet.add(new Pistol(screen, b2body.getPosition().x, b2body.getPosition().y, runningRight ? true : false, aimUp ? true:false,
+                            aimDown ? true : false,20,Jannabi.PISTOL_CLIP));
+                    currentAmmo--;
+                    fireDelay = 0;
+                }else if(!firstShot){
+                    Bullet.add(new Pistol(screen, b2body.getPosition().x, b2body.getPosition().y, runningRight ? true : false, aimUp ? true:false,
+                            aimDown ? true : false,20,Jannabi.PISTOL_CLIP));
+                    currentAmmo--;
+                    firstShot = true;
+
+                }
+
+            }else if(curGunState == GunState.SMG){
+                if(fireDelay > Jannabi.SMG_FIRE_RATE){
+                    Bullet.add(new Smg(screen, b2body.getPosition().x, b2body.getPosition().y, runningRight ? true : false, aimUp ? true:false,
+                            aimDown ? true : false,10,Jannabi.SMG_CLIP));
+                    currentAmmo--;
+                    fireDelay = 0;
+                }else if(!firstShot){
+                    Bullet.add(new Smg(screen, b2body.getPosition().x, b2body.getPosition().y, runningRight ? true : false, aimUp ? true:false,
+                            aimDown ? true : false,10,Jannabi.SMG_CLIP));
+                    currentAmmo--;
+                    firstShot = true;
+                }
+
+            }else if(curGunState == GunState.SHOTGUN){
+                if(fireDelay > Jannabi.SHOTGUN_FIRE_RATE){
+                    Bullet.add(new Shotgun(screen, b2body.getPosition().x, b2body.getPosition().y, runningRight ? true : false, aimUp ? true:false,
+                            aimDown ? true : false,10,Jannabi.SHOTGUN_CLIP));
+                    currentAmmo--;
+                    fireDelay = 0;
+                }else if(!firstShot){
+                    Bullet.add(new Shotgun(screen, b2body.getPosition().x, b2body.getPosition().y, runningRight ? true : false, aimUp ? true:false,
+                            aimDown ? true : false,10,Jannabi.SHOTGUN_CLIP));
+                    currentAmmo--;
+                    firstShot = true;
+                }
             }
-            pistolsBullet.add(new pistol(screen, b2body.getPosition().x, b2body.getPosition().y, runningRight ? true : false, aimUp ? true:false,
-                    aimDown ? true : false,20));
-            currentAmmo--;
+
         }else if(allAmmo > 0){
             //clink sound
             Gdx.app.log("ammo","need to reload");
-            //reload
-            if(reloaded){
-                pistolsBullet.clear();
-                Gdx.app.log("ammo","reload complete");
-                allAmmo -= pistolClip;
-                currentAmmo = pistolClip;
-                reloaded = false;
-                Gdx.app.log("ammo = "+allAmmo,"ammoleft ");
-            }
 
-        }else if(currentAmmo <= 0 && allAmmo <= 00){
+
+        }else if(allAmmo <= 0){
             //clinksound
-
-            pistolsBullet.clear();
+            Bullet.clear();
             Gdx.app.log("ammo out","no bullet left");
         }
 
     }
+
+    private void reload(){
+        //reload
+        if(reloaded && allAmmo > 0){
+            Bullet.clear();
+            Gdx.app.log("ammo","reload complete");
+            //need to change when different gunState
+            allAmmo -= getClip();
+            currentAmmo = getClip();
+            reloaded = false;
+            Gdx.app.log("ammo = "+allAmmo,"ammoleft ");
+        }
+    }
+
+    private int getClip(){
+        switch (curGunState){
+            case PISTOL:
+                return Jannabi.PISTOL_CLIP;
+            case SMG:
+                return Jannabi.SMG_CLIP;
+            case SHOTGUN:
+                return Jannabi.SHOTGUN_CLIP;
+            default:
+                return 0;
+        }
+    }
     //draw each bullet
     public void draw(Batch batch){
         super.draw(batch);
-        for(pistol bullet:pistolsBullet){
+        for(Gun bullet: Bullet){
             bullet.draw(batch);
         }
-    }
-    public float getStateTimer(){
-        return stateTimer;
     }
 
     public void getHit(){
         hp--;
-        Jannabi.manager.get("Audio/Sound/Player/beenHit.wav",Sound.class).play();
-        if (hp == 0 ){Jannabi.manager.get("Audio/Sound/GameOver/GameOver.mp3",Sound.class).play();}
-        //hp -= 1;
         beenHit = true;
         //push back when hit
         //b2body.applyLinearImpulse(new Vector2(100,0),b2body.getWorldCenter(),true);
@@ -457,7 +446,6 @@ public class Player extends Sprite {
 
     public void getPotion(){
         hp+= 3;
-        Jannabi.manager.get("Audio/Sound/Slime/PickupPotion.mp3", Sound.class).play();
         Gdx.app.log("hp Up","cur hp is" + hp);
     }
 
@@ -483,24 +471,9 @@ public class Player extends Sprite {
                 curGunState = GunState.SHOTGUN;
                 Gdx.app.log("change to shotgun","");
         }
-       /* if(gun == "sword"){
-            //setJannabiWithSword(screen);
-
-        }
-        if(gun == "pistol"){
-            //setJannabiWithPistol(screen);
-            curGunState = GunState.PISTOL;
-            Gdx.app.log("change to pistol","");
-        }*/
     }
 
-    private TextureRegion loadRegion(){
-
-        return null;
+    public void setFirstShot(boolean firstShot) {
+        this.firstShot = firstShot;
     }
-
-    private Animation<TextureRegion> loadAnimation(){
-        return null;
-    }
-
 }
