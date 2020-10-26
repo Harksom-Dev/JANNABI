@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.Jannabi;
-import com.mygdx.game.Scenes.Hud;
 import com.mygdx.game.Screen.PlayScreen;
 import com.mygdx.game.Sprites.Weapon.pistol;
 
@@ -386,15 +385,13 @@ public class Player extends Sprite {
                 pistolsBullet.clear();
                 Gdx.app.log("ammo","reload complete");
                 allAmmo -= pistolClip;
+                currentAmmo = pistolClip;
                 reloaded = false;
                 Gdx.app.log("ammo = "+allAmmo,"ammoleft ");
-                currentAmmo = pistolClip;
-                Hud.updateAmmo(currentAmmo);
             }
             pistolsBullet.add(new pistol(screen, b2body.getPosition().x, b2body.getPosition().y, runningRight ? true : false, aimUp ? true:false,
                     aimDown ? true : false,20));
             currentAmmo--;
-            Hud.updateAmmo(currentAmmo);
         }else if(allAmmo > 0){
             //clink sound
             Gdx.app.log("ammo","need to reload");
@@ -406,7 +403,6 @@ public class Player extends Sprite {
                 currentAmmo = pistolClip;
                 reloaded = false;
                 Gdx.app.log("ammo = "+allAmmo,"ammoleft ");
-                Hud.updateAmmo(pistolClip);
             }
 
         }else if(currentAmmo <= 0 && allAmmo <= 00){
@@ -438,6 +434,4 @@ public class Player extends Sprite {
     public int getHp() {
         return hp;
     }
-
-    public int getAmmo() { return currentAmmo; }
 }

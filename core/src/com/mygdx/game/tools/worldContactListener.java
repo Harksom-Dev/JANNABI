@@ -4,9 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.physics.box2d.*;
 import com.mygdx.game.Jannabi;
 import com.mygdx.game.Sprites.Enemy;
+import com.mygdx.game.Sprites.Item.Item;
 import com.mygdx.game.Sprites.Player;
-import com.mygdx.game.Sprites.Weapon.pistol;
-import com.mygdx.game.StageTile.TestLayer;
+import com.mygdx.game.Sprites.Weapon.Gun;
+import com.mygdx.game.Sprites.Weapon.Pistol;
 
 //this class get called when 2 box2d collision
 public class worldContactListener implements ContactListener {
@@ -22,12 +23,12 @@ public class worldContactListener implements ContactListener {
         switch (cDef){
             case Jannabi.ENEMY_BIT | Jannabi.PISTOL_BULLET_BIT:
                 if(fixA.getFilterData().categoryBits == Jannabi.ENEMY_BIT){
-                    ((Enemy)fixA.getUserData()).getHit((pistol) fixB.getUserData());
-                    ((pistol)fixB.getUserData()).setToDestroy();
+                    ((Enemy)fixA.getUserData()).getHit((Gun) fixB.getUserData());
+                    ((Gun)fixB.getUserData()).setToDestroy();
                 }
                 if(fixB.getFilterData().categoryBits == Jannabi.ENEMY_BIT){
-                    ((Enemy)fixB.getUserData()).getHit((pistol) fixA.getUserData());
-                    ((pistol)fixA.getUserData()).setToDestroy();
+                    ((Enemy)fixB.getUserData()).getHit((Gun) fixA.getUserData());
+                    ((Gun)fixA.getUserData()).setToDestroy();
                 }
                 break;
             case Jannabi.ENEMY_BIT | Jannabi.JANNABI_BIT:
@@ -45,8 +46,17 @@ public class worldContactListener implements ContactListener {
                 }
                 if(fixB.getFilterData().categoryBits == Jannabi.ENEMY_BIT){
                     ((Enemy)fixB.getUserData()).reverseVelocity(true,false);
+                }*/
+                break;
+            case Jannabi.ITEM_BIT | Jannabi.JANNABI_BIT:
+                //Gdx.app.log("hp Up","health potion");
+                if(fixA.getFilterData().categoryBits == Jannabi.ITEM_BIT){
+                    ((Item)fixA.getUserData()).use((Player) fixB.getUserData());
                 }
-                break;*/
+                if(fixB.getFilterData().categoryBits == Jannabi.ITEM_BIT){
+                    ((Item)fixB.getUserData()).use((Player) fixA.getUserData());
+                }
+                break;
 
         }
 
