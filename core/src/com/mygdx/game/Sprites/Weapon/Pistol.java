@@ -1,5 +1,6 @@
 package com.mygdx.game.Sprites.Weapon;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -48,7 +49,6 @@ public class Pistol extends Gun {
         /////////////////////////Set position when fire with different angle/////////////////////////////////////////////
         if(!aimUp && !aimDown){
             b2body.setLinearVelocity(new Vector2(fireRight ? 10 : -10, 0));
-
         }else if(aimUp && !aimDown){
             b2body.setLinearVelocity(new Vector2(fireRight ? 10 : -10, 10));
             if(fireRight){
@@ -118,8 +118,6 @@ public class Pistol extends Gun {
             world.destroyBody(b2body);
             destroyed = true;
         }
-        /*if(b2body.getLinearVelocity().y > 2f)
-            b2body.setLinearVelocity(b2body.getLinearVelocity().x, 0.1f);*/
         if((fireRight && b2body.getLinearVelocity().x < 0) || (!fireRight && b2body.getLinearVelocity().x > 0))
             setToDestroy();
     }

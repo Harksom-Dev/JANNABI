@@ -25,16 +25,12 @@ public abstract class Gun extends Sprite {
     boolean aimDown;
     boolean reloaded;
 
-    public Body bullet1;
-    public Body bullet2;
-    public Body bullet3;
 
     protected int Dmg;
     protected int clip;
     //TextureRegion region;
     TextureRegion img;
-    TextureRegion img2;
-    TextureRegion img3;
+
     //for further use
     //public ArrayList<ammo> activeAmmo;
 

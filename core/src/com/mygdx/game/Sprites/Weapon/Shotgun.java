@@ -1,7 +1,6 @@
 package com.mygdx.game.Sprites.Weapon;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -16,7 +15,9 @@ import com.mygdx.game.Screen.PlayScreen;
 
 public class Shotgun extends Gun {
 
-    Sprite sprite;
+    Sprite bulletSprite1;
+    Sprite bulletSprite2;
+    Sprite bulletSprite3;
 
     public Shotgun(PlayScreen screen, float x, float y, boolean fireRight, boolean aimUp, boolean aimDown, int Dmg, int clip) {
         super(screen, x, y, fireRight, aimUp, aimDown, Dmg, clip);
@@ -25,24 +26,27 @@ public class Shotgun extends Gun {
 
         img = new TextureRegion(screen.getAtlas().findRegion("bullet"),32,0,16,16);
         //setRegion(img);
-
-        sprite = new Sprite(img);
+        // set individual sprite to bullet Texture
+        bulletSprite1 = new Sprite(img);
+        bulletSprite2 = new Sprite(img);
+        bulletSprite3 = new Sprite(img);
         //increase width and height to increase bullet size
-        sprite.setBounds(x-1 / Jannabi.PPM, y, 30 / Jannabi.PPM, 20 / Jannabi.PPM);
+        bulletSprite1.setBounds(x-1 / Jannabi.PPM, y, 30 / Jannabi.PPM, 20 / Jannabi.PPM);
+        bulletSprite2.setBounds(x-1 / Jannabi.PPM, y, 30 / Jannabi.PPM, 20 / Jannabi.PPM);
+        bulletSprite3.setBounds(x-1 / Jannabi.PPM, y, 30 / Jannabi.PPM, 20 / Jannabi.PPM);
         setBounds(x-1 / Jannabi.PPM, y, 30 / Jannabi.PPM, 20 / Jannabi.PPM);
-        //definedBullet(b2body,0,10,-10,0);
-        /*definedBullet(bullet2,1,15,-8,+15 / Jannabi.PPM);
-        definedBullet(bullet3,-1,8,-13,-15/Jannabi.PPM);
-*/
-        definedBullet();
-        /*definedBullet2();
+        b2body = definedBullet(b2body,0,10,-10,0);
+        b2body2 = definedBullet(b2body2,1,15,-8,+15 / Jannabi.PPM);
+        b2body3 = definedBullet(b2body3,-1,8,-13,-15/Jannabi.PPM);
+        /*definedBullet();
+        definedBullet2();
         definedBullet3();*/
     }
 
 
 
 
-    protected void definedBullet(Body body,float normalVeloY, float aimUpVeloY, float aimDownVeloy, float angle) {
+    protected Body definedBullet(Body body,float normalVeloY, float aimUpVeloY, float aimDownVeloy, float angle) {
 
         BodyDef bdef = new BodyDef();
         bdef.position.set(fireRight ? getX() + 12 / Jannabi.PPM : getX() - 12 / Jannabi.PPM, getY() +2 / Jannabi.PPM);
@@ -78,7 +82,7 @@ public class Shotgun extends Gun {
                             (body.getPosition().y- getHeight() / 2)+ 12 / Jannabi.PPM,-angle);
                 }
             }
-
+            Gdx.app.log("body.x  =",""+ body.getPosition().x);
 
         }else if(aimUp && !aimDown){
             body.setLinearVelocity(new Vector2(fireRight ? 10 : -10, aimUpVeloY));
@@ -90,7 +94,7 @@ public class Shotgun extends Gun {
             }
 
         }else if(!aimUp && aimDown){
-            b2body.setLinearVelocity(new Vector2(fireRight ? 10 : -10, aimDownVeloy));
+            body.setLinearVelocity(new Vector2(fireRight ? 10 : -10, aimDownVeloy));
             if(fireRight){
                 body.setTransform(body.getPosition().x- (getWidth()/ 2) + 5/ Jannabi.PPM,
                         (body.getPosition().y- getHeight() / 2)+ 8 / Jannabi.PPM ,-45 + angle);
@@ -102,6 +106,7 @@ public class Shotgun extends Gun {
 
         }
         /////////////////////////Set position when fire with different angle/////////////////////////////////////////////
+        return body;
     }
 
     @Override
@@ -117,7 +122,7 @@ public class Shotgun extends Gun {
         PolygonShape shape = new PolygonShape();
         shape.setAsBox(3/Jannabi.PPM,0.5f/Jannabi.PPM);
         fdef.filter.categoryBits =  Jannabi.PISTOL_BULLET_BIT;
-        fdef.filter.maskBits = Jannabi.JANNABI_BIT | Jannabi.ENEMY_BIT ;
+        fdef.filter.maskBits =  Jannabi.ENEMY_BIT ;
 
 
         fdef.shape = shape;
@@ -282,87 +287,75 @@ public class Shotgun extends Gun {
         //bulletUpdate(dt,b2body);
         //bulletUpdate(dt,b2body);
         stateTime += dt;
-        bulletUpdate(b2body);
-        //bulletUpdate(b2body2);
-        //bulletUpdate(b2body3);
-
-
-        //change position of sprite here
-        /*if(!aimUp && !aimDown){
-            //normal case
-            setPosition(bullet1.getPosition().x - (getWidth() / 2) + 1/Jannabi.PPM, bullet1.getPosition().y - getHeight() / 2.1f);
-
-            //aim up case
-        }else if(aimUp && !aimDown){
-            if(fireRight){
-
-                setRotation(58);
-                setPosition(bullet1.getPosition().x - (getWidth() / 2) + 15.5f / Jannabi.PPM, bullet1.getPosition().y - (getHeight() / 2) - 7 / Jannabi.PPM  );
-            }else{
-                setRotation(-58);
-                setPosition(bullet1.getPosition().x - (getWidth() / 2) , bullet1.getPosition().y - (getHeight() / 2) + 16/Jannabi.PPM);
-            }
-
-            //aim down case
-        }else if(!aimUp && aimDown){
-
-            if(fireRight){
-                setRotation(-58);
-                setPosition(bullet1.getPosition().x - getWidth() / 2  , (bullet1.getPosition().y - getHeight() / 2) +16 / Jannabi.PPM );
-            }else{
-                setRotation(58);
-                setPosition((bullet1.getPosition().x - getWidth() / 2) + 15 / Jannabi.PPM  , (bullet1.getPosition().y - getHeight() / 2) - 8 / Jannabi.PPM );
-            }
+        bulletUpdate(b2body,bulletSprite1);
+        bulletUpdate(b2body2,bulletSprite2);
+        bulletUpdate(b2body3,bulletSprite3);
 
 
 
-        }
-
-
-        //setPosition(b2body.getPosition().x - getWidth() / 1.88697f, b2body.getPosition().y - getHeight() / 2.1f);
-        if((stateTime > 3f || setToDestroy) && !destroyed) {
-            world.destroyBody(bullet1);
-            destroyed = true;
-        }
-        if((fireRight && bullet1.getLinearVelocity().x < 0) || (!fireRight && bullet1.getLinearVelocity().x > 0))
-            setToDestroy();*/
     }
 
     @Override
     public void draw(Batch batch) {
-        sprite.draw(batch);
+        bulletSprite1.draw(batch);
+        bulletSprite2.draw(batch);
+        bulletSprite3.draw(batch);
     }
 
-    private void bulletUpdate(Body bulletBody){
-
-        //setRegion(fireAnimation.getKeyFrame(stateTime, true));
+    private void bulletUpdate(Body bulletBody,Sprite bulletSprite){
 
 
+        bulletSprite.setOrigin(0,0);
         //change position of sprite here
         if(!aimUp && !aimDown){
             //normal case
-            sprite.setPosition(bulletBody.getPosition().x - (sprite.getWidth() / 2) + 1/Jannabi.PPM, bulletBody.getPosition().y - sprite.getHeight() / 2.1f);
+            if(fireRight){
+                if(bulletSprite.isFlipX()){
+                    bulletSprite.flip(true,false);
+                }
+            }else{
+                if(!bulletSprite.isFlipX()){
+                    bulletSprite.flip(true,false);
+                }
+            }
+            bulletSprite.setPosition(bulletBody.getPosition().x - (bulletSprite.getWidth() / 2) + 1/Jannabi.PPM,
+                    bulletBody.getPosition().y - bulletSprite.getHeight() / 2.1f);
 
             //aim up case
         }else if(aimUp && !aimDown){
             if(fireRight){
-
-               sprite.setRotation(58);
-                sprite.setPosition(bulletBody.getPosition().x - (sprite.getWidth() / 2) + 15.5f / Jannabi.PPM, bulletBody.getPosition().y - (sprite.getHeight() / 2) - 7 / Jannabi.PPM  );
+               if (bulletSprite.isFlipX()){
+                   bulletSprite.flip(true,false);
+               }
+                bulletSprite.setRotation(58);
+                bulletSprite.setPosition(bulletBody.getPosition().x - (bulletSprite.getWidth() / 2) + 15.5f/Jannabi.PPM,
+                        bulletBody.getPosition().y - (bulletSprite.getHeight() / 2) - 7 / Jannabi.PPM  );
             }else{
-                sprite.setRotation(-58);
-                sprite.setPosition(bulletBody.getPosition().x - (sprite.getWidth() / 2) , bulletBody.getPosition().y - (sprite.getHeight() / 2) + 16/Jannabi.PPM);
+                if(!bulletSprite.isFlipX()){
+                    bulletSprite.flip(true,false);
+                }
+                bulletSprite.setRotation(-58);
+                bulletSprite.setPosition(bulletBody.getPosition().x - (bulletSprite.getWidth() / 2) - 2 / Jannabi.PPM ,
+                        bulletBody.getPosition().y - (bulletSprite.getHeight() / 2) + 19/Jannabi.PPM);
             }
 
             //aim down case
         }else if(!aimUp && aimDown){
 
             if(fireRight){
-                sprite.setRotation(-58);
-                sprite.setPosition(bulletBody.getPosition().x - sprite.getWidth() / 2  , (bulletBody.getPosition().y - sprite.getHeight() / 2) +16 / Jannabi.PPM );
+                if (bulletSprite.isFlipX()){
+                    bulletSprite.flip(true,false);
+                }
+                bulletSprite.setRotation(-58);
+                bulletSprite.setPosition(bulletBody.getPosition().x - bulletSprite.getWidth() / 2  ,
+                        (bulletBody.getPosition().y - bulletSprite.getHeight() / 2) +16 / Jannabi.PPM );
             }else{
-                sprite.setRotation(58);
-                sprite.setPosition((bulletBody.getPosition().x - sprite.getWidth() / 2) + 15 / Jannabi.PPM  , (bulletBody.getPosition().y - sprite.getHeight() / 2) - 8 / Jannabi.PPM );
+                if(!bulletSprite.isFlipX()){
+                    bulletSprite.flip(true,false);
+                }
+                bulletSprite.setRotation(58);
+                bulletSprite.setPosition((bulletBody.getPosition().x - bulletSprite.getWidth() / 2) + 15 / Jannabi.PPM  ,
+                        (bulletBody.getPosition().y - bulletSprite.getHeight() / 2) - 8 / Jannabi.PPM );
             }
 
 
@@ -375,8 +368,7 @@ public class Shotgun extends Gun {
             world.destroyBody(bulletBody);
             destroyed = true;
         }
-        if(bulletBody.getLinearVelocity().y > 2f)
-            bulletBody.setLinearVelocity(bulletBody.getLinearVelocity().x, 0.1f);
+
         if((fireRight && bulletBody.getLinearVelocity().x < 0) || (!fireRight && bulletBody.getLinearVelocity().x > 0))
             setToDestroy();
     }
