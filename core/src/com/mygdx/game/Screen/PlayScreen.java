@@ -213,6 +213,12 @@ public class PlayScreen implements Screen {
             player.setDuplicatedChange(false);
             player.setFirstShot(false);
         }
+        /*if(Gdx.input.isKeyPressed(Input.Keys.UP)){
+            player.setAimUp(true);
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.DOWN)){
+            player.setAimUp(false);
+        }*/
 
     }
 
@@ -326,10 +332,6 @@ public class PlayScreen implements Screen {
         for(Item item : items){ item.draw(game.batch); }
 
 
-
-
-
-
         if (gameOver()){ game.setScreen(new GameOverScreen(game)); }
         game.batch.draw(jannaHead,100,100);
 
@@ -344,7 +346,7 @@ public class PlayScreen implements Screen {
     }
     public boolean gameOver(){
 
-        if (player.currentState == Player.State.DEAD && player.getStateTimer() > 2  ){
+        if (player.currentState == Player.State.DEAD && player.getStateTimer() > 2  || player.getY() < 0){
             return true;
         }else{return false;}
     }

@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.Jannabi;
 import com.mygdx.game.Screen.PlayScreen;
 import com.mygdx.game.Sprites.Item.ItemDef;
+import com.mygdx.game.Sprites.Item.Mag;
 import com.mygdx.game.Sprites.Item.Potion;
 import com.mygdx.game.Sprites.Weapon.Gun;
 import com.mygdx.game.Sprites.Weapon.Sword;
@@ -208,7 +209,7 @@ public class BlackShirt extends Enemy {
             setToDestroy = true;
             //define drop condition
             if(!drop){
-                screen.spawnItem(new ItemDef(new Vector2(b2body.getPosition().x,b2body.getPosition().y + 25), Potion.class));
+                screen.spawnItem(new ItemDef(new Vector2(b2body.getPosition().x,b2body.getPosition().y + 25), Mag.class));
                 drop = true;
             }
 
@@ -224,7 +225,7 @@ public class BlackShirt extends Enemy {
             setToDestroy = true;
             //define drop condition
             if(!drop){
-                screen.spawnItem(new ItemDef(new Vector2(b2body.getPosition().x,b2body.getPosition().y + 25),Potion.class));
+                screen.spawnItem(new ItemDef(new Vector2(b2body.getPosition().x,b2body.getPosition().y + 25),Mag.class));
                 drop = true;
             }
 

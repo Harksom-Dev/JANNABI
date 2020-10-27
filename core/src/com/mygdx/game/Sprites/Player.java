@@ -381,15 +381,16 @@ public class Player extends Sprite {
         if(currentAmmo > 0){
             fireDelay += dt;
             if(curGunState == GunState.PISTOL){
-                Jannabi.manager.get("Audio/Sound/gun/pistol.wav", Sound.class).play();
-                if(fireDelay > Jannabi.PISTOL_FIRE_RATE){
 
+                if(fireDelay > Jannabi.PISTOL_FIRE_RATE){
+                    Jannabi.manager.get("Audio/Sound/gun/pistol.wav", Sound.class).play();
                     Bullet.add(new Pistol(screen, b2body.getPosition().x, b2body.getPosition().y, runningRight ? true : false, aimUp ? true:false,
                             aimDown ? true : false,20,Jannabi.PISTOL_CLIP));
                     currentAmmo-- ;
                             Hud.updateAmmo(currentAmmo);
                     fireDelay = 0;
                 }else if(!firstShot){
+                    Jannabi.manager.get("Audio/Sound/gun/pistol.wav", Sound.class).play();
                     Bullet.add(new Pistol(screen, b2body.getPosition().x, b2body.getPosition().y, runningRight ? true : false, aimUp ? true:false,
                             aimDown ? true : false,20,Jannabi.PISTOL_CLIP));
                     currentAmmo-- ;
@@ -399,15 +400,16 @@ public class Player extends Sprite {
                 }
 
             }else if(curGunState == GunState.SMG){
-                Jannabi.manager.get("Audio/Sound/gun/smg.mp3", Sound.class).play();
-                if(fireDelay > Jannabi.SMG_FIRE_RATE){
 
+                if(fireDelay > Jannabi.SMG_FIRE_RATE){
+                    Jannabi.manager.get("Audio/Sound/gun/smg.mp3", Sound.class).play();
                     Bullet.add(new Smg(screen, b2body.getPosition().x, b2body.getPosition().y, runningRight ? true : false, aimUp ? true:false,
                             aimDown ? true : false,10,Jannabi.SMG_CLIP));
                     currentAmmo-- ;
                     Hud.updateAmmo(currentAmmo);
                     fireDelay = 0;
                 }else if(!firstShot){
+                    Jannabi.manager.get("Audio/Sound/gun/smg.mp3", Sound.class).play();
                     Bullet.add(new Smg(screen, b2body.getPosition().x, b2body.getPosition().y, runningRight ? true : false, aimUp ? true:false,
                             aimDown ? true : false,10,Jannabi.SMG_CLIP));
                     currentAmmo-- ;
@@ -416,16 +418,18 @@ public class Player extends Sprite {
                 }
 
             }else if(curGunState == GunState.SHOTGUN){
-                Jannabi.manager.get("Audio/Sound/gun/shotGun.mp3", Sound.class).play();
+
                 if(fireDelay > Jannabi.SHOTGUN_FIRE_RATE){
+                    Jannabi.manager.get("Audio/Sound/gun/shotGun.mp3", Sound.class).play();
                     Bullet.add(new Shotgun(screen, b2body.getPosition().x, b2body.getPosition().y, runningRight ? true : false, aimUp ? true:false,
-                            aimDown ? true : false,10,Jannabi.SHOTGUN_CLIP));
+                            aimDown ? true : false,30,Jannabi.SHOTGUN_CLIP));
                     currentAmmo-- ;
                     Hud.updateAmmo(currentAmmo);
                     fireDelay = 0;
                 }else if(!firstShot){
+                    Jannabi.manager.get("Audio/Sound/gun/shotGun.mp3", Sound.class).play();
                     Bullet.add(new Shotgun(screen, b2body.getPosition().x, b2body.getPosition().y, runningRight ? true : false, aimUp ? true:false,
-                            aimDown ? true : false,10,Jannabi.SHOTGUN_CLIP));
+                            aimDown ? true : false,30,Jannabi.SHOTGUN_CLIP));
                     currentAmmo-- ;
                     Hud.updateAmmo(currentAmmo);
                     firstShot = true;
@@ -501,6 +505,9 @@ public class Player extends Sprite {
         Gdx.app.log("hp Up","cur hp is" + hp);
     }
 
+    public void getMag(){
+        allAmmo += 13;
+    }
     public int getHp() {
         return hp;
     }
@@ -565,6 +572,8 @@ public class Player extends Sprite {
         }
     }
 
+
+
     public float getStateTimer(){
         return stateTimer;
     }
@@ -583,5 +592,13 @@ public class Player extends Sprite {
 
     public int getAmmo(){
         return currentAmmo;
+    }
+
+    public void setAimUp(boolean aimUp) {
+        this.aimUp = aimUp;
+    }
+
+    public void setAimDown(boolean aimDown) {
+        this.aimDown = aimDown;
     }
 }

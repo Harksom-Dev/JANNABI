@@ -17,7 +17,7 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.Jannabi;
 
-public class EmptyScreen2 implements Screen {
+public class introToMainMenu implements Screen {
 
     private static final int SCREEN_WIDTH = 1280;
     private static final int SCREEN_HEIGHT = 720;
@@ -33,7 +33,7 @@ public class EmptyScreen2 implements Screen {
     Texture Background2;
 
 
-    public EmptyScreen2(Jannabi game) {
+    public introToMainMenu(Jannabi game) {
         this.game = game;
         viewport = new FitViewport(SCREEN_WIDTH, SCREEN_HEIGHT,new OrthographicCamera());
         stage = new Stage(viewport, game.batch);
