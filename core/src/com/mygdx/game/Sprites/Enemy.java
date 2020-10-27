@@ -7,6 +7,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.Screen.PlayScreen;
 import com.mygdx.game.Sprites.Weapon.Gun;
 import com.mygdx.game.Sprites.Weapon.Pistol;
+import com.mygdx.game.Sprites.Weapon.Sword;
 
 public abstract class Enemy extends Sprite {
     protected World world;
@@ -31,6 +32,7 @@ public abstract class Enemy extends Sprite {
     protected abstract void defineEnemy();
     public abstract void update(float dt);
     public abstract void getHit(Gun gun);
+    public abstract void getHit(Sword sword);
     protected abstract void randomMove(float dt);
     protected abstract void animateGetHit(float dt);
 

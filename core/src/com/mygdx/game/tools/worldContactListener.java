@@ -8,6 +8,7 @@ import com.mygdx.game.Sprites.Item.Item;
 import com.mygdx.game.Sprites.Player;
 import com.mygdx.game.Sprites.Weapon.Gun;
 import com.mygdx.game.Sprites.Weapon.Pistol;
+import com.mygdx.game.Sprites.Weapon.Sword;
 
 //this class get called when 2 box2d collision
 public class worldContactListener implements ContactListener {
@@ -55,6 +56,16 @@ public class worldContactListener implements ContactListener {
                 }
                 if(fixB.getFilterData().categoryBits == Jannabi.ITEM_BIT){
                     ((Item)fixB.getUserData()).use((Player) fixA.getUserData());
+                }
+                break;
+            case Jannabi.ENEMY_BIT | Jannabi.SWORDHITBOX_BIT:
+                if(fixA.getFilterData().categoryBits == Jannabi.ENEMY_BIT){
+                    ((Enemy)fixA.getUserData()).getHit((Sword) fixB.getUserData());
+                    //((Sword)fixB.getUserData()).destroy();
+                }
+                if(fixB.getFilterData().categoryBits == Jannabi.ENEMY_BIT){
+                    ((Enemy)fixB.getUserData()).getHit((Sword) fixA.getUserData());
+                    //((Sword)fixA.getUserData()).destroy();
                 }
                 break;
 
