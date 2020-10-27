@@ -102,10 +102,10 @@ public class Hud {
         // Width of progress bar on screen relevant to Screen width
         float healthBarWidth = (screenWidth / 100) * health;
 
-        game.getBatch().setProjectionMatrix(camera.combined);
+        /*game.getBatch().setProjectionMatrix(camera.combined);
         game.getBatch().begin();
         bitmapFont.draw(game.getBatch(), "Loading " + health + " / " + 10, 100, 100);
-        game.getBatch().end();
+        game.getBatch().end();*/
 
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);

@@ -542,4 +542,12 @@ public class Player extends Sprite {
     public void setDuplicatedChange(boolean change){
         duplicatedChange = change;
     }
+
+    public int getAllAmmo(){
+        return allAmmo;
+    }
+
+    public int getAmmo(){
+        return currentAmmo;
+    }
 }

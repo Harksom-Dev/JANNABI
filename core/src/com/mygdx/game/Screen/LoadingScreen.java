@@ -73,11 +73,11 @@ public class LoadingScreen implements Screen {
         // Width of progress bar on screen relevant to Screen width
         float progressBarWidth = (screenWidth / 100) * progress;
 
-        mGame.getBatch().setProjectionMatrix(camera.combined);
+        /*mGame.getBatch().setProjectionMatrix(camera.combined);
         mGame.getBatch().begin();
         mGame.batch.draw(wall,0,0);
         bf_loadProgress.draw(mGame.getBatch(), "Loading " + progress + " / " + 100, 10, 40);
-        mGame.getBatch().end();
+        mGame.getBatch().end();*/
 
         mShapeRenderer.setProjectionMatrix(camera.combined);
         mShapeRenderer.begin(ShapeType.Filled);
