@@ -434,7 +434,9 @@ public class Player extends Sprite {
             bullet.draw(batch);
         }
     }
-
+    public float getStateTimer(){
+        return stateTimer;
+    }
     public void getHit(){
         hp--;
         beenHit = true;
