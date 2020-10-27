@@ -36,6 +36,7 @@ public class BlackShirt extends Enemy {
     private boolean destroy;
     private boolean moveLeft;
     private boolean beenHit;
+    private boolean attackLeft;
 
     public BlackShirt(PlayScreen screen, float x, float y,int Hp) {
         super(screen, x, y);
@@ -53,12 +54,13 @@ public class BlackShirt extends Enemy {
         beenHit = false;
         drop = false;
         walkTime = 0;
+        stateTime = 0;
         currentState = State.STAND;
     }
 
     @Override
     protected void setTexture() {
-        stateTime = 0;
+
         for(int i =0; i < 2 ;i++){
             frames.add(new TextureRegion(screen.getAtlas().findRegion("tamruot_stand"),i*32,0,32,32));
         }
@@ -67,7 +69,7 @@ public class BlackShirt extends Enemy {
 
         animateDelay = 0;
         for(int i = 0; i < 4 ;i++){
-            frames.add(new TextureRegion(screen.getAtlas().findRegion("tamruot_walk"),i*32,0,32,32));
+            frames.add(new TextureRegion(screen.getAtlas().findRegion("tamruot_walk"),i*35,0,35,32));
         }
         walkAnimation = new Animation<TextureRegion>(0.5f,frames);
         frames.clear();
@@ -120,6 +122,7 @@ public class BlackShirt extends Enemy {
     }
 
     private TextureRegion getFrame(float dt){
+        stateTime += dt;
         TextureRegion region;
         switch (currentState){
             case WALK:
@@ -129,7 +132,7 @@ public class BlackShirt extends Enemy {
                 region = stayAnimation.getKeyFrame(stateTime,true);
                 break;
             case ATTACK:
-                region = attackAnimation.getKeyFrame(stateTime,false);
+                region = attackAnimation.getKeyFrame(stateTime,true);
                 break;
             case GETHIT:
                 region = getHitAnimation.getKeyFrame(stateTime,true);
@@ -139,10 +142,10 @@ public class BlackShirt extends Enemy {
                 break;
 
         }
-        if(velocity.x < 0 && region.isFlipX() == false){
+        if((b2body.getLinearVelocity().x < 0 ) && region.isFlipX() == false ){
             region.flip(true,false);
         }
-        if(velocity.x > 0 && region.isFlipX() == true){
+        if((b2body.getLinearVelocity().x > 0 ) && region.isFlipX() == true){
             region.flip(true,false);
         }
 
@@ -160,23 +163,23 @@ public class BlackShirt extends Enemy {
             //world.destroyBody(b2body);
             //destroy = true;
             stateTime = 0;
-            setRegion(deadAnimation.getKeyFrame(0.5f,false));
+            currentState = State.DEAD;
+            //setRegion(deadAnimation.getKeyFrame(0.5f,false));
         }else if(!destroy){
             //random movement ot this slime
             randomMove(dt);
-
+            currentState = State.WALK;
             setPosition(b2body.getPosition().x - getWidth() / 2.5f,b2body.getPosition().y - getHeight()/ 3);
             //check if slime get hit change animation
             if(beenHit){
+                currentState = State.DEAD;
                 animateGetHit(dt);
 
-            }else{
-                setRegion(stayAnimation.getKeyFrame(stateTime,true));
             }
 
         }
 
-        setPosition(b2body.getPosition().x - getWidth() / 2 ,b2body.getPosition().y - getHeight() / 2);
+
     }
 
     @Override
@@ -184,6 +187,16 @@ public class BlackShirt extends Enemy {
         if(!destroy || stateTime < 1){
             super.draw(batch);
         }
+
+    }
+
+    @Override
+    public void attack(boolean attack,boolean attackLeft) {
+        if(attack){
+            currentState = State.ATTACK;
+            this.attackLeft = attackLeft;
+        }
+
 
     }
 
@@ -223,16 +236,16 @@ public class BlackShirt extends Enemy {
         //need to change
         pauseJump -= dt;
         if(pauseJump < 0){
-            if(moveLeft && b2body.getLinearVelocity().y == 0){
-                b2body.applyLinearImpulse(new Vector2(0.2f,0),b2body.getWorldCenter(),true);
+            if(moveLeft){
+                b2body.setLinearVelocity(-0.6f,0);
+                //b2body.applyLinearImpulse(new Vector2(-0.5f,0),b2body.getWorldCenter(),true);
                 moveLeft = false;
-                pauseJump = 1.5f;
-            }else if(!moveLeft && b2body.getLinearVelocity().y == 0){
-                b2body.applyLinearImpulse(new Vector2(-0.2f,0),b2body.getWorldCenter(),true);
+                pauseJump = 2;
+            }else if(!moveLeft){
+                b2body.setLinearVelocity(+0.6f,0);
+                //b2body.applyLinearImpulse(new Vector2(0.5f,0),b2body.getWorldCenter(),true);
                 moveLeft = true;
-                pauseJump = 1.5f;
-            }if(b2body.getLinearVelocity().y == 0 && b2body.getLinearVelocity().x !=0){
-                b2body.setLinearVelocity(0,0);
+                pauseJump = 2;
             }
 
         }
@@ -241,7 +254,7 @@ public class BlackShirt extends Enemy {
     @Override
     protected void animateGetHit(float dt) {
         animateDelay += dt;
-        setRegion(getHitAnimation.getKeyFrame(stateTime,false));
+        setRegion(deadAnimation.getKeyFrame(stateTime,false));
         if(animateDelay > 0.125f){
 
             beenHit = false;

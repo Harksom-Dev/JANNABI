@@ -64,7 +64,6 @@ public class B2WorldCreator {
     public Array<Slime> getSlimes() {
         return slimes;
     }
-
     public Iterator<Enemy> getEnemyIterator(){
         Array<Enemy> enemies = new Array<Enemy>();
         enemies.addAll(slimes);
