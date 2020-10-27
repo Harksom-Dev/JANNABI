@@ -2,6 +2,7 @@ package com.mygdx.game.Screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -15,6 +16,8 @@ public class Credits implements Screen {
 
     private static final int SCREEN_WIDTH = 1280;
     private static final int SCREEN_HEIGHT = 720;
+
+    Music music;
 
     Jannabi game;
     OrthographicCamera cam;
@@ -30,6 +33,9 @@ public class Credits implements Screen {
         stage = new Stage(viewport,((Jannabi) game).batch);
         cam = new OrthographicCamera();
         cWallpaper = new Texture("Credit/credit.png");
+        music = Jannabi.manager.get("Audio/Music/jannabi.mp3", Music.class);
+        music.setLooping(true);
+        music.play();
 
     }
 
@@ -78,6 +84,6 @@ public class Credits implements Screen {
 
     @Override
     public void dispose() {
-
+        music.dispose();
     }
 }

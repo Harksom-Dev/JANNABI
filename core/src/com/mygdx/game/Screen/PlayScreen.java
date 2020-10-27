@@ -3,21 +3,33 @@ package com.mygdx.game.Screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.ai.GdxAI;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.bullet.linearmath.HullDesc;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.TimeUtils;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.Jannabi;
+import com.mygdx.game.Scenes.Hud;
 import com.mygdx.game.Sprites.Enemy.BlackShirt;
+//import com.mygdx.game.Sprites.Enemy;
 import com.mygdx.game.Sprites.Enemy.Enemy;
 import com.mygdx.game.Sprites.Item.Item;
 import com.mygdx.game.Sprites.Item.ItemDef;
@@ -26,18 +38,26 @@ import com.mygdx.game.Sprites.Player;
 import com.mygdx.game.Sprites.Enemy.Slime;
 import com.mygdx.game.tools.B2WorldCreator;
 import com.mygdx.game.tools.worldContactListener;
+import com.mygdx.game.Sprites.Player;
 
 import java.util.Iterator;
+import java.util.PriorityQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 
 
 public class PlayScreen implements Screen {
+    public String imageAddress;
     //create Texture for background
     Texture background;
+    Texture jannaHead;
+
+    //creat Texture fot health bar
+    Texture healthBar;
 
     //implement main game camera and viewport
     private Jannabi game;
     private OrthographicCamera gamecam;
+    private OrthographicCamera camera;
     private Viewport gamePort;
 
     //create tile map variable
@@ -50,6 +70,7 @@ public class PlayScreen implements Screen {
 
     //sprite variable
     private Player player;
+    public static int hp = 10;
 
     //box2d variable
     private World world;
@@ -65,6 +86,22 @@ public class PlayScreen implements Screen {
     private Array<Item> items;
     private LinkedBlockingDeque<ItemDef> itemToSpawn;
 
+    //background music player
+    private Music music;
+    private BitmapFont bf_loadProgress;
+    private long progress = 0;
+    private ShapeRenderer shapeRenderer;
+    private BitmapFont bf_healthProgress;
+    private long health = 100;
+    private final int healthWidth = 1000 ;
+    private final int screenWidth = 1280, screenHeight = 720;
+    private boolean consHit ;
+
+    private Hud hud;
+    Stage stage;
+    Viewport viewport;
+
+
     public PlayScreen(Jannabi game) {
 
         background = new Texture("Background/Stage1/stage1_fix.png");
@@ -74,7 +111,8 @@ public class PlayScreen implements Screen {
         //trying Load class
         atlas = new TextureAtlas("Sprite/allCharacter/character_pack.pack");
 
-
+        viewport = new FitViewport(1280,720);
+        stage = new Stage(viewport,((Jannabi)game).batch);
         //set this class to current screen
         this.game = game;
 
@@ -106,6 +144,22 @@ public class PlayScreen implements Screen {
         //initialize item
         items = new Array<Item>();
         itemToSpawn = new LinkedBlockingDeque<ItemDef>();
+
+        //Hud
+        hud = new Hud(game.batch, this.player);
+        //Health Bar
+        bf_healthProgress = new BitmapFont();
+        bf_healthProgress.getData().setScale(2,1);
+        shapeRenderer = new ShapeRenderer();
+        initCamera();
+        jannaHead = new Texture("Hud/JanHead.png");
+
+
+    }
+    private void initCamera() {
+        camera = new OrthographicCamera();
+        camera.setToOrtho(false, screenWidth, screenHeight);
+        camera.update();
     }
 
     //create getter for texture atlas
@@ -134,6 +188,7 @@ public class PlayScreen implements Screen {
     //create handle input when we get input from user
     public void handleInput( float dt){
         if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && player.b2body.getLinearVelocity().y == 0){
+            Jannabi.manager.get("Audio/Sound/player/jump.mp3", Sound.class).play();
             player.b2body.applyLinearImpulse(new Vector2(0,3),player.b2body.getWorldCenter(),true);
         }
         if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.b2body.getLinearVelocity().x <= 2){
@@ -145,12 +200,16 @@ public class PlayScreen implements Screen {
         if(Gdx.input.isKeyPressed(Input.Keys.C)){
             player.attack(dt);
         }else if(Gdx.input.isKeyJustPressed(Input.Keys.Q)){
+            Jannabi.manager.get("Audio/Sound/gun/changeWeapons.mp3", Sound.class).play();
             player.changeWeapon("sword");
         }else if(Gdx.input.isKeyJustPressed(Input.Keys.W)){
+            Jannabi.manager.get("Audio/Sound/gun/changeWeapons.mp3", Sound.class).play();
             player.changeWeapon("pistol");
         }else if(Gdx.input.isKeyJustPressed(Input.Keys.E)){
+            Jannabi.manager.get("Audio/Sound/gun/changeWeapons.mp3", Sound.class).play();
             player.changeWeapon("smg");
         }else if(Gdx.input.isKeyJustPressed(Input.Keys.R)){
+            Jannabi.manager.get("Audio/Sound/gun/changeWeapons.mp3", Sound.class).play();
             player.changeWeapon("shotgun");
         }else{
             player.setDuplicatedChange(false);
@@ -193,14 +252,11 @@ public class PlayScreen implements Screen {
                 nextEnemies.setDestroyed(true);
                 enemyIterator.remove();
             }
-            /*if (nextEnemies.getStateTime() >= 1 && nextEnemies.getDestroyed())
-            {
-                Gdx.app.log("removing slime from array", "");
 
-            }*/
 
 
         }
+
 
 
         for(Item item : items){
@@ -220,6 +276,14 @@ public class PlayScreen implements Screen {
         //set view to camera
         renderer.setView(gamecam);
     }
+
+    private void shortToExit(){
+        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)){
+            this.dispose();
+            game.setScreen(new MainMenuScreen(game));
+        }
+    }
+
 
     @Override
     public void render(float delta) {
@@ -244,7 +308,7 @@ public class PlayScreen implements Screen {
         game.batch.begin();
         //multiple width to increase background (now get commented to check box2d)
         //can comment background  to check collision
-        //game.batch.draw(background,0,0,(Jannabi.V_WIDTH /Jannabi.PPM) * 8,Jannabi.V_HEIGHT / Jannabi.PPM);
+        game.batch.draw(background,0,0,(Jannabi.V_WIDTH /Jannabi.PPM) * 8,Jannabi.V_HEIGHT / Jannabi.PPM);
         game.batch.end();
 
         //need to render after background
@@ -253,19 +317,25 @@ public class PlayScreen implements Screen {
         //draw things
         game.batch.begin();
         player.draw(game.batch);
-        for(Enemy enemy : creator.getEnemies()){
-            enemy.draw(game.batch);
-        }
-        /*for(Enemy enemy : creator.getBlackShirts()){
-            enemy.draw(game.batch);
-        }*/
-        for(Item item : items){
-            item.draw(game.batch);
-        }
+        for(Enemy enemy : creator.getSlimes()){ enemy.draw(game.batch); }
+        for(Item item : items){ item.draw(game.batch); }
+        if (gameOver()){ game.setScreen(new GameOverScreen(game)); }
+        game.batch.draw(jannaHead,100,100);
+
         game.batch.end();
+        shapeRenderer.setProjectionMatrix(camera.combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(Color.RED);
+        shapeRenderer.rect(100, 625, healthBarWidth, 25);
+        shapeRenderer.end();
+        hud.stage.draw();
+        shortToExit();
+    }
+    public boolean gameOver(){
 
-
-
+        if (player.currentState == Player.State.DEAD && player.getStateTimer() > 2  ){
+            return true;
+        }else{return false;}
     }
 
     @Override
