@@ -17,6 +17,9 @@ import com.mygdx.game.Sprites.Weapon.Gun;
 import com.mygdx.game.Sprites.Weapon.Sword;
 
 public class BlackShirt extends Enemy {
+    public enum State{WALK,STAND,ATTACK,GETHIT,DEAD}
+    public State currentState;
+    public State previousState;
 
     private float animateDelay;         //delay time
     private float stateTime;
@@ -40,7 +43,7 @@ public class BlackShirt extends Enemy {
 
         setTexture();
 
-        setBounds(getX(),getY(),64 / Jannabi.PPM,32 / Jannabi.PPM);
+        setBounds(getX(),getY(),32 / Jannabi.PPM,32 / Jannabi.PPM);
         setToDestroy = false;
         destroy = false;
         this.Hp  = Hp;
@@ -112,9 +115,40 @@ public class BlackShirt extends Enemy {
         b2body.createFixture(fdef).setUserData(this);
     }
 
+    private TextureRegion getFrame(float dt){
+        TextureRegion region;
+        switch (currentState){
+            case WALK:
+                region = walkAnimation.getKeyFrame(stateTime,true);
+                break;
+            case STAND:
+                region = stayAnimation.getKeyFrame(stateTime,true);
+                break;
+            case ATTACK:
+                region = attackAnimation.getKeyFrame(0.3f,false);
+                break;
+            case GETHIT:
+                region = getHitAnimation.getKeyFrame(0.5f,true);
+                break;
+            default:
+                region = deadAnimation.getKeyFrame(0.5f,true);
+                break;
+
+        }
+        if(velocity.x < 0 && region.isFlipX() == false){
+            region.flip(true,false);
+        }
+        if(velocity.x > 0 && region.isFlipX() == true){
+            region.flip(true,false);
+        }
+
+        return region;
+    }
+
     @Override
     public void update(float dt) {
         stateTime += dt;
+        setRegion(getFrame(dt));
         if(setToDestroy && !destroy){
             //world.destroyBody(b2body);
             //destroy = true;
@@ -134,6 +168,8 @@ public class BlackShirt extends Enemy {
             }
 
         }
+
+        setPosition(b2body.getPosition().x - getWidth() / 2 ,b2body.getPosition().y - getHeight() / 2);
     }
 
     @Override

@@ -59,6 +59,7 @@ public class PlayScreen implements Screen {
     //iterator
     private Iterator<Slime> slimeIterator;
     private Iterator<BlackShirt> BlackShirtIterator;
+    private Iterator<Enemy> enemyIterator;
 
     //array for item
     private Array<Item> items;
@@ -173,28 +174,28 @@ public class PlayScreen implements Screen {
         player.update(dt);
         //spawn all slimes
         /////////////need to destroy enemy in playscreen////////////
-        slimeIterator = creator.getSlimeIterator();
-        while(slimeIterator.hasNext())
+        enemyIterator = creator.getEnemyIterator();
+        while(enemyIterator.hasNext())
         {
-            Slime nextSlime = slimeIterator.next();
-            nextSlime.update(dt);
-            if(nextSlime.getX()<player.getX()+224 / Jannabi.PPM)
-                nextSlime.b2body.setActive((true));
-            if (nextSlime.getToDestroy() && !nextSlime.getDestroyed())
+            Enemy nextEnemies = enemyIterator.next();
+            nextEnemies.update(dt);
+            if(nextEnemies.getX()<player.getX()+224 / Jannabi.PPM)
+                nextEnemies.b2body.setActive((true));
+            if (nextEnemies.getToDestroy() && !nextEnemies.getDestroyed())
             {
-                world.destroyBody(nextSlime.b2body);
-                nextSlime.setDestroyed(true);
+                world.destroyBody(nextEnemies.b2body);
+                nextEnemies.setDestroyed(true);
             }
 
-            if (nextSlime.getStateTime() >= 1 && nextSlime.getDestroyed())
+            if (nextEnemies.getStateTime() >= 1 && nextEnemies.getDestroyed())
             {
                 Gdx.app.log("removing slime from array", "");
-                slimeIterator.remove();
+                enemyIterator.remove();
             }
 
         }
 
-        BlackShirtIterator = creator.getBlackShirtIterator();
+       /* BlackShirtIterator = creator.getBlackShirtIterator();
         while(BlackShirtIterator.hasNext())
         {
             BlackShirt nextBlackShirt = BlackShirtIterator.next();
@@ -213,7 +214,7 @@ public class PlayScreen implements Screen {
                 slimeIterator.remove();
             }
 
-        }
+        }*/
 
         for(Item item : items){
             item.update(dt);
