@@ -16,10 +16,13 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.Jannabi;
+import com.mygdx.game.Scenes.Hud;
 import com.mygdx.game.Sprites.Enemy;
 import com.mygdx.game.Sprites.Item.Item;
 import com.mygdx.game.Sprites.Item.ItemDef;
@@ -28,6 +31,7 @@ import com.mygdx.game.Sprites.Player;
 import com.mygdx.game.Sprites.Slime;
 import com.mygdx.game.tools.B2WorldCreator;
 import com.mygdx.game.tools.worldContactListener;
+import com.mygdx.game.Sprites.Player;
 
 import java.util.Iterator;
 import java.util.PriorityQueue;
@@ -35,8 +39,12 @@ import java.util.concurrent.LinkedBlockingDeque;
 
 
 public class PlayScreen implements Screen {
+    public String imageAddress;
     //create Texture for background
     Texture background;
+
+    //creat Texture fot health bar
+    Texture healthBar;
 
     //implement main game camera and viewport
     private Jannabi game;
@@ -53,6 +61,7 @@ public class PlayScreen implements Screen {
 
     //sprite variable
     private Player player;
+    public static int hp = 10;
 
     //box2d variable
     private World world;
@@ -70,16 +79,31 @@ public class PlayScreen implements Screen {
     private Music music;
 
 
+
+    //hud
+    private Hud hud;
+
+    Stage stage;
+    Viewport viewport;
+
+
     public PlayScreen(Jannabi game) {
 
         background = new Texture("Background/Stage1/stage1.png");
+
+        //health bar Texture
+        healthBar = new Texture("Hud/Healthbar/1.png");
 
         //create atlas and load from path
         //atlas = new TextureAtlas("Sprite/allCharacter/character_all.pack");
         //trying Load class
         atlas = new TextureAtlas("Sprite/allCharacter/character_pack.pack");
 
+//        updateAddress();
+//        healthBar = new Texture(imageAddress);
 
+        viewport = new FitViewport(1280,720);
+        stage = new Stage(viewport,((Jannabi)game).batch);
         //set this class to current screen
         this.game = game;
 
@@ -115,6 +139,9 @@ public class PlayScreen implements Screen {
         //music
 
 
+
+        //Hud
+        hud = new Hud(game.batch, this.player);
     }
 
     //create getter for texture atlas
@@ -143,7 +170,6 @@ public class PlayScreen implements Screen {
     //create handle input when we get input from user
     public void handleInput( float dt){
         if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && player.b2body.getLinearVelocity().y == 0){
-            Jannabi.manager.get("Audio/Sound/Player/Jump.mp3",Sound.class).play();
             player.b2body.applyLinearImpulse(new Vector2(0,3),player.b2body.getWorldCenter(),true);
         }
         if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.b2body.getLinearVelocity().x <= 2){
@@ -168,15 +194,20 @@ public class PlayScreen implements Screen {
 
     }
 
+
+//    public void  updateAddress(){
+//        if(hp == 10){
+//            imageAddress = "Hud/Healthbar/1.png";
+//        }else if(hp == 9){
+//            imageAddress = "Hud/Healthbar/2.png";
+//        }
+//    }
+
     public void update(float dt){
         if(player.getHp() > 0){
             //check for input
             handleInput(dt);
         }
-//        else{
-//            game.setScreen(new EmptyScreen(game));
-//            Gdx.input.setInputProcessor(null);
-//        }
 
         handleSpawningItems();
 
@@ -221,7 +252,7 @@ public class PlayScreen implements Screen {
         //check if we ae at the beginning of the stage or end of stage to freeze camera
         if(player.b2body.getPosition().x > (Jannabi.V_WIDTH/2) /Jannabi.PPM ){
             if(player.b2body.getPosition().x < (((Jannabi.V_WIDTH * 7) + (Jannabi.V_WIDTH/2)) /Jannabi.PPM))
-                gamecam.position.x = player.b2body.getPosition().x;
+            gamecam.position.x = player.b2body.getPosition().x;
         }
 
 
@@ -248,13 +279,14 @@ public class PlayScreen implements Screen {
         //if we comment this we not gonna outline object but not sure we can collide or not
         b2dr.render(world, gamecam.combined);
 
+
         game.batch.setProjectionMatrix(gamecam.combined);
 
         //need to draw background before render and render before player.draw
         game.batch.begin();
         //multiple width to increase background (now get commented to check box2d)
         //can comment background  to check collision
-        game.batch.draw(background,0,0,(Jannabi.V_WIDTH /Jannabi.PPM) * 8,Jannabi.V_HEIGHT / Jannabi.PPM);
+        //game.batch.draw(background,0,0,(Jannabi.V_WIDTH /Jannabi.PPM) * 8,Jannabi.V_HEIGHT / Jannabi.PPM);
         game.batch.end();
 
         //need to render after background
@@ -269,19 +301,19 @@ public class PlayScreen implements Screen {
         for(Item item : items){
             item.draw(game.batch);
         }
-        if (gameOver() ){
-            game.setScreen(new GameOverScreen(game));
-
-        }
         game.batch.end();
 
-    }
 
-    public boolean gameOver(){
-        if (player.currentState == Player.State.DEAD && player.getStateTimer() > 2  ){
-            return true;
-        }else
-            return false;
+        //draw hud
+        hud.stage.draw();
+
+
+        //draw health bar
+        game.batch.begin();
+        game.batch.draw(healthBar,55,183,190,25);
+        game.batch.end();
+
+
     }
 
     @Override

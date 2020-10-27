@@ -10,6 +10,7 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.Jannabi;
+import com.mygdx.game.Scenes.Hud;
 import com.mygdx.game.Screen.PlayScreen;
 import com.mygdx.game.Sprites.Item.ItemDef;
 import com.mygdx.game.Sprites.Item.Potion;
@@ -119,7 +120,7 @@ public class Slime extends Enemy {
         fdef.filter.categoryBits = Jannabi.ENEMY_BIT;
         //what our slime can collide with
         fdef.filter.maskBits = Jannabi.DEFAULT_BIT | Jannabi.OTHERLAYER_BIT | Jannabi.ENEMY_BIT | Jannabi.JANNABI_BIT | Jannabi.PISTOL_BULLET_BIT
-                                | Jannabi.Edge_BIT;
+                | Jannabi.Edge_BIT;
 
         fdef.shape = shape;
         fdef.restitution = 0.2f;
@@ -145,6 +146,7 @@ public class Slime extends Enemy {
         beenHit = true;
         if(Hp <= 0){
             setToDestroy = true;
+            Hud.addScore(50);
             //define drop condition
             if(!drop){
                 screen.spawnItem(new ItemDef(new Vector2(b2body.getPosition().x,b2body.getPosition().y + 25),Potion.class));
