@@ -538,6 +538,10 @@ public class Player extends Sprite {
         }
     }
 
+    public float getStateTimer(){
+        return stateTimer;
+    }
+
     public void setFirstShot(boolean firstShot) {
         this.firstShot = firstShot;
     }

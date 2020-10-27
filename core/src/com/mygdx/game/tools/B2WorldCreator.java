@@ -57,7 +57,14 @@ public class B2WorldCreator {
         return slimes;
     }
 
-    public Iterator<Slime> getSlimeIterator()
+    public Iterator<Enemy> getEnemyIterator(){
+        Array<Enemy> enemies = new Array<Enemy>();
+        enemies.addAll(slimes);
+        enemies.addAll(blackShirts);
+        return enemies.iterator();
+    }
+
+    /*public Iterator<Slime> getSlimeIterator()
     {
         return slimes.iterator();
     }
@@ -69,7 +76,7 @@ public class B2WorldCreator {
     public Iterator<BlackShirt> getBlackShirtIterator()
     {
         return blackShirts.iterator();
-    }
+    }*/
 
     public Array<Enemy> getEnemies(){
         Array<Enemy> enemies = new Array<Enemy>();
