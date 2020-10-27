@@ -40,6 +40,10 @@ public class Player extends Sprite {
     PlayScreen screen;
     //pistol shot array
     private Array<Gun> Bullet;
+    private int lastPistolMag;
+    private int lastSmgMag;
+    private int lastShotgunMag;
+    private boolean duplicatedChange;
 
     //hit count of our main character
     private int hp;
@@ -112,8 +116,14 @@ public class Player extends Sprite {
         setBounds(0,0,32 / Jannabi.PPM,32 / Jannabi.PPM);
 
         Bullet = new Array<>();
-        currentAmmo = Jannabi.SHOTGUN_CLIP;
+        currentAmmo = 0;
         allAmmo = 52;
+
+        //check bullet in different gun
+        lastPistolMag = Jannabi.PISTOL_CLIP;
+        lastSmgMag = Jannabi.SMG_CLIP;
+        lastShotgunMag = Jannabi.SHOTGUN_CLIP;
+        duplicatedChange = false;
 
         sword = new Sword(screen,true,50);
         swordDefined = false;
@@ -145,7 +155,6 @@ public class Player extends Sprite {
         //Gdx.app.log("sword boolean","" + swordAttack);
 
         if(swordAttack){
-
             swordAttackTime += dt;
         }
         if(swordDefined){
@@ -195,7 +204,6 @@ public class Player extends Sprite {
                 swordDefined = false;
                 swordAttackTime =0;
             }
-
             return State.SWORD_ATTACK;
         }else if(b2body.getLinearVelocity().y > 0 || (b2body.getLinearVelocity().y < 0 && previousState == State.JUMPING)){
             if(Gdx.input.isKeyPressed(Input.Keys.UP)){
@@ -434,7 +442,8 @@ public class Player extends Sprite {
         }
     }
 
-    private int getClip(){
+
+    private short getClip(){
         switch (curGunState){
             case PISTOL:
                 return Jannabi.PISTOL_CLIP;
@@ -479,20 +488,58 @@ public class Player extends Sprite {
                 Gdx.app.log("change to sword","");
                 break;
             case "pistol":
-                curGunState = GunState.PISTOL;
+                if(!duplicatedChange){
+                    setLastMag(currentAmmo);
+                    curGunState = GunState.PISTOL;
+                    currentAmmo = lastPistolMag;
+                }
+                duplicatedChange = true;
+
                 Gdx.app.log("change to pistol","");
+
                 break;
             case "smg":
-                curGunState = GunState.SMG;
+                if(!duplicatedChange){
+                    setLastMag(currentAmmo);
+                    curGunState = GunState.SMG;
+                    currentAmmo = lastSmgMag;
+                }
+                duplicatedChange = true;
                 Gdx.app.log("change to smg","");
                 break;
             default:
-                curGunState = GunState.SHOTGUN;
+                if(!duplicatedChange){
+                    setLastMag(currentAmmo);
+                    curGunState = GunState.SHOTGUN;
+                    currentAmmo = lastShotgunMag;
+                }
+                duplicatedChange = true;
                 Gdx.app.log("change to shotgun","");
+        }
+    }
+
+    public void setLastMag(int lastMag){
+        switch (curGunState){
+            case PISTOL:
+                lastPistolMag = lastMag;
+                Gdx.app.log("set last mag to",""+lastMag);
+                break;
+            case SMG:
+                lastSmgMag = lastMag;
+                Gdx.app.log("set last mag to",""+lastMag);
+                break;
+            case SHOTGUN:
+                lastShotgunMag = lastMag;
+                Gdx.app.log("set last mag to",""+lastMag);
+                break;
         }
     }
 
     public void setFirstShot(boolean firstShot) {
         this.firstShot = firstShot;
+    }
+
+    public void setDuplicatedChange(boolean change){
+        duplicatedChange = change;
     }
 }

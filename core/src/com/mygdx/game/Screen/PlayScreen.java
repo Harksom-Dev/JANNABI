@@ -150,6 +150,7 @@ public class PlayScreen implements Screen {
         }else if(Gdx.input.isKeyJustPressed(Input.Keys.R)){
             player.changeWeapon("shotgun");
         }else{
+            player.setDuplicatedChange(false);
             player.setFirstShot(false);
         }
 
@@ -190,13 +191,7 @@ public class PlayScreen implements Screen {
             }
 
         }
-        /*for(Slime enemy : creator.getSlimes()){
-            enemy.update(dt);
-            if(enemy.getX() < player.getX() +224 / Jannabi.PPM){
-                enemy.b2body.setActive(true);
-                //we can use this to enable attack in the future
-            }
-        }*/
+
         for(Item item : items){
             item.update(dt);
         }
@@ -238,7 +233,7 @@ public class PlayScreen implements Screen {
         game.batch.begin();
         //multiple width to increase background (now get commented to check box2d)
         //can comment background  to check collision
-        //game.batch.draw(background,0,0,(Jannabi.V_WIDTH /Jannabi.PPM) * 8,Jannabi.V_HEIGHT / Jannabi.PPM);
+        game.batch.draw(background,0,0,(Jannabi.V_WIDTH /Jannabi.PPM) * 8,Jannabi.V_HEIGHT / Jannabi.PPM);
         game.batch.end();
 
         //need to render after background
