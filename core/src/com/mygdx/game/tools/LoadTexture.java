@@ -151,7 +151,7 @@ public class LoadTexture extends Sprite {
                 region = playerGetHit[index];
                 break;
             case SWORD_ATTACK:
-                region = playerSwordAttack[0].getKeyFrame(stateTimer,false);
+                region = playerSwordAttack[0].getKeyFrame(stateTimer,true);
                 break;
             case FALLING:
             case STANDING:

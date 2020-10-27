@@ -33,6 +33,7 @@ public class Jannabi extends Game {
 	public static final short Edge_BIT = 32;
 	public static final short ENEMY_BIT = 64;
 	public static final short ITEM_BIT = 128;
+	public static final short SWORDHITBOX_BIT = 128;
 	
 	@Override
 	public void create () {

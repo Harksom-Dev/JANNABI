@@ -59,13 +59,13 @@ public class Player extends Sprite {
     private float fireDelay;
     private boolean firstShot;
 
-    private int pistolClip = 13;
     private int currentAmmo;
     private int allAmmo;
     private boolean reloaded;
     private LoadTexture loader;
 
     protected Sword sword;
+    protected boolean swordDefined;
 
     //create Constructor
     public Player( PlayScreen screen){
@@ -110,13 +110,13 @@ public class Player extends Sprite {
 
         //link sprite to box2d
         setBounds(0,0,32 / Jannabi.PPM,32 / Jannabi.PPM);
-        //setRegion(playerStand);
 
         Bullet = new Array<>();
         currentAmmo = Jannabi.SHOTGUN_CLIP;
         allAmmo = 52;
 
         sword = new Sword(screen,true,50);
+        swordDefined = false;
 
 
     }
@@ -128,7 +128,6 @@ public class Player extends Sprite {
         setPosition(b2body.getPosition().x - getWidth() / 2 , b2body.getPosition().y - getHeight() / 3.5f);
         if(beenHit){
             animateDelay += dt;
-            Gdx.app.log("player gethit",""+animateDelay);
             setRegion(loader.getPlayerGetHitRegion(curGunState));
             if(animateDelay > 0.125f){
 
@@ -143,13 +142,15 @@ public class Player extends Sprite {
             if(bullet.isDestroyed())
                 Bullet.removeValue(bullet, true);
         }
+        //Gdx.app.log("sword boolean","" + swordAttack);
+
         if(swordAttack){
 
             swordAttackTime += dt;
-
         }
-        sword.update(dt);
-
+        if(swordDefined){
+            sword.update(dt,b2body.getPosition().x,b2body.getPosition().y);
+        }
 
 
     }
@@ -190,6 +191,8 @@ public class Player extends Sprite {
         }else if(swordAttack){
             if(swordAttackTime > 0.3f){
                 swordAttack = false;
+                sword.destroy();
+                swordDefined = false;
                 swordAttackTime =0;
             }
 
@@ -311,7 +314,7 @@ public class Player extends Sprite {
     //create box2d and set fixture
     private void definePlayer(){
         BodyDef bdef = new BodyDef();
-        //set box2d our animation now have width16 and height 32
+        //set box2d our animation now have width32 and height 32
         bdef.position.set(32 / Jannabi.PPM,32 / Jannabi.PPM);
         bdef.type = BodyDef.BodyType.DynamicBody;
         b2body = world.createBody(bdef);
@@ -319,7 +322,7 @@ public class Player extends Sprite {
         //create fixture
         FixtureDef fdef = new FixtureDef();
         CircleShape shape = new CircleShape();
-        shape.setRadius(7.5f / Jannabi.PPM);
+        shape.setRadius(7 / Jannabi.PPM);
 
         //PolygonShape shape = new PolygonShape();
         //shape.setAsBox(16,32);
@@ -337,7 +340,6 @@ public class Player extends Sprite {
 
 
 
-
     }
     public void attack(float dt){
         if(curGunState != GunState.SWORD){
@@ -345,8 +347,9 @@ public class Player extends Sprite {
 
         }else{
             //sword method
-            sword = new Sword(screen,runningRight ? true : false,50);
-            swing(dt);
+            if(!swordDefined) swing(dt);
+            //sword.definedBullet(b2body.getPosition().x,b2body.getPosition().y,runningRight ? true : false);
+
 
         }
     }
@@ -354,8 +357,10 @@ public class Player extends Sprite {
     //swing method for sword
     private void swing(float dt){
         //maybe check sword radius
-        fireDelay += dt;
+        sword.definedBullet(b2body.getPosition().x,b2body.getPosition().y,runningRight ? true : false,b2body.getLinearVelocity().x,b2body.getLinearVelocity().y);
         swordAttack = true;
+        swordDefined = true;
+
     }
 
     //fire method

@@ -1,6 +1,7 @@
 package com.mygdx.game.Sprites;
 
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -15,6 +16,7 @@ import com.mygdx.game.Sprites.Item.ItemDef;
 import com.mygdx.game.Sprites.Item.Potion;
 import com.mygdx.game.Sprites.Weapon.Gun;
 import com.mygdx.game.Sprites.Weapon.Pistol;
+import com.mygdx.game.Sprites.Weapon.Sword;
 
 public class Slime extends Enemy {
 
@@ -119,7 +121,7 @@ public class Slime extends Enemy {
         fdef.filter.categoryBits = Jannabi.ENEMY_BIT;
         //what our slime can collide with
         fdef.filter.maskBits = Jannabi.DEFAULT_BIT | Jannabi.OTHERLAYER_BIT | Jannabi.ENEMY_BIT | Jannabi.JANNABI_BIT | Jannabi.PISTOL_BULLET_BIT
-                                | Jannabi.Edge_BIT;
+                                | Jannabi.Edge_BIT | Jannabi.SWORDHITBOX_BIT;
 
         fdef.shape = shape;
         fdef.restitution = 0.2f;
@@ -153,6 +155,22 @@ public class Slime extends Enemy {
 
         }
 
+    }
+
+    @Override
+    public void getHit(Sword sword) {
+        Gdx.app.log("Im Bleeding!!!","");
+        Hp -= sword.getDmg();
+        beenHit = true;
+        if(Hp <= 0){
+            setToDestroy = true;
+            //define drop condition
+            if(!drop){
+                screen.spawnItem(new ItemDef(new Vector2(b2body.getPosition().x,b2body.getPosition().y + 25),Potion.class));
+                drop = true;
+            }
+
+        }
     }
 
     @Override
