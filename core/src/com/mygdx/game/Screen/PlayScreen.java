@@ -106,9 +106,7 @@ public class PlayScreen implements Screen {
 
         background = new Texture("Background/Stage1/stage1_fix.png");
 
-        //create atlas and load from path
-        //atlas = new TextureAtlas("Sprite/allCharacter/character_all.pack");
-        //trying Load class
+
         atlas = new TextureAtlas("Sprite/allCharacter/character_pack.pack");
 
         viewport = new FitViewport(1280,720);
@@ -295,6 +293,13 @@ public class PlayScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 
+        ////////////////// HEALTH BAR /////////////////////////////////////////////////
+        if (player.isBeenHit() && consHit == false) {
+            consHit = true;
+        }else{ consHit = false; }
+        // Width of progress bar on screen relevant to Screen width
+        float healthBarWidth = (50) * player.getHp() ;
+        game.batch.setProjectionMatrix(camera.combined);
 
         //render box2d
 
@@ -317,8 +322,14 @@ public class PlayScreen implements Screen {
         //draw things
         game.batch.begin();
         player.draw(game.batch);
-        for(Enemy enemy : creator.getSlimes()){ enemy.draw(game.batch); }
+        for(Enemy enemy : creator.getEnemies()){ enemy.draw(game.batch); }
         for(Item item : items){ item.draw(game.batch); }
+
+
+
+
+
+
         if (gameOver()){ game.setScreen(new GameOverScreen(game)); }
         game.batch.draw(jannaHead,100,100);
 
