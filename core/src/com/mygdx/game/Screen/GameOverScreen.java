@@ -3,6 +3,7 @@ package com.mygdx.game.Screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -60,9 +61,9 @@ public class GameOverScreen implements Screen {
         QuitButtonActive = new Texture("GameOver/QuitActive.png");
         QuitButtonInactive = new Texture("GameOver/QuitInactive.png");
         Test = new Texture("MainMenu/MainWallpaper.png");
-        /*music = Jannabi.manager.get("Audio/Music/GameOverMusic.mp3",Music.class);
+        music = Jannabi.manager.get("Audio/Music/GameOver.mp3",Music.class);
         music.setLooping(true);
-        music.play();*/
+        music.play();
     }
 
 
@@ -70,6 +71,10 @@ public class GameOverScreen implements Screen {
     public void show() {
        // stage = new Stage(viewport,((Jannabi) game).batch);
     }
+
+    public void touchButtonSound(){ Jannabi.manager.get("Audio/Sound/main/isTouchButton.mp3", Sound.class).play(); }
+    public  void isClicked(){ Jannabi.manager.get("Audio/Sound/main/selected.mp3", Sound.class).play(); }
+
 
     @Override
     public void render(float delta) {
@@ -87,9 +92,11 @@ public class GameOverScreen implements Screen {
             // TRYAGAIN
         if (Gdx.input.getX() > 330 && Gdx.input.getX() < 470 && Gdx.input.getY() > 530 && Gdx.input.getY() <573) {
             game.batch.draw(TryAgainButtonActive, TRYAGAIN_BUTTON_WIDTH, TRYAGAIN_BUTTON_HEIGHT);
+            touchButtonSound();
             Gdx.app.log("Now I'm in MAINMENU BUTT","Pass");
                 if (Gdx.input.isTouched()){
                     Gdx.app.log("Now I'm in TRYAGAIN BUTT","Pass");
+                    isClicked();
                     this.dispose();
                     game.setScreen(new PlayScreen(game));
                     game.batch.end();
@@ -102,8 +109,10 @@ public class GameOverScreen implements Screen {
             //MAINMENU
         if (Gdx.input.getX() > 545 && Gdx.input.getX() < 735 && Gdx.input.getY() > 530 && Gdx.input.getY() <573){
                 game.batch.draw(MainMenuButtonActive, MAINMENU_BUTTON_WIDTH, MAINMENU_BUTTON_HEIGHT);
+                touchButtonSound();
                 if (Gdx.input.isTouched()){
                     Gdx.app.log("Now I'm in MAINMENU BUTT","Pass");
+                    isClicked();
                     this.dispose();
                     game.batch.end();
                     game.setScreen(new MainMenuScreen(game));
@@ -115,6 +124,7 @@ public class GameOverScreen implements Screen {
             //QUIT
         if (Gdx.input.getX() > 759 && Gdx.input.getX() < 948 && Gdx.input.getY() > 530 && Gdx.input.getY() <573){
             game.batch.draw(QuitButtonActive, QUIT_BUTTON_WIDTH, QUIT_BUTTON_HEIGHT);
+            touchButtonSound();
                 if (Gdx.input.isTouched()) {
                     Gdx.app.exit();
                 }
@@ -147,7 +157,7 @@ public class GameOverScreen implements Screen {
 
     @Override
     public void dispose() {
-        //music.dispose();
+        music.dispose();
 
     }
 }

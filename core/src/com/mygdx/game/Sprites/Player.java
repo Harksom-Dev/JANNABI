@@ -2,6 +2,7 @@ package com.mygdx.game.Sprites;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -9,6 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.Jannabi;
+import com.mygdx.game.Scenes.Hud;
 import com.mygdx.game.Screen.PlayScreen;
 import com.mygdx.game.Sprites.Weapon.*;
 import com.mygdx.game.tools.LoadTexture;
@@ -149,6 +151,7 @@ public class Player extends Sprite {
         }
         for(Gun bullet : Bullet) {
             bullet.update(dt);
+
             if(bullet.isDestroyed())
                 Bullet.removeValue(bullet, true);
         }
@@ -193,6 +196,7 @@ public class Player extends Sprite {
     //this class check that we jump or do other animation
     private State getState(float dt){
         if(hp <= 0){
+            Jannabi.manager.get("Audio/Sound/gameoversound.mp3",Sound.class).play();
             return State.DEAD;
         }else if(beenHit){
             beenHit = false;
@@ -365,6 +369,7 @@ public class Player extends Sprite {
     //swing method for sword
     private void swing(float dt){
         //maybe check sword radius
+        Jannabi.manager.get("Audio/Sound/gun/sword.mp3", Sound.class).play();
         sword.definedBullet(b2body.getPosition().x,b2body.getPosition().y,runningRight ? true : false,b2body.getLinearVelocity().x,b2body.getLinearVelocity().y);
         swordAttack = true;
         swordDefined = true;
@@ -376,42 +381,53 @@ public class Player extends Sprite {
         if(currentAmmo > 0){
             fireDelay += dt;
             if(curGunState == GunState.PISTOL){
+                Jannabi.manager.get("Audio/Sound/gun/pistol.wav", Sound.class).play();
                 if(fireDelay > Jannabi.PISTOL_FIRE_RATE){
+
                     Bullet.add(new Pistol(screen, b2body.getPosition().x, b2body.getPosition().y, runningRight ? true : false, aimUp ? true:false,
                             aimDown ? true : false,20,Jannabi.PISTOL_CLIP));
-                    currentAmmo--;
+                    currentAmmo-- ;
+                            Hud.updateAmmo(currentAmmo);
                     fireDelay = 0;
                 }else if(!firstShot){
                     Bullet.add(new Pistol(screen, b2body.getPosition().x, b2body.getPosition().y, runningRight ? true : false, aimUp ? true:false,
                             aimDown ? true : false,20,Jannabi.PISTOL_CLIP));
-                    currentAmmo--;
+                    currentAmmo-- ;
+                    Hud.updateAmmo(currentAmmo);
                     firstShot = true;
 
                 }
 
             }else if(curGunState == GunState.SMG){
+                Jannabi.manager.get("Audio/Sound/gun/smg.mp3", Sound.class).play();
                 if(fireDelay > Jannabi.SMG_FIRE_RATE){
+
                     Bullet.add(new Smg(screen, b2body.getPosition().x, b2body.getPosition().y, runningRight ? true : false, aimUp ? true:false,
                             aimDown ? true : false,10,Jannabi.SMG_CLIP));
-                    currentAmmo--;
+                    currentAmmo-- ;
+                    Hud.updateAmmo(currentAmmo);
                     fireDelay = 0;
                 }else if(!firstShot){
                     Bullet.add(new Smg(screen, b2body.getPosition().x, b2body.getPosition().y, runningRight ? true : false, aimUp ? true:false,
                             aimDown ? true : false,10,Jannabi.SMG_CLIP));
-                    currentAmmo--;
+                    currentAmmo-- ;
+                    Hud.updateAmmo(currentAmmo);
                     firstShot = true;
                 }
 
             }else if(curGunState == GunState.SHOTGUN){
+                Jannabi.manager.get("Audio/Sound/gun/shotGun.mp3", Sound.class).play();
                 if(fireDelay > Jannabi.SHOTGUN_FIRE_RATE){
                     Bullet.add(new Shotgun(screen, b2body.getPosition().x, b2body.getPosition().y, runningRight ? true : false, aimUp ? true:false,
                             aimDown ? true : false,10,Jannabi.SHOTGUN_CLIP));
-                    currentAmmo--;
+                    currentAmmo-- ;
+                    Hud.updateAmmo(currentAmmo);
                     fireDelay = 0;
                 }else if(!firstShot){
                     Bullet.add(new Shotgun(screen, b2body.getPosition().x, b2body.getPosition().y, runningRight ? true : false, aimUp ? true:false,
                             aimDown ? true : false,10,Jannabi.SHOTGUN_CLIP));
-                    currentAmmo--;
+                    currentAmmo-- ;
+                    Hud.updateAmmo(currentAmmo);
                     firstShot = true;
                 }
             }
@@ -435,17 +451,19 @@ public class Player extends Sprite {
     private void reload(){
         //reload
         if(reloaded && allAmmo > 0){
+            Jannabi.manager.get("Audio/Sound/gun/reload.mp3", Sound.class).play();
             Bullet.clear();
             Gdx.app.log("ammo","reload complete");
             //need to change when different gunState
             allAmmo -= getClip();
+            if (allAmmo < 0 ){allAmmo = 0 ;}
             currentAmmo = getClip();
+            Hud.updateAmmo(currentAmmo);
+            Hud.updateAllammo(allAmmo);
             reloaded = false;
             Gdx.app.log("ammo = "+allAmmo,"ammoleft ");
         }
     }
-
-
     private short getClip(){
         switch (curGunState){
             case PISTOL:
@@ -467,7 +485,9 @@ public class Player extends Sprite {
     }
 
     public void getHit(){
+        Jannabi.manager.get("Audio/Sound/player/beenHit.wav", Sound.class).play();
         hp--;
+        if (hp < 0)hp=0;
         beenHit = true;
         //push back when hit
         //b2body.applyLinearImpulse(new Vector2(100,0),b2body.getWorldCenter(),true);
@@ -476,6 +496,7 @@ public class Player extends Sprite {
     }
 
     public void getPotion(){
+        Jannabi.manager.get("Audio/Sound/player/pickup.wav", Sound.class).play();
         hp+= 3;
         Gdx.app.log("hp Up","cur hp is" + hp);
     }
@@ -495,6 +516,8 @@ public class Player extends Sprite {
                     setLastMag(currentAmmo);
                     curGunState = GunState.PISTOL;
                     currentAmmo = lastPistolMag;
+                    Hud.updateAmmo(currentAmmo);
+                    Hud.updateAllammo(allAmmo);
                 }
                 duplicatedChange = true;
 
@@ -506,6 +529,8 @@ public class Player extends Sprite {
                     setLastMag(currentAmmo);
                     curGunState = GunState.SMG;
                     currentAmmo = lastSmgMag;
+                    Hud.updateAmmo(currentAmmo);
+                    Hud.updateAllammo(allAmmo);
                 }
                 duplicatedChange = true;
                 Gdx.app.log("change to smg","");
@@ -515,6 +540,8 @@ public class Player extends Sprite {
                     setLastMag(currentAmmo);
                     curGunState = GunState.SHOTGUN;
                     currentAmmo = lastShotgunMag;
+                    Hud.updateAmmo(currentAmmo);
+                    Hud.updateAllammo(allAmmo);
                 }
                 duplicatedChange = true;
                 Gdx.app.log("change to shotgun","");

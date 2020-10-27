@@ -23,6 +23,7 @@ public class BlackShirt extends Enemy {
 
     private float animateDelay;         //delay time
     private float stateTime;
+    private float walkTime;
     private Animation<TextureRegion> stayAnimation;
     private Animation<TextureRegion> walkAnimation;
     private Animation<TextureRegion> deadAnimation;
@@ -51,17 +52,19 @@ public class BlackShirt extends Enemy {
         pauseJump = 1;
         beenHit = false;
         drop = false;
-        //setRegion();
+        walkTime = 0;
+        currentState = State.STAND;
     }
 
     @Override
     protected void setTexture() {
+        stateTime = 0;
         for(int i =0; i < 2 ;i++){
             frames.add(new TextureRegion(screen.getAtlas().findRegion("tamruot_stand"),i*32,0,32,32));
         }
         stayAnimation = new Animation<TextureRegion>(0.5f,frames);
         frames.clear();
-        stateTime = 0;
+
         animateDelay = 0;
         for(int i = 0; i < 4 ;i++){
             frames.add(new TextureRegion(screen.getAtlas().findRegion("tamruot_walk"),i*32,0,32,32));
@@ -98,7 +101,7 @@ public class BlackShirt extends Enemy {
         //create fixture
         FixtureDef fdef = new FixtureDef();
         CircleShape shape = new CircleShape();
-        shape.setRadius(6 / Jannabi.PPM);
+        shape.setRadius(8 / Jannabi.PPM);
 
         //PolygonShape shape = new PolygonShape();
         //shape.setAsBox(16,32);
@@ -126,13 +129,13 @@ public class BlackShirt extends Enemy {
                 region = stayAnimation.getKeyFrame(stateTime,true);
                 break;
             case ATTACK:
-                region = attackAnimation.getKeyFrame(0.3f,false);
+                region = attackAnimation.getKeyFrame(stateTime,false);
                 break;
             case GETHIT:
-                region = getHitAnimation.getKeyFrame(0.5f,true);
+                region = getHitAnimation.getKeyFrame(stateTime,true);
                 break;
             default:
-                region = deadAnimation.getKeyFrame(0.5f,true);
+                region = deadAnimation.getKeyFrame(stateTime,true);
                 break;
 
         }
@@ -143,13 +146,16 @@ public class BlackShirt extends Enemy {
             region.flip(true,false);
         }
 
+        stateTime = currentState == previousState ? stateTime + dt : 0;
+        previousState = currentState;
         return region;
+
     }
 
     @Override
     public void update(float dt) {
         stateTime += dt;
-        //setRegion(getFrame(dt));
+        setRegion(getFrame(dt));
         if(setToDestroy && !destroy){
             //world.destroyBody(b2body);
             //destroy = true;
@@ -218,11 +224,11 @@ public class BlackShirt extends Enemy {
         pauseJump -= dt;
         if(pauseJump < 0){
             if(moveLeft && b2body.getLinearVelocity().y == 0){
-                b2body.applyLinearImpulse(velocity,b2body.getWorldCenter(),true);
+                b2body.applyLinearImpulse(new Vector2(0.2f,0),b2body.getWorldCenter(),true);
                 moveLeft = false;
                 pauseJump = 1.5f;
             }else if(!moveLeft && b2body.getLinearVelocity().y == 0){
-                //b2body.applyLinearImpulse(new Vector2(0.07f,0.15f),b2body.getWorldCenter(),true);
+                b2body.applyLinearImpulse(new Vector2(-0.2f,0),b2body.getWorldCenter(),true);
                 moveLeft = true;
                 pauseJump = 1.5f;
             }if(b2body.getLinearVelocity().y == 0 && b2body.getLinearVelocity().x !=0){

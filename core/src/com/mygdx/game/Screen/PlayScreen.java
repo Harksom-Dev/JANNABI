@@ -104,7 +104,7 @@ public class PlayScreen implements Screen {
 
     public PlayScreen(Jannabi game) {
 
-        background = new Texture("Background/Stage1/stage1.png");
+        background = new Texture("Background/Stage1/stage1_fix.png");
 
         atlas = new TextureAtlas("Sprite/allCharacter/character_pack.pack");
 
@@ -185,6 +185,7 @@ public class PlayScreen implements Screen {
     //create handle input when we get input from user
     public void handleInput( float dt){
         if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && player.b2body.getLinearVelocity().y == 0){
+            Jannabi.manager.get("Audio/Sound/player/jump.mp3", Sound.class).play();
             player.b2body.applyLinearImpulse(new Vector2(0,3),player.b2body.getWorldCenter(),true);
         }
         if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.b2body.getLinearVelocity().x <= 2){
@@ -196,14 +197,18 @@ public class PlayScreen implements Screen {
         if(Gdx.input.isKeyPressed(Input.Keys.C)){
             player.attack(dt);
         }else if(Gdx.input.isKeyJustPressed(Input.Keys.Q)){
+            Jannabi.manager.get("Audio/Sound/gun/changeWeapons.mp3", Sound.class).play();
             player.changeWeapon("sword");
         }else if(Gdx.input.isKeyJustPressed(Input.Keys.W)){
+            Jannabi.manager.get("Audio/Sound/gun/changeWeapons.mp3", Sound.class).play();
             player.changeWeapon("pistol");
         }else if(Gdx.input.isKeyJustPressed(Input.Keys.E)){
+            Jannabi.manager.get("Audio/Sound/gun/changeWeapons.mp3", Sound.class).play();
             player.changeWeapon("smg");
         }else if(Gdx.input.isKeyJustPressed(Input.Keys.R)){
+            Jannabi.manager.get("Audio/Sound/gun/changeWeapons.mp3", Sound.class).play();
             player.changeWeapon("shotgun");
-        }else{
+        } else{
             player.setDuplicatedChange(false);
             player.setFirstShot(false);
         }
@@ -247,25 +252,6 @@ public class PlayScreen implements Screen {
 
         }
 
-       /* BlackShirtIterator = creator.getBlackShirtIterator();
-        while(BlackShirtIterator.hasNext())
-        {
-            BlackShirt nextBlackShirt = BlackShirtIterator.next();
-            nextBlackShirt.update(dt);
-            if(nextBlackShirt.getX()<player.getX()+224 / Jannabi.PPM)
-                nextBlackShirt.b2body.setActive((true));
-            if (nextBlackShirt.getToDestroy() && !nextBlackShirt.getDestroyed())
-            {
-                world.destroyBody(nextBlackShirt.b2body);
-                nextBlackShirt.setDestroyed(true);
-            }
-            if (nextBlackShirt.getStateTime() >= 1 && nextBlackShirt.getDestroyed())
-            {
-                Gdx.app.log("removing slime from array", "");
-                slimeIterator.remove();
-            }
-        }*/
-
         for(Item item : items){
             item.update(dt);
         }
@@ -275,14 +261,20 @@ public class PlayScreen implements Screen {
             if(player.b2body.getPosition().x < (((Jannabi.V_WIDTH * 7) + (Jannabi.V_WIDTH/2)) /Jannabi.PPM))
             gamecam.position.x = player.b2body.getPosition().x;
         }
-
-
         //update camera
         gamecam.update();
 
         //set view to camera
         renderer.setView(gamecam);
     }
+
+    private void shortToExit(){
+        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)){
+            this.dispose();
+            game.setScreen(new MainMenuScreen(game));
+        }
+    }
+
 
     @Override
     public void render(float delta) {
@@ -292,7 +284,9 @@ public class PlayScreen implements Screen {
 
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        ////////////////// HUD /////////////////////////////////////////////////
+
+
+        ////////////////// HEALTH BAR /////////////////////////////////////////////////
         if (player.isBeenHit() && consHit == false) {
             consHit = true;
         }else{ consHit = false; }
@@ -302,6 +296,7 @@ public class PlayScreen implements Screen {
 
         ////////////////////////////////////////////////////////////////////////
 
+
         //if we comment this we not gonna outline object but not sure we can collide or not
         b2dr.render(world, gamecam.combined);
         game.batch.setProjectionMatrix(gamecam.combined);
@@ -309,7 +304,7 @@ public class PlayScreen implements Screen {
         game.batch.begin();
         //multiple width to increase background (now get commented to check box2d)
         //can comment background  to check collision
-        //game.batch.draw(background,0,0,(Jannabi.V_WIDTH /Jannabi.PPM) * 8,Jannabi.V_HEIGHT / Jannabi.PPM);
+        game.batch.draw(background,0,0,(Jannabi.V_WIDTH /Jannabi.PPM) * 8,Jannabi.V_HEIGHT / Jannabi.PPM);
         game.batch.end();
         //need to render after background
         renderer.render();
@@ -328,8 +323,10 @@ public class PlayScreen implements Screen {
         shapeRenderer.rect(100, 625, healthBarWidth, 25);
         shapeRenderer.end();
         hud.stage.draw();
+        shortToExit();
     }
     public boolean gameOver(){
+
         if (player.currentState == Player.State.DEAD && player.getStateTimer() > 2  ){
             return true;
         }else{return false;}

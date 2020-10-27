@@ -2,6 +2,7 @@ package com.mygdx.game.Screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -35,11 +36,11 @@ public class EmptyScreen2 implements Screen {
     public EmptyScreen2(Jannabi game) {
         this.game = game;
         viewport = new FitViewport(SCREEN_WIDTH, SCREEN_HEIGHT,new OrthographicCamera());
-        stage = new Stage(viewport,((Jannabi) game).batch);
+        stage = new Stage(viewport, game.batch);
         cam = new OrthographicCamera();
         Background = new Texture("Loading/main.png");
         Background2 = new Texture("Loading/main2.png");
-        //Jannabi.manager.get("Audio/Sound/MainMenu/openUp.mp3", Sound.class).play();
+        Jannabi.manager.get("Audio/Music/Harksom.mp3", Music.class).play();
     }
 
     @Override

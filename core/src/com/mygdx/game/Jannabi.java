@@ -50,24 +50,28 @@ public class Jannabi extends Game {
 	public void create () {
 		batch = new SpriteBatch();
 		manager = new AssetManager();
-		/*manager.load("Audio/Music/i.mp3",Music.class);
-		manager.load("Audio/Music/GameOverMusic.mp3",Music.class);
-		manager.load("Audio/Sound/Slime/SlimeBeenHit.mp3", Sound.class);
-		manager.load("Audio/Sound/Slime/PickupPotion.mp3",Sound.class);
-		manager.load("Audio/Sound/Slime/hit.mp3",Sound.class);
-		manager.load("Audio/Sound/Weapons/Gun.wav",Sound.class);
-		manager.load("Audio/Sound/MainMenu/Select.mp3",Sound.class);
-		manager.load("Audio/Sound/MainMenu/Selected.mp3",Sound.class);
-		manager.load("Audio/Sound/MainMenu/openUp.mp3",Sound.class);
-		manager.load("Audio/Sound/Player/beenHit.wav",Sound.class);
-		manager.load("Audio/Sound/Player/Jump.mp3",Sound.class);
-		manager.load("Audio/Sound/GameOver/GameOver.mp3",Sound.class);
-		manager.load("Audio/Sound/Weapons/pistolReload.mp3",Sound.class);*/
+		manager.load("Audio/Music/GameOver.mp3", Music.class);
+		manager.load("Audio/Music/Harksom.mp3", Music.class);
+		manager.load("Audio/Music/jannabi.mp3", Music.class);
+		manager.load("Audio/Music/MainMenu.mp3", Music.class);
+		manager.load("Audio/Sound/gameoversound.mp3", Sound.class);
+		manager.load("Audio/Sound/gun/pistol.wav", Sound.class);
+		manager.load("Audio/Sound/gun/reload.mp3", Sound.class);
+		manager.load("Audio/Sound/gun/shotGun.mp3", Sound.class);
+		manager.load("Audio/Sound/gun/smg.mp3", Sound.class);
+		manager.load("Audio/Sound/gun/sword.mp3", Sound.class);
+		manager.load("Audio/Sound/gun/changeWeapons.mp3", Sound.class);
+		manager.load("Audio/Sound/gun/outOfAmmo.wav", Sound.class);
+		manager.load("Audio/Sound/main/isTouchButton.mp3", Sound.class);
+		manager.load("Audio/Sound/main/selected.mp3", Sound.class);
+		manager.load("Audio/Sound/player/beenHit.wav", Sound.class);
+		manager.load("Audio/Sound/player/jump.mp3", Sound.class);
+		manager.load("Audio/Sound/player/pickup.wav", Sound.class);
 		manager.finishLoading();
 
-		//setScreen(new EmptyScreen2(this));
+		setScreen(new EmptyScreen2(this));
 		//setScreen(new GameOverScreen(this));
-		setScreen(new PlayScreen(this));
+		//setScreen(new PlayScreen(this));
 		//setScreen(new LoadingScreen(this));
 
 	}
