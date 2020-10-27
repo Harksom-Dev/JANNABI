@@ -62,6 +62,7 @@ public class Hud {
         ammo = player.getAmmo();
         allAmmo = player.getAllAmmo();
 
+
         //image implement
         ammoBox = new Image(new Texture("Hud/Ammo-box.png"));
         janabi = new Image(new Texture("Hud/Janabi.png"));

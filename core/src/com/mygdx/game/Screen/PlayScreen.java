@@ -17,6 +17,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.Jannabi;
+import com.mygdx.game.Scenes.Hud;
 import com.mygdx.game.Sprites.Enemy.BlackShirt;
 import com.mygdx.game.Sprites.Enemy.Enemy;
 import com.mygdx.game.Sprites.Item.Item;
@@ -65,6 +66,8 @@ public class PlayScreen implements Screen {
     private Array<Item> items;
     private LinkedBlockingDeque<ItemDef> itemToSpawn;
 
+    Hud hud;
+
     public PlayScreen(Jannabi game) {
 
         background = new Texture("Background/Stage1/stage1_fix.png");
@@ -77,6 +80,8 @@ public class PlayScreen implements Screen {
 
         //set this class to current screen
         this.game = game;
+
+
 
         //set game camera
         gamecam = new OrthographicCamera();
@@ -102,7 +107,7 @@ public class PlayScreen implements Screen {
 
         //use this class to use collision detect
         world.setContactListener(new worldContactListener());
-
+        hud = new Hud(game.batch,player);
         //initialize item
         items = new Array<Item>();
         itemToSpawn = new LinkedBlockingDeque<ItemDef>();
@@ -244,7 +249,7 @@ public class PlayScreen implements Screen {
         game.batch.begin();
         //multiple width to increase background (now get commented to check box2d)
         //can comment background  to check collision
-        //game.batch.draw(background,0,0,(Jannabi.V_WIDTH /Jannabi.PPM) * 8,Jannabi.V_HEIGHT / Jannabi.PPM);
+        game.batch.draw(background,0,0,(Jannabi.V_WIDTH /Jannabi.PPM) * 8,Jannabi.V_HEIGHT / Jannabi.PPM);
         game.batch.end();
 
         //need to render after background
