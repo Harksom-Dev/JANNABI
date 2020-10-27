@@ -3,11 +3,10 @@ package com.mygdx.game.tools;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.physics.box2d.*;
 import com.mygdx.game.Jannabi;
-import com.mygdx.game.Sprites.Enemy;
+import com.mygdx.game.Sprites.Enemy.Enemy;
 import com.mygdx.game.Sprites.Item.Item;
 import com.mygdx.game.Sprites.Player;
 import com.mygdx.game.Sprites.Weapon.Gun;
-import com.mygdx.game.Sprites.Weapon.Pistol;
 import com.mygdx.game.Sprites.Weapon.Sword;
 
 //this class get called when 2 box2d collision

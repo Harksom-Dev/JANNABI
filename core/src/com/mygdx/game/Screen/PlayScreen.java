@@ -17,12 +17,13 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.Jannabi;
-import com.mygdx.game.Sprites.Enemy;
+import com.mygdx.game.Sprites.Enemy.BlackShirt;
+import com.mygdx.game.Sprites.Enemy.Enemy;
 import com.mygdx.game.Sprites.Item.Item;
 import com.mygdx.game.Sprites.Item.ItemDef;
 import com.mygdx.game.Sprites.Item.Potion;
 import com.mygdx.game.Sprites.Player;
-import com.mygdx.game.Sprites.Slime;
+import com.mygdx.game.Sprites.Enemy.Slime;
 import com.mygdx.game.tools.B2WorldCreator;
 import com.mygdx.game.tools.worldContactListener;
 
@@ -57,6 +58,7 @@ public class PlayScreen implements Screen {
 
     //iterator
     private Iterator<Slime> slimeIterator;
+    private Iterator<BlackShirt> BlackShirtIterator;
 
     //array for item
     private Array<Item> items;
@@ -64,7 +66,7 @@ public class PlayScreen implements Screen {
 
     public PlayScreen(Jannabi game) {
 
-        background = new Texture("Background/Stage1/stage1.png");
+        background = new Texture("Background/Stage1/stage1_fix.png");
 
         //create atlas and load from path
         //atlas = new TextureAtlas("Sprite/allCharacter/character_all.pack");
@@ -192,6 +194,27 @@ public class PlayScreen implements Screen {
 
         }
 
+        BlackShirtIterator = creator.getBlackShirtIterator();
+        while(BlackShirtIterator.hasNext())
+        {
+            BlackShirt nextBlackShirt = BlackShirtIterator.next();
+            nextBlackShirt.update(dt);
+            if(nextBlackShirt.getX()<player.getX()+224 / Jannabi.PPM)
+                nextBlackShirt.b2body.setActive((true));
+            if (nextBlackShirt.getToDestroy() && !nextBlackShirt.getDestroyed())
+            {
+                world.destroyBody(nextBlackShirt.b2body);
+                nextBlackShirt.setDestroyed(true);
+            }
+
+            if (nextBlackShirt.getStateTime() >= 1 && nextBlackShirt.getDestroyed())
+            {
+                Gdx.app.log("removing slime from array", "");
+                slimeIterator.remove();
+            }
+
+        }
+
         for(Item item : items){
             item.update(dt);
         }
@@ -242,9 +265,12 @@ public class PlayScreen implements Screen {
         //draw things
         game.batch.begin();
         player.draw(game.batch);
-        for(Enemy enemy : creator.getSlimes()){
+        for(Enemy enemy : creator.getEnemies()){
             enemy.draw(game.batch);
         }
+        /*for(Enemy enemy : creator.getBlackShirts()){
+            enemy.draw(game.batch);
+        }*/
         for(Item item : items){
             item.draw(game.batch);
         }

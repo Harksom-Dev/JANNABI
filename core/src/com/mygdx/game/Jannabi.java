@@ -5,7 +5,9 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.mygdx.game.Screen.EmptyScreen2;
 import com.mygdx.game.Screen.PlayScreen;
 
 public class Jannabi extends Game {
@@ -50,5 +52,9 @@ public class Jannabi extends Game {
 	@Override
 	public void dispose () {
 		batch.dispose();
+	}
+
+	public Batch getBatch() {
+		return batch;
 	}
 }
