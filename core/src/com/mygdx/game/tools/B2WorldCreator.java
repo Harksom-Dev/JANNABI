@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.Jannabi;
 import com.mygdx.game.Screen.PlayScreen;
 import com.mygdx.game.Sprites.Enemy.BlackShirt;
+import com.mygdx.game.Sprites.Enemy.Boss;
 import com.mygdx.game.Sprites.Enemy.Enemy;
 import com.mygdx.game.Sprites.Enemy.Slime;
 import com.mygdx.game.StageTile.TestLayer;
@@ -25,6 +26,7 @@ public class B2WorldCreator {
     //create array for store spawn point for enemy
     private Array<Slime> slimes;
     private Array<BlackShirt> blackShirts;
+    private Array<Boss> boss;
     public B2WorldCreator(PlayScreen screen){
         World world = screen.getWorld();
         TiledMap map = screen.getMap();
@@ -49,6 +51,12 @@ public class B2WorldCreator {
             blackShirts.add(new BlackShirt(screen,rect.getX()/ Jannabi.PPM, rect.getY(),200));
         }
 
+        boss = new Array<Boss>();
+        for(MapObject object : map.getLayers().get(15).getObjects().getByType(RectangleMapObject.class)){
+            Rectangle rect = ((RectangleMapObject) object).getRectangle();
+            boss.add(new Boss(screen,rect.getX()/ Jannabi.PPM, rect.getY(),400));
+        }
+
 
 
     }
@@ -61,6 +69,7 @@ public class B2WorldCreator {
         Array<Enemy> enemies = new Array<Enemy>();
         enemies.addAll(slimes);
         enemies.addAll(blackShirts);
+        enemies.addAll(boss);
         return enemies.iterator();
     }
 
@@ -82,6 +91,7 @@ public class B2WorldCreator {
         Array<Enemy> enemies = new Array<Enemy>();
         enemies.addAll(slimes);
         enemies.addAll(blackShirts);
+        enemies.addAll(boss);
         return enemies;
     }
     private  void getObjectLayer(World world, TiledMap map, int layer,short bit) {
