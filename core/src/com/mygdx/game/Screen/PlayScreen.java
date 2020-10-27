@@ -13,10 +13,13 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.Jannabi;
+import com.mygdx.game.Scenes.Hud;
 import com.mygdx.game.Sprites.Enemy;
 import com.mygdx.game.Sprites.Item.Item;
 import com.mygdx.game.Sprites.Item.ItemDef;
@@ -25,15 +28,19 @@ import com.mygdx.game.Sprites.Player;
 import com.mygdx.game.Sprites.Slime;
 import com.mygdx.game.tools.B2WorldCreator;
 import com.mygdx.game.tools.worldContactListener;
+import com.mygdx.game.Sprites.Player;
 
 import java.util.Iterator;
-import java.util.PriorityQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 
 
 public class PlayScreen implements Screen {
+    public String imageAddress;
     //create Texture for background
     Texture background;
+
+    //creat Texture fot health bar
+    Texture healthBar;
 
     //implement main game camera and viewport
     private Jannabi game;
@@ -50,6 +57,7 @@ public class PlayScreen implements Screen {
 
     //sprite variable
     private Player player;
+    public static int hp = 10;
 
     //box2d variable
     private World world;
@@ -63,13 +71,31 @@ public class PlayScreen implements Screen {
     private Array<Item> items;
     private LinkedBlockingDeque<ItemDef> itemToSpawn;
 
+
+    //hud
+    private Hud hud;
+
+    Stage stage;
+    Viewport viewport;
+
+
     public PlayScreen(Jannabi game) {
 
         background = new Texture("Background/Stage1/stage1.png");
 
-        //create atlas and load from path
-        atlas = new TextureAtlas("Sprite/allCharacter/character_all.pack");
+        //health bar Texture
+        healthBar = new Texture("Hud/Healthbar/1.png");
 
+        //create atlas and load from path
+        //atlas = new TextureAtlas("Sprite/allCharacter/character_all.pack");
+        //trying Load class
+        atlas = new TextureAtlas("Sprite/allCharacter/character_pack.pack");
+
+//        updateAddress();
+//        healthBar = new Texture(imageAddress);
+
+        viewport = new FitViewport(1280,720);
+        stage = new Stage(viewport,((Jannabi)game).batch);
         //set this class to current screen
         this.game = game;
 
@@ -93,7 +119,7 @@ public class PlayScreen implements Screen {
         creator = new B2WorldCreator(this);
 
         //create player class
-        player = new Player(this);
+        this.player = new Player(this);
 
         //use this class to use collision detect
         world.setContactListener(new worldContactListener());
@@ -101,6 +127,9 @@ public class PlayScreen implements Screen {
         //initialize item
         items = new Array<Item>();
         itemToSpawn = new LinkedBlockingDeque<ItemDef>();
+
+        //Hud
+        hud = new Hud(game.batch, this.player);
     }
 
     //create getter for texture atlas
@@ -137,11 +166,30 @@ public class PlayScreen implements Screen {
         if(Gdx.input.isKeyPressed(Input.Keys.LEFT) && player.b2body.getLinearVelocity().x >= -2){
             player.b2body.applyLinearImpulse(new Vector2(-0.07f,0),player.b2body.getWorldCenter(),true);
         }
-        if(Gdx.input.isKeyJustPressed(Input.Keys.C)){
-            player.fire();
+        if(Gdx.input.isKeyPressed(Input.Keys.C)){
+            player.fire(dt);
+        }else if(Gdx.input.isKeyJustPressed(Input.Keys.Q)){
+            player.changeGun("sword");
+        }else if(Gdx.input.isKeyJustPressed(Input.Keys.W)){
+            player.changeGun("pistol");
+        }else if(Gdx.input.isKeyJustPressed(Input.Keys.E)){
+            player.changeGun("smg");
+        }else if(Gdx.input.isKeyJustPressed(Input.Keys.R)){
+            player.changeGun("shotgun");
+        }else{
+            player.setFirstShot(false);
         }
 
     }
+
+
+//    public void  updateAddress(){
+//        if(hp == 10){
+//            imageAddress = "Hud/Healthbar/1.png";
+//        }else if(hp == 9){
+//            imageAddress = "Hud/Healthbar/2.png";
+//        }
+//    }
 
     public void update(float dt){
         if(player.getHp() > 0){
@@ -151,29 +199,37 @@ public class PlayScreen implements Screen {
 
         handleSpawningItems();
 
+//        updateAddress();
+
         //dont know what this doing
         world.step(1/60f,6,2);
+
+//        if(hp == 10){
+//            healthBar = new Texture("Hud/Healthbar/1.png");
+//        }else if(hp == 9){
+//            healthBar = new Texture("Hud/Healthbar/2.png");
+//        }
 
         //update player
         player.update(dt);
         //spawn all slimes
-        /////////////need to destroy in playscreen////////////
+        /////////////need to destroy enemy in playscreen////////////
         slimeIterator = creator.getSlimeIterator();
         while(slimeIterator.hasNext())
         {
-            Slime nextGoomba = slimeIterator.next();
-            nextGoomba.update(dt);
-            if(nextGoomba.getX()<player.getX()+224 / Jannabi.PPM)
-                nextGoomba.b2body.setActive((true));
-            if (nextGoomba.getToDestroy() && !nextGoomba.getDestroyed())
+            Slime nextSlime = slimeIterator.next();
+            nextSlime.update(dt);
+            if(nextSlime.getX()<player.getX()+224 / Jannabi.PPM)
+                nextSlime.b2body.setActive((true));
+            if (nextSlime.getToDestroy() && !nextSlime.getDestroyed())
             {
-                world.destroyBody(nextGoomba.b2body);
-                nextGoomba.setDestroyed(true);
+                world.destroyBody(nextSlime.b2body);
+                nextSlime.setDestroyed(true);
             }
 
-            if (nextGoomba.getStateTime() >= 1 && nextGoomba.getDestroyed())
+            if (nextSlime.getStateTime() >= 1 && nextSlime.getDestroyed())
             {
-                Gdx.app.log("removing goomba from array", "");
+                Gdx.app.log("removing slime from array", "");
                 slimeIterator.remove();
             }
 
@@ -192,7 +248,7 @@ public class PlayScreen implements Screen {
         //check if we ae at the beginning of the stage or end of stage to freeze camera
         if(player.b2body.getPosition().x > (Jannabi.V_WIDTH/2) /Jannabi.PPM ){
             if(player.b2body.getPosition().x < (((Jannabi.V_WIDTH * 7) + (Jannabi.V_WIDTH/2)) /Jannabi.PPM))
-            gamecam.position.x = player.b2body.getPosition().x;
+                gamecam.position.x = player.b2body.getPosition().x;
         }
 
 
@@ -201,6 +257,7 @@ public class PlayScreen implements Screen {
 
         //set view to camera
         renderer.setView(gamecam);
+
     }
 
     @Override
@@ -211,11 +268,8 @@ public class PlayScreen implements Screen {
 
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-
-
         //render box2d
-
+        stage.draw();
         //if we comment this we not gonna outline object but not sure we can collide or not
         b2dr.render(world, gamecam.combined);
 
@@ -225,9 +279,11 @@ public class PlayScreen implements Screen {
         //need to draw background before render and render before player.draw
         game.batch.begin();
         //multiple width to increase background (now get commented to check box2d)
-        //now comment background due to check collision
+        //can comment background  to check collision
         game.batch.draw(background,0,0,(Jannabi.V_WIDTH /Jannabi.PPM) * 8,Jannabi.V_HEIGHT / Jannabi.PPM);
         game.batch.end();
+
+
 
         //need to render after background
         renderer.render();
@@ -243,6 +299,15 @@ public class PlayScreen implements Screen {
         }
         game.batch.end();
 
+
+        //draw hud
+        hud.stage.draw();
+
+
+        //draw health bar
+        game.batch.begin();
+        game.batch.draw(healthBar,55,183,190,25);
+        game.batch.end();
 
 
     }

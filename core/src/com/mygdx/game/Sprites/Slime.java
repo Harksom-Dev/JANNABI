@@ -1,7 +1,6 @@
 package com.mygdx.game.Sprites;
 
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -11,10 +10,12 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.Jannabi;
+import com.mygdx.game.Scenes.Hud;
 import com.mygdx.game.Screen.PlayScreen;
 import com.mygdx.game.Sprites.Item.ItemDef;
 import com.mygdx.game.Sprites.Item.Potion;
-import com.mygdx.game.Sprites.Weapon.pistol;
+import com.mygdx.game.Sprites.Weapon.Gun;
+import com.mygdx.game.Sprites.Weapon.Pistol;
 
 public class Slime extends Enemy {
 
@@ -70,6 +71,7 @@ public class Slime extends Enemy {
         moveLeft = true;
         pauseJump = 1;
         beenHit = false;
+        drop = false;
 
     }
 
@@ -78,7 +80,7 @@ public class Slime extends Enemy {
         stateTime += dt;
         if(setToDestroy && !destroy){
             //world.destroyBody(b2body);
-            destroy = true;
+            //destroy = true;
             stateTime = 0;
             setRegion(deadAnimation.getKeyFrame(0.5f,false));
         }else if(!destroy){
@@ -101,7 +103,7 @@ public class Slime extends Enemy {
     @Override
     protected void defineEnemy() {
         BodyDef bdef = new BodyDef();
-        //set box2d our animation now have width16 and height 32
+        //set box2d our animation now have width32 and height 32
         bdef.position.set(getX(),getY()/Jannabi.PPM);
         bdef.type = BodyDef.BodyType.DynamicBody;
         b2body = world.createBody(bdef);
@@ -116,9 +118,9 @@ public class Slime extends Enemy {
 
         //set category bit
         fdef.filter.categoryBits = Jannabi.ENEMY_BIT;
-        //what our mainPlayer can collide with
+        //what our slime can collide with
         fdef.filter.maskBits = Jannabi.DEFAULT_BIT | Jannabi.OTHERLAYER_BIT | Jannabi.ENEMY_BIT | Jannabi.JANNABI_BIT | Jannabi.PISTOL_BULLET_BIT
-                                | Jannabi.Edge_BIT;
+                | Jannabi.Edge_BIT;
 
         fdef.shape = shape;
         fdef.restitution = 0.2f;
@@ -136,15 +138,21 @@ public class Slime extends Enemy {
     }
 
 
-    public void getHit(pistol pistol) {
+    public void getHit(Gun gun) {
         //setRegion(tempHitAnimation.getKeyFrame(0.5f,true));
         //b2body.setLinearVelocity(3,2);
 
-        Hp -= pistol.getDmg();
+        Hp -= gun.getDmg();
         beenHit = true;
         if(Hp <= 0){
             setToDestroy = true;
-            screen.spawnItem(new ItemDef(new Vector2(b2body.getPosition().x,b2body.getPosition().y),Potion.class));
+            Hud.addScore(50);
+            //define drop condition
+            if(!drop){
+                screen.spawnItem(new ItemDef(new Vector2(b2body.getPosition().x,b2body.getPosition().y + 25),Potion.class));
+                drop = true;
+            }
+
         }
 
     }
