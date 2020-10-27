@@ -46,6 +46,7 @@ public class Player extends Sprite {
     private int lastSmgMag;
     private int lastShotgunMag;
     private boolean duplicatedChange;
+    private boolean pressReload;
 
     //hit count of our main character
     private int hp;
@@ -76,7 +77,6 @@ public class Player extends Sprite {
     //create Constructor
     public Player( PlayScreen screen){
         //get start image in .pack
-        //super(screen.getAtlas().findRegion("stand_aim"));
         super(screen.getAtlas().findRegion("playerStand"));
         this.screen = screen;
         this.world = screen.getWorld();
@@ -85,9 +85,9 @@ public class Player extends Sprite {
         currentState = State.STANDING;
         previousState = State.STANDING;
         stateTimer = 0;
-        curGunState = GunState.SHOTGUN;
+        curGunState = GunState.PISTOL;
 
-        //all boolean and vaule for animation
+        //all boolean and value for animation
         runningRight = true;
         aimUp = false;
         aimDown = false;
@@ -107,6 +107,8 @@ public class Player extends Sprite {
         fireDelay = 0;
         firstShot = false;
 
+        pressReload = false;
+
         //create this class for shorter and easy access for load all player texture
         loader = new LoadTexture(screen);
 
@@ -122,9 +124,9 @@ public class Player extends Sprite {
         allAmmo = 52;
 
         //check bullet in different gun
-        lastPistolMag = Jannabi.PISTOL_CLIP;
-        lastSmgMag = Jannabi.SMG_CLIP;
-        lastShotgunMag = Jannabi.SHOTGUN_CLIP;
+        lastPistolMag = 0;
+        lastSmgMag = 0;
+        lastShotgunMag = 0;
         duplicatedChange = false;
 
         sword = new Sword(screen,true,50);
@@ -210,16 +212,14 @@ public class Player extends Sprite {
             }
             return State.SWORD_ATTACK;
         }else if(b2body.getLinearVelocity().y > 0 || (b2body.getLinearVelocity().y < 0 && previousState == State.JUMPING)){
-            if(Gdx.input.isKeyPressed(Input.Keys.UP)){
-                aimUp = true;
+            if(aimUp){
                 if(curGunState == GunState.SWORD ){
                     return State.JUMPING;
                 }else{
                     return State.JUMP_AIM_UP;
                 }
 
-            }else if(Gdx.input.isKeyPressed(Input.Keys.DOWN)){
-                aimDown = true;
+            }else if(aimDown){
                 if(curGunState == GunState.SWORD ){
                     return State.JUMPING;
                 }else{
@@ -231,15 +231,13 @@ public class Player extends Sprite {
                 return State.JUMPING;
             }
         }else if(b2body.getLinearVelocity().y < 0){
-            if(Gdx.input.isKeyPressed(Input.Keys.UP)){
-                aimUp = true;
+            if(aimUp){
                 if(curGunState == GunState.SWORD ){
                     return State.JUMPING;
                 }else{
                     return State.JUMP_AIM_UP;
                 }
-            }else if(Gdx.input.isKeyPressed(Input.Keys.DOWN)){
-                aimDown = true;
+            }else if(aimDown){
                 if(curGunState == GunState.SWORD ){
                     return State.JUMPING;
                 }else{
@@ -252,16 +250,14 @@ public class Player extends Sprite {
                 return State.FALLING;
             }
         }else if(b2body.getLinearVelocity().x != 0){
-            if(Gdx.input.isKeyPressed(Input.Keys.UP)){
-                aimUp = true;
+            if(aimUp){
                 if(curGunState == GunState.SWORD){
                     return State.RUNNING;
                 }else{
                     return State.RUNNING_AIM_UP;
                 }
 
-            }else if(Gdx.input.isKeyPressed(Input.Keys.DOWN)){
-                aimDown = true;
+            }else if(aimDown){
                 if(curGunState == GunState.SWORD){
                     return State.RUNNING;
                 }else{
@@ -273,23 +269,21 @@ public class Player extends Sprite {
                 aimDown = false;
                 return State.RUNNING;
             }
-        }else if(Gdx.input.isKeyPressed(Input.Keys.UP)){
-            aimUp = true;
+        }else if(aimUp){
             if(curGunState == GunState.SWORD){
                 return State.STANDING;
             }else{
                 return State.STAND_AIM_UP;
             }
 
-        }else if(Gdx.input.isKeyPressed(Input.Keys.DOWN)){
-            aimDown = true;
+        }else if(aimDown){
             if(curGunState == GunState.SWORD){
                 return State.STANDING;
             }else{
                 return State.STAND_AIM_DOWN;
             }
 
-        }else if(Gdx.input.isKeyPressed(Input.Keys.F)){
+        }else if(pressReload){
             aimUp = false;
             aimDown = false;
             reloadTime += dt;
@@ -438,11 +432,13 @@ public class Player extends Sprite {
 
         }else if(allAmmo > 0){
             //clink sound
+            Jannabi.manager.get("Audio/Sound/gun/outOfAmmo.wav", Sound.class).play();
             Gdx.app.log("ammo","need to reload");
 
 
         }else if(allAmmo <= 0){
             //clinksound
+            Jannabi.manager.get("Audio/Sound/gun/outOfAmmo.wav", Sound.class).play();
             Bullet.clear();
             Gdx.app.log("ammo out","no bullet left");
         }
@@ -502,11 +498,16 @@ public class Player extends Sprite {
     public void getPotion(){
         Jannabi.manager.get("Audio/Sound/player/pickup.wav", Sound.class).play();
         hp+= 3;
+        if(hp >= 10){
+            hp = 10;
+        }
         Gdx.app.log("hp Up","cur hp is" + hp);
     }
 
     public void getMag(){
+        Jannabi.manager.get("Audio/Sound/player/pickup.wav", Sound.class).play();
         allAmmo += 13;
+        Hud.updateAllammo(allAmmo);
     }
     public int getHp() {
         return hp;
@@ -600,5 +601,9 @@ public class Player extends Sprite {
 
     public void setAimDown(boolean aimDown) {
         this.aimDown = aimDown;
+    }
+
+    public void setPressReload(boolean pressReload){
+        this.pressReload = pressReload;
     }
 }

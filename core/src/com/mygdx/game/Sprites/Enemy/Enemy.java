@@ -17,6 +17,7 @@ public abstract class Enemy extends Sprite {
     public Vector2 velocity2;
     protected float pauseJump;
     protected boolean drop;
+    protected boolean bossDead;
 
 
     public Body b2body;
@@ -50,5 +51,8 @@ public abstract class Enemy extends Sprite {
     public abstract void setDestroyed(boolean d);
 
     public abstract float getStateTime();
+
+    public abstract boolean isBossDead();
+
 
 }

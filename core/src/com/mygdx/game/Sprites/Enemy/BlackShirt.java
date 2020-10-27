@@ -209,7 +209,8 @@ public class BlackShirt extends Enemy {
             setToDestroy = true;
             //define drop condition
             if(!drop){
-                screen.spawnItem(new ItemDef(new Vector2(b2body.getPosition().x,b2body.getPosition().y + 25), Mag.class));
+
+                screen.spawnItem(new ItemDef(new Vector2(b2body.getPosition().x,b2body.getPosition().y + 32), Mag.class));
                 drop = true;
             }
 
@@ -225,7 +226,8 @@ public class BlackShirt extends Enemy {
             setToDestroy = true;
             //define drop condition
             if(!drop){
-                screen.spawnItem(new ItemDef(new Vector2(b2body.getPosition().x,b2body.getPosition().y + 25),Mag.class));
+
+                screen.spawnItem(new ItemDef(new Vector2(b2body.getPosition().x,b2body.getPosition().y + 32),Mag.class));
                 drop = true;
             }
 
@@ -281,5 +283,10 @@ public class BlackShirt extends Enemy {
     @Override
     public float getStateTime() {
         return stateTime;
+    }
+
+    @Override
+    public boolean isBossDead() {
+        return false;
     }
 }

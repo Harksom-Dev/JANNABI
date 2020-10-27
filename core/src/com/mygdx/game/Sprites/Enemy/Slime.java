@@ -233,4 +233,9 @@ public class Slime extends Enemy {
     public float getStateTime() {
         return stateTime;
     }
+
+    @Override
+    public boolean isBossDead() {
+        return false;
+    }
 }

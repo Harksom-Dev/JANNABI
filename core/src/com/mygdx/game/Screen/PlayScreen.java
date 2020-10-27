@@ -30,9 +30,11 @@ import com.mygdx.game.Jannabi;
 import com.mygdx.game.Scenes.Hud;
 import com.mygdx.game.Sprites.Enemy.BlackShirt;
 //import com.mygdx.game.Sprites.Enemy;
+import com.mygdx.game.Sprites.Enemy.Boss;
 import com.mygdx.game.Sprites.Enemy.Enemy;
 import com.mygdx.game.Sprites.Item.Item;
 import com.mygdx.game.Sprites.Item.ItemDef;
+import com.mygdx.game.Sprites.Item.Mag;
 import com.mygdx.game.Sprites.Item.Potion;
 import com.mygdx.game.Sprites.Player;
 import com.mygdx.game.Sprites.Enemy.Slime;
@@ -97,6 +99,8 @@ public class PlayScreen implements Screen {
     private final int screenWidth = 1280, screenHeight = 720;
     private boolean consHit ;
 
+    private boolean winCondition;
+
     private Hud hud;
     Stage stage;
     Viewport viewport;
@@ -152,6 +156,7 @@ public class PlayScreen implements Screen {
         initCamera();
         jannaHead = new Texture("Hud/JanHead.png");
 
+        winCondition = false;
 
     }
     private void initCamera() {
@@ -171,6 +176,7 @@ public class PlayScreen implements Screen {
     }
 
     public void spawnItem(ItemDef idef){
+
         itemToSpawn.add(idef);
     }
 
@@ -179,7 +185,10 @@ public class PlayScreen implements Screen {
             ItemDef idef = itemToSpawn.poll();
             if(idef.type == Potion.class){
                 items.add(new Potion(this,idef.position.x,idef.position.y));
-            }
+            }else if(idef.type == Mag.class)
+                items.add(new Mag(this,idef.position.x,idef.position.y));
+
+
         }
     }
 
@@ -213,12 +222,19 @@ public class PlayScreen implements Screen {
             player.setDuplicatedChange(false);
             player.setFirstShot(false);
         }
-        /*if(Gdx.input.isKeyPressed(Input.Keys.UP)){
+        if(Gdx.input.isKeyPressed(Input.Keys.UP)){
             player.setAimUp(true);
-        }
-        if(Gdx.input.isKeyPressed(Input.Keys.DOWN)){
+        }else if(Gdx.input.isKeyPressed(Input.Keys.DOWN)){
+            player.setAimDown(true);
+        }else{
             player.setAimUp(false);
-        }*/
+            player.setAimDown(false);
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.F)){
+            player.setPressReload(true);
+        }else{
+            player.setPressReload(false);
+        }
 
     }
 
@@ -242,14 +258,19 @@ public class PlayScreen implements Screen {
         {
             Enemy nextEnemies = enemyIterator.next();
             nextEnemies.update(dt);
-            if(nextEnemies.getX()<player.getX()+270 / Jannabi.PPM)
-                nextEnemies.b2body.setActive((true));
-            if(nextEnemies.getX()<player.getX()+50 / Jannabi.PPM && player.getX() < nextEnemies.getX() ){
-                nextEnemies.attack(true,true);
-            }else if(player.getX() < nextEnemies.getX() + 50 / Jannabi.PPM && nextEnemies.getX() < player.getX()){
-                nextEnemies.attack(true,false);
+            if(!nextEnemies.getDestroyed()){
+                if(nextEnemies.getX()<player.getX()+270 / Jannabi.PPM)
+                    nextEnemies.b2body.setActive((true));
+                if(nextEnemies.getX()<player.getX()+50 / Jannabi.PPM && player.getX() < nextEnemies.getX() ){
+                    nextEnemies.attack(true,true);
+                }else if(player.getX() < nextEnemies.getX() + 50 / Jannabi.PPM && nextEnemies.getX() < player.getX()){
+                    nextEnemies.attack(true,false);
+                }
             }
 
+            if(nextEnemies.isBossDead()){
+                winCondition = true;
+            }
             if (nextEnemies.getToDestroy() && !nextEnemies.getDestroyed())
             {
                 world.destroyBody(nextEnemies.b2body);
@@ -282,7 +303,7 @@ public class PlayScreen implements Screen {
     }
 
     private void shortToExit(){
-        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)){
+        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE) || winCondition ){
             this.dispose();
             game.setScreen(new MainMenuScreen(game));
         }

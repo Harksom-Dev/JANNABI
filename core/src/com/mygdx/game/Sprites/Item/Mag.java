@@ -1,5 +1,6 @@
 package com.mygdx.game.Sprites.Item;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -11,6 +12,7 @@ public class Mag extends Item {
     public Mag(PlayScreen screen, float x, float y) {
         super(screen, x, y);
         setRegion(screen.getAtlas().findRegion("clip"),0,0,16,16);
+        setBounds(getX(),getY(),16/Jannabi.PPM,16/Jannabi.PPM);
     }
 
     @Override

@@ -37,6 +37,8 @@ public class Boss extends Enemy {
     private boolean moveLeft;
     private boolean beenHit;
     private boolean attackLeft;
+    private boolean bossDead;
+
     public Boss(PlayScreen screen, float x, float y,int hp) {
         super(screen, x, y);
         this.Hp = hp;
@@ -55,6 +57,7 @@ public class Boss extends Enemy {
         walkTime = 0;
         stateTime = 0;
         currentState = State.STAND;
+        bossDead = false;
     }
 
     @Override
@@ -76,7 +79,7 @@ public class Boss extends Enemy {
         for(int i = 0; i < 2 ;i++){
             frames.add(new TextureRegion(screen.getAtlas().findRegion("boss_gethit"),i*47,0,47,32));
         }
-        getHitAnimation = new Animation<TextureRegion>(1,frames);
+        getHitAnimation = new Animation<TextureRegion>(0.5f,frames);
         frames.clear();
         for(int i = 0; i < 7 ;i++){
             frames.add(new TextureRegion(screen.getAtlas().findRegion("boss_attack"),i*47,0,47,32));
@@ -125,7 +128,7 @@ public class Boss extends Enemy {
                 region = attackAnimation.getKeyFrame(stateTime,true);
                 break;
             case GETHIT:
-                region = getHitAnimation.getKeyFrame(stateTime,true);
+                region = getHitAnimation.getKeyFrame(stateTime,false);
                 break;
             default:
                 region = deadAnimation.getKeyFrame(stateTime,false);
@@ -184,6 +187,7 @@ public class Boss extends Enemy {
         beenHit = true;
         if(Hp <= 0){
             setToDestroy = true;
+            bossDead = true;
             //define drop condition
             if(!drop){
                 screen.spawnItem(new ItemDef(new Vector2(b2body.getPosition().x,b2body.getPosition().y + 25), Potion.class));
@@ -200,6 +204,7 @@ public class Boss extends Enemy {
         beenHit = true;
         if(Hp <= 0){
             setToDestroy = true;
+            bossDead = true;
             //define drop condition
             if(!drop){
                 screen.spawnItem(new ItemDef(new Vector2(b2body.getPosition().x,b2body.getPosition().y + 25),Potion.class));
@@ -270,5 +275,10 @@ public class Boss extends Enemy {
     @Override
     public float getStateTime() {
         return stateTime;
+    }
+
+    @Override
+    public boolean isBossDead() {
+        return bossDead;
     }
 }
