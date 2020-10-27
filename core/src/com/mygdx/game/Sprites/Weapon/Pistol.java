@@ -24,7 +24,7 @@ public class Pistol extends Gun {
     @Override
     public void definedBullet() {
         BodyDef bdef = new BodyDef();
-        bdef.position.set(fireRight ? getX() + 12 / Jannabi.PPM : getX() - 12 / Jannabi.PPM, getY() +2 / Jannabi.PPM);
+        bdef.position.set(fireRight ? getX() + 12 / Jannabi.PPM  : getX() - 12 / Jannabi.PPM, getY() +2 / Jannabi.PPM);
         bdef.type = BodyDef.BodyType.KinematicBody;
         if(!world.isLocked())
             b2body = world.createBody(bdef);

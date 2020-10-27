@@ -28,12 +28,13 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.Jannabi;
 import com.mygdx.game.Scenes.Hud;
+import com.mygdx.game.Sprites.Enemy.BlackShirt;
 import com.mygdx.game.Sprites.Enemy;
 import com.mygdx.game.Sprites.Item.Item;
 import com.mygdx.game.Sprites.Item.ItemDef;
 import com.mygdx.game.Sprites.Item.Potion;
 import com.mygdx.game.Sprites.Player;
-import com.mygdx.game.Sprites.Slime;
+import com.mygdx.game.Sprites.Enemy.Slime;
 import com.mygdx.game.tools.B2WorldCreator;
 import com.mygdx.game.tools.worldContactListener;
 import com.mygdx.game.Sprites.Player;
@@ -48,6 +49,9 @@ public class PlayScreen implements Screen {
     //create Texture for background
     Texture background;
     Texture jannaHead;
+
+    //creat Texture fot health bar
+    Texture healthBar;
 
     //implement main game camera and viewport
     private Jannabi game;
@@ -74,6 +78,7 @@ public class PlayScreen implements Screen {
 
     //iterator
     private Iterator<Slime> slimeIterator;
+    private Iterator<BlackShirt> BlackShirtIterator;
 
     //array for item
     private Array<Item> items;
@@ -156,12 +161,16 @@ public class PlayScreen implements Screen {
     public TextureAtlas getAtlas(){
         return atlas;
     }
+
     @Override
     public void show() {
+
     }
+
     public void spawnItem(ItemDef idef){
         itemToSpawn.add(idef);
     }
+
     public void handleSpawningItems(){
         if(!itemToSpawn.isEmpty()){
             ItemDef idef = itemToSpawn.poll();
@@ -170,6 +179,7 @@ public class PlayScreen implements Screen {
             }
         }
     }
+
     //create handle input when we get input from user
     public void handleInput( float dt){
         if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && player.b2body.getLinearVelocity().y == 0){
@@ -182,20 +192,22 @@ public class PlayScreen implements Screen {
             player.b2body.applyLinearImpulse(new Vector2(-0.07f,0),player.b2body.getWorldCenter(),true);
         }
         if(Gdx.input.isKeyPressed(Input.Keys.C)){
-            player.fire(dt);
+            player.attack(dt);
         }else if(Gdx.input.isKeyJustPressed(Input.Keys.Q)){
-            player.changeGun("sword");
+            player.changeWeapon("sword");
         }else if(Gdx.input.isKeyJustPressed(Input.Keys.W)){
-            player.changeGun("pistol");
+            player.changeWeapon("pistol");
         }else if(Gdx.input.isKeyJustPressed(Input.Keys.E)){
-            player.changeGun("smg");
+            player.changeWeapon("smg");
         }else if(Gdx.input.isKeyJustPressed(Input.Keys.R)){
-            player.changeGun("shotgun");
+            player.changeWeapon("shotgun");
         }else{
+            player.setDuplicatedChange(false);
             player.setFirstShot(false);
         }
 
     }
+
     public void update(float dt){
         if(player.getHp() > 0){
             //check for input
@@ -203,8 +215,10 @@ public class PlayScreen implements Screen {
         }
 
         handleSpawningItems();
+
         //dont know what this doing
         world.step(1/60f,6,2);
+
         //update player
         player.update(dt);
         //spawn all slimes
@@ -230,6 +244,28 @@ public class PlayScreen implements Screen {
             }
 
         }
+
+        BlackShirtIterator = creator.getBlackShirtIterator();
+        while(BlackShirtIterator.hasNext())
+        {
+            BlackShirt nextBlackShirt = BlackShirtIterator.next();
+            nextBlackShirt.update(dt);
+            if(nextBlackShirt.getX()<player.getX()+224 / Jannabi.PPM)
+                nextBlackShirt.b2body.setActive((true));
+            if (nextBlackShirt.getToDestroy() && !nextBlackShirt.getDestroyed())
+            {
+                world.destroyBody(nextBlackShirt.b2body);
+                nextBlackShirt.setDestroyed(true);
+            }
+
+            if (nextBlackShirt.getStateTime() >= 1 && nextBlackShirt.getDestroyed())
+            {
+                Gdx.app.log("removing slime from array", "");
+                slimeIterator.remove();
+            }
+
+        }
+
         for(Item item : items){
             item.update(dt);
         }
@@ -240,15 +276,19 @@ public class PlayScreen implements Screen {
             gamecam.position.x = player.b2body.getPosition().x;
         }
 
+
         //update camera
         gamecam.update();
+
         //set view to camera
         renderer.setView(gamecam);
     }
 
     @Override
     public void render(float delta) {
+
         update(delta);
+
 
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -267,6 +307,7 @@ public class PlayScreen implements Screen {
         game.batch.setProjectionMatrix(gamecam.combined);
         //need to draw background before render and render before player.draw
         game.batch.begin();
+        //multiple width to increase background (now get commented to check box2d)
         //can comment background  to check collision
         //game.batch.draw(background,0,0,(Jannabi.V_WIDTH /Jannabi.PPM) * 8,Jannabi.V_HEIGHT / Jannabi.PPM);
         game.batch.end();

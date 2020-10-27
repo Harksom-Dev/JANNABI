@@ -1,5 +1,6 @@
 package com.mygdx.game;
 
+import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
@@ -7,14 +8,15 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.mygdx.game.Screen.EmptyScreen2;
 import com.mygdx.game.Screen.PlayScreen;
 import com.mygdx.game.Screen.LoadingScreen;
 import com.mygdx.game.Sprites.Player;
 import com.mygdx.game.Screen.*;
 
 public class Jannabi extends Game {
-
 	private Player player;
 	public SpriteBatch batch;
 	//create constant variable
@@ -42,8 +44,8 @@ public class Jannabi extends Game {
 	public static final short Edge_BIT = 32;
 	public static final short ENEMY_BIT = 64;
 	public static final short ITEM_BIT = 128;
+	public static final short SWORDHITBOX_BIT = 128;
 	public static AssetManager manager;
-
 	@Override
 	public void create () {
 		batch = new SpriteBatch();

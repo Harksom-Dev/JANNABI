@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="200" height="13" tilewidth="16" tileheight="16" infinite="0" nextlayerid="17" nextobjectid="75">
+<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="200" height="13" tilewidth="16" tileheight="16" infinite="0" nextlayerid="18" nextobjectid="77">
  <tileset firstgid="1" name="tile set vol1" tilewidth="16" tileheight="16" tilecount="242" columns="22">
   <image source="tile set/tile set vol1.png" width="352" height="176"/>
  </tileset>
@@ -198,5 +198,8 @@
   <object id="72" x="2064" y="160" width="16" height="16"/>
   <object id="73" x="2640" y="160" width="16" height="16"/>
   <object id="74" x="256" y="160" width="16" height="16"/>
+ </objectgroup>
+ <objectgroup id="17" name="BossSpawn">
+  <object id="76" x="3136" y="160" width="16" height="16"/>
  </objectgroup>
 </map>

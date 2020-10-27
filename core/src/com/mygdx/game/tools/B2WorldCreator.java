@@ -1,6 +1,5 @@
 package com.mygdx.game.tools;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.PolygonMapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
@@ -12,11 +11,10 @@ import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.Jannabi;
 import com.mygdx.game.Screen.PlayScreen;
-import com.mygdx.game.Sprites.Slime;
-import com.mygdx.game.StageTile.FourthFloor;
-import com.mygdx.game.StageTile.SecondFloor;
+import com.mygdx.game.Sprites.Enemy.BlackShirt;
+import com.mygdx.game.Sprites.Enemy.Enemy;
+import com.mygdx.game.Sprites.Enemy.Slime;
 import com.mygdx.game.StageTile.TestLayer;
-import com.mygdx.game.StageTile.ThirdFloor;
 
 import java.util.Iterator;
 
@@ -26,6 +24,7 @@ public class B2WorldCreator {
     Fixture fixture;
     //create array for store spawn point for enemy
     private Array<Slime> slimes;
+    private Array<BlackShirt> blackShirts;
     public B2WorldCreator(PlayScreen screen){
         World world = screen.getWorld();
         TiledMap map = screen.getMap();
@@ -44,6 +43,12 @@ public class B2WorldCreator {
             slimes.add(new Slime(screen,rect.getX()/ Jannabi.PPM, rect.getY(),100));
         }
 
+        blackShirts = new Array<BlackShirt>();
+        for(MapObject object : map.getLayers().get(14).getObjects().getByType(RectangleMapObject.class)){
+            Rectangle rect = ((RectangleMapObject) object).getRectangle();
+            blackShirts.add(new BlackShirt(screen,rect.getX()/ Jannabi.PPM, rect.getY(),200));
+        }
+
 
 
     }
@@ -55,6 +60,22 @@ public class B2WorldCreator {
     public Iterator<Slime> getSlimeIterator()
     {
         return slimes.iterator();
+    }
+
+    public Array<BlackShirt> getBlackShirts() {
+        return blackShirts;
+    }
+
+    public Iterator<BlackShirt> getBlackShirtIterator()
+    {
+        return blackShirts.iterator();
+    }
+
+    public Array<Enemy> getEnemies(){
+        Array<Enemy> enemies = new Array<Enemy>();
+        enemies.addAll(slimes);
+        enemies.addAll(blackShirts);
+        return enemies;
     }
     private  void getObjectLayer(World world, TiledMap map, int layer,short bit) {
         BodyDef bdef = new BodyDef();

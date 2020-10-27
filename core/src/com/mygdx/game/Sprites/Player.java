@@ -2,36 +2,23 @@ package com.mygdx.game.Sprites;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.Jannabi;
-import com.mygdx.game.Scenes.Hud;
 import com.mygdx.game.Screen.PlayScreen;
-import com.mygdx.game.Sprites.Weapon.Gun;
-import com.mygdx.game.Sprites.Weapon.Pistol;
-import com.mygdx.game.Sprites.Weapon.Shotgun;
-import com.mygdx.game.Sprites.Weapon.Smg;
+import com.mygdx.game.Sprites.Weapon.*;
 import com.mygdx.game.tools.LoadTexture;
-
-import static com.mygdx.game.Scenes.Hud.updateAllammo;
-import static com.mygdx.game.Scenes.Hud.updateAmmo;
-
 
 //this class is create for create main player create box2d sprite and further
 public class Player extends Sprite {
 
-    public Texture healthbar;
-    public String imageAddress;
-    PlayScreen playScreen;
-
     //enum for checkState
     public enum State {FALLING,JUMPING,STANDING,RUNNING,STAND_AIM_UP,STAND_AIM_DOWN,RUNNING_AIM_UP,RUNNING_AIM_DOWN,
-        JUMP_AIM_UP,JUMP_AIM_DOWN,RELOAD,DEAD,GETHIT};
+                        JUMP_AIM_UP,JUMP_AIM_DOWN,RELOAD,DEAD,GETHIT,SWORD_ATTACK};
 
     public enum GunState {SWORD,PISTOL,SMG,SHOTGUN}
     public GunState curGunState;
@@ -39,6 +26,7 @@ public class Player extends Sprite {
     //implement state to check current and previous
     public State currentState;
     public State previousState;
+
 
     //implement box2d
     public World world;
@@ -52,11 +40,18 @@ public class Player extends Sprite {
     PlayScreen screen;
     //pistol shot array
     private Array<Gun> Bullet;
+    private int lastPistolMag;
+    private int lastSmgMag;
+    private int lastShotgunMag;
+    private boolean duplicatedChange;
 
     //hit count of our main character
     private int hp;
     //use for display hit anim
     private boolean beenHit;
+
+    private boolean swordAttack;
+    private float swordAttackTime;
 
     private float animateDelay;
 
@@ -68,22 +63,21 @@ public class Player extends Sprite {
     private float fireDelay;
     private boolean firstShot;
 
-    private int pistolClip = 13;
     private int currentAmmo;
     private int allAmmo;
     private boolean reloaded;
     private LoadTexture loader;
 
+    protected Sword sword;
+    protected boolean swordDefined;
 
     //create Constructor
     public Player( PlayScreen screen){
-
         //get start image in .pack
         //super(screen.getAtlas().findRegion("stand_aim"));
         super(screen.getAtlas().findRegion("playerStand"));
         this.screen = screen;
         this.world = screen.getWorld();
-
 
         //set all necessary State
         currentState = State.STANDING;
@@ -103,6 +97,10 @@ public class Player extends Sprite {
         reloadTime = 0;
         duplicateReloadCheck = false;
 
+        //construc for sword var
+        swordAttack = false;
+        swordAttackTime = 0;
+
         //ini for fireDelay
         fireDelay = 0;
         firstShot = false;
@@ -116,23 +114,31 @@ public class Player extends Sprite {
 
         //link sprite to box2d
         setBounds(0,0,32 / Jannabi.PPM,32 / Jannabi.PPM);
-        //setRegion(playerStand);
 
         Bullet = new Array<>();
-        currentAmmo = Jannabi.SHOTGUN_CLIP;
+        currentAmmo = 0;
         allAmmo = 52;
+
+        //check bullet in different gun
+        lastPistolMag = Jannabi.PISTOL_CLIP;
+        lastSmgMag = Jannabi.SMG_CLIP;
+        lastShotgunMag = Jannabi.SHOTGUN_CLIP;
+        duplicatedChange = false;
+
+        sword = new Sword(screen,true,50);
+        swordDefined = false;
+
+
     }
 
 
     public void update(float dt){
 
-
         //set position of sprite here
         setPosition(b2body.getPosition().x - getWidth() / 2 , b2body.getPosition().y - getHeight() / 3.5f);
         if(beenHit){
             animateDelay += dt;
-            Gdx.app.log("player gethit",""+animateDelay);
-            setRegion(loader.getIndividualRegion(curGunState));
+            setRegion(loader.getPlayerGetHitRegion(curGunState));
             if(animateDelay > 0.125f){
 
                 beenHit = false;
@@ -145,6 +151,14 @@ public class Player extends Sprite {
             bullet.update(dt);
             if(bullet.isDestroyed())
                 Bullet.removeValue(bullet, true);
+        }
+        //Gdx.app.log("sword boolean","" + swordAttack);
+
+        if(swordAttack){
+            swordAttackTime += dt;
+        }
+        if(swordDefined){
+            sword.update(dt,b2body.getPosition().x,b2body.getPosition().y);
         }
 
 
@@ -183,6 +197,14 @@ public class Player extends Sprite {
         }else if(beenHit){
             beenHit = false;
             return State.GETHIT;
+        }else if(swordAttack){
+            if(swordAttackTime > 0.3f){
+                swordAttack = false;
+                sword.destroy();
+                swordDefined = false;
+                swordAttackTime =0;
+            }
+            return State.SWORD_ATTACK;
         }else if(b2body.getLinearVelocity().y > 0 || (b2body.getLinearVelocity().y < 0 && previousState == State.JUMPING)){
             if(Gdx.input.isKeyPressed(Input.Keys.UP)){
                 aimUp = true;
@@ -300,7 +322,7 @@ public class Player extends Sprite {
     //create box2d and set fixture
     private void definePlayer(){
         BodyDef bdef = new BodyDef();
-        //set box2d our animation now have width16 and height 32
+        //set box2d our animation now have width32 and height 32
         bdef.position.set(32 / Jannabi.PPM,32 / Jannabi.PPM);
         bdef.type = BodyDef.BodyType.DynamicBody;
         b2body = world.createBody(bdef);
@@ -308,7 +330,7 @@ public class Player extends Sprite {
         //create fixture
         FixtureDef fdef = new FixtureDef();
         CircleShape shape = new CircleShape();
-        shape.setRadius(7.5f / Jannabi.PPM);
+        shape.setRadius(7 / Jannabi.PPM);
 
         //PolygonShape shape = new PolygonShape();
         //shape.setAsBox(16,32);
@@ -322,40 +344,35 @@ public class Player extends Sprite {
         //fdef.isSensor = false;//this sensor use for jumping through
         b2body.createFixture(fdef).setUserData(this);
         //b2body.createFixture(fdef);
-        /*
-        //create above hitBox with edgeShape
-        EdgeShape aboveHitBox = new EdgeShape();
-        aboveHitBox.set(new Vector2(-6.5f / Jannabi.PPM,16 / Jannabi.PPM),new Vector2(6.5f / Jannabi.PPM , 16 / Jannabi.PPM));
-        fdef.shape = aboveHitBox;
-        fdef.isSensor = true;
-        //b2body.createFixture(fdef).setUserData(this);
-        b2body.createFixture(fdef);
-        //create leftHitBox
-        EdgeShape leftHitBox = new EdgeShape();
-        leftHitBox.set(new Vector2(-7.5f / Jannabi.PPM,16 / Jannabi.PPM),new Vector2(-7.5f / Jannabi.PPM , -8 / Jannabi.PPM));
-        fdef.shape = leftHitBox;
-        fdef.isSensor = true;
-        //b2body.createFixture(fdef).setUserData(this);
-        b2body.createFixture(fdef);
-        //create rightHitBox
-        EdgeShape rightHitBox = new EdgeShape();
-        rightHitBox.set(new Vector2(7.5f / Jannabi.PPM,16 / Jannabi.PPM),new Vector2(7.5f / Jannabi.PPM , -8 / Jannabi.PPM));
-        fdef.shape = rightHitBox;
-        fdef.isSensor = true;
-        //b2body.createFixture(fdef).setUserData(this);
-        b2body.createFixture(fdef);
-        //create belowHitBox
-        EdgeShape belowHitBox = new EdgeShape();
-        belowHitBox.set(new Vector2(-6.5f / Jannabi.PPM,-8 / Jannabi.PPM),new Vector2(6.5f / Jannabi.PPM , -8 / Jannabi.PPM));
-        fdef.shape = belowHitBox;
-        fdef.isSensor = true;
-        //b2body.createFixture(fdef).setUserData(this);
-        b2body.createFixture(fdef);*/
+
+
 
 
     }
-    //fire method for pistol gun (temporary)
-    public void fire(float dt){
+    public void attack(float dt){
+        if(curGunState != GunState.SWORD){
+            fire(dt);
+
+        }else{
+            //sword method
+            if(!swordDefined) swing(dt);
+            //sword.definedBullet(b2body.getPosition().x,b2body.getPosition().y,runningRight ? true : false);
+
+
+        }
+    }
+
+    //swing method for sword
+    private void swing(float dt){
+        //maybe check sword radius
+        sword.definedBullet(b2body.getPosition().x,b2body.getPosition().y,runningRight ? true : false,b2body.getLinearVelocity().x,b2body.getLinearVelocity().y);
+        swordAttack = true;
+        swordDefined = true;
+
+    }
+
+    //fire method
+    private void fire(float dt){
         if(currentAmmo > 0){
             fireDelay += dt;
             if(curGunState == GunState.PISTOL){
@@ -363,15 +380,11 @@ public class Player extends Sprite {
                     Bullet.add(new Pistol(screen, b2body.getPosition().x, b2body.getPosition().y, runningRight ? true : false, aimUp ? true:false,
                             aimDown ? true : false,20,Jannabi.PISTOL_CLIP));
                     currentAmmo--;
-                    updateAmmo(currentAmmo);
-                    updateAllammo(allAmmo);
                     fireDelay = 0;
                 }else if(!firstShot){
                     Bullet.add(new Pistol(screen, b2body.getPosition().x, b2body.getPosition().y, runningRight ? true : false, aimUp ? true:false,
                             aimDown ? true : false,20,Jannabi.PISTOL_CLIP));
                     currentAmmo--;
-                    updateAmmo(currentAmmo);
-                    updateAllammo(allAmmo);
                     firstShot = true;
 
                 }
@@ -381,15 +394,11 @@ public class Player extends Sprite {
                     Bullet.add(new Smg(screen, b2body.getPosition().x, b2body.getPosition().y, runningRight ? true : false, aimUp ? true:false,
                             aimDown ? true : false,10,Jannabi.SMG_CLIP));
                     currentAmmo--;
-                    updateAmmo(currentAmmo);
-                    updateAllammo(allAmmo);
                     fireDelay = 0;
                 }else if(!firstShot){
                     Bullet.add(new Smg(screen, b2body.getPosition().x, b2body.getPosition().y, runningRight ? true : false, aimUp ? true:false,
                             aimDown ? true : false,10,Jannabi.SMG_CLIP));
                     currentAmmo--;
-                    updateAmmo(currentAmmo);
-                    updateAllammo(allAmmo);
                     firstShot = true;
                 }
 
@@ -398,15 +407,11 @@ public class Player extends Sprite {
                     Bullet.add(new Shotgun(screen, b2body.getPosition().x, b2body.getPosition().y, runningRight ? true : false, aimUp ? true:false,
                             aimDown ? true : false,10,Jannabi.SHOTGUN_CLIP));
                     currentAmmo--;
-                    updateAmmo(currentAmmo);
-                    updateAllammo(allAmmo);
                     fireDelay = 0;
                 }else if(!firstShot){
                     Bullet.add(new Shotgun(screen, b2body.getPosition().x, b2body.getPosition().y, runningRight ? true : false, aimUp ? true:false,
                             aimDown ? true : false,10,Jannabi.SHOTGUN_CLIP));
                     currentAmmo--;
-                    updateAmmo(currentAmmo);
-                    updateAllammo(allAmmo);
                     firstShot = true;
                 }
             }
@@ -435,14 +440,13 @@ public class Player extends Sprite {
             //need to change when different gunState
             allAmmo -= getClip();
             currentAmmo = getClip();
-            updateAmmo(currentAmmo);
-            updateAllammo(allAmmo);
             reloaded = false;
             Gdx.app.log("ammo = "+allAmmo,"ammoleft ");
         }
     }
 
-    private int getClip(){
+
+    private short getClip(){
         switch (curGunState){
             case PISTOL:
                 return Jannabi.PISTOL_CLIP;
@@ -461,9 +465,7 @@ public class Player extends Sprite {
             bullet.draw(batch);
         }
     }
-    public float getStateTimer(){
-        return stateTimer;
-    }
+
     public void getHit(){
         hp--;
         beenHit = true;
@@ -474,7 +476,7 @@ public class Player extends Sprite {
     }
 
     public void getPotion(){
-        hp += 3;
+        hp+= 3;
         Gdx.app.log("hp Up","cur hp is" + hp);
     }
 
@@ -482,42 +484,73 @@ public class Player extends Sprite {
         return hp;
     }
 
-    public int getAmmo() {
-        return currentAmmo;
-    }
-
-    public int getAllAmmo(){return allAmmo; }
-
-    public void changeGun(String gun){
-        switch (gun){
+    public void changeWeapon(String weapon){
+        switch (weapon){
             case "sword":
                 curGunState = GunState.SWORD;
                 Gdx.app.log("change to sword","");
                 break;
             case "pistol":
-                curGunState = GunState.PISTOL;
+                if(!duplicatedChange){
+                    setLastMag(currentAmmo);
+                    curGunState = GunState.PISTOL;
+                    currentAmmo = lastPistolMag;
+                }
+                duplicatedChange = true;
+
                 Gdx.app.log("change to pistol","");
+
                 break;
             case "smg":
-                curGunState = GunState.SMG;
+                if(!duplicatedChange){
+                    setLastMag(currentAmmo);
+                    curGunState = GunState.SMG;
+                    currentAmmo = lastSmgMag;
+                }
+                duplicatedChange = true;
                 Gdx.app.log("change to smg","");
                 break;
             default:
-                curGunState = GunState.SHOTGUN;
+                if(!duplicatedChange){
+                    setLastMag(currentAmmo);
+                    curGunState = GunState.SHOTGUN;
+                    currentAmmo = lastShotgunMag;
+                }
+                duplicatedChange = true;
                 Gdx.app.log("change to shotgun","");
+        }
+    }
+
+    public void setLastMag(int lastMag){
+        switch (curGunState){
+            case PISTOL:
+                lastPistolMag = lastMag;
+                Gdx.app.log("set last mag to",""+lastMag);
+                break;
+            case SMG:
+                lastSmgMag = lastMag;
+                Gdx.app.log("set last mag to",""+lastMag);
+                break;
+            case SHOTGUN:
+                lastShotgunMag = lastMag;
+                Gdx.app.log("set last mag to",""+lastMag);
+                break;
         }
     }
 
     public void setFirstShot(boolean firstShot) {
         this.firstShot = firstShot;
     }
-//    public void updatehp(){
-//        if(beenHit){
-//            hp=hp-1;
-//        }
-//    }
 
-    public String getAddress(String imageAddress){
-        return imageAddress;
+    public void setDuplicatedChange(boolean change){
+        duplicatedChange = change;
+    }
+
+    public int getAllAmmo(){
+        return allAmmo;
+    }
+
+    public int getAmmo(){
+        return currentAmmo;
     }
 }

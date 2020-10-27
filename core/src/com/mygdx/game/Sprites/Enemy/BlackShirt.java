@@ -1,6 +1,6 @@
-package com.mygdx.game.Sprites;
+package com.mygdx.game.Sprites.Enemy;
 
-
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -10,14 +10,13 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.Jannabi;
-import com.mygdx.game.Scenes.Hud;
 import com.mygdx.game.Screen.PlayScreen;
 import com.mygdx.game.Sprites.Item.ItemDef;
 import com.mygdx.game.Sprites.Item.Potion;
 import com.mygdx.game.Sprites.Weapon.Gun;
-import com.mygdx.game.Sprites.Weapon.Pistol;
+import com.mygdx.game.Sprites.Weapon.Sword;
 
-public class Slime extends Enemy {
+public class BlackShirt extends Enemy {
 
     private float animateDelay;         //delay time
     private float stateTime;
@@ -25,6 +24,7 @@ public class Slime extends Enemy {
     private Animation<TextureRegion> walkAnimation;
     private Animation<TextureRegion> deadAnimation;
     private Animation<TextureRegion> getHitAnimation;
+    private Animation<TextureRegion> attackAnimation;
 
     private Array<TextureRegion> frames;
     private int Hp;
@@ -33,36 +33,12 @@ public class Slime extends Enemy {
     private boolean moveLeft;
     private boolean beenHit;
 
-
-
-    public Slime(PlayScreen screen, float x, float y,int Hp) {
+    public BlackShirt(PlayScreen screen, float x, float y,int Hp) {
         super(screen, x, y);
 
         frames = new Array<TextureRegion>();
-        for(int i =0; i < 2 ;i++){
-            frames.add(new TextureRegion(screen.getAtlas().findRegion("slime_stay"),i*48,0,64,32));
-        }
-        stayAnimation = new Animation<TextureRegion>(0.5f,frames);
-        frames.clear();
-        stateTime = 0;
-        animateDelay = 0;
-        for(int i = 0; i < 7 ;i++){
-            frames.add(new TextureRegion(screen.getAtlas().findRegion("slime_attack"),i*48,0,64,32));
-        }
-        walkAnimation = new Animation<TextureRegion>(0.5f,frames);
-        frames.clear();
 
-        for(int i = 0; i < 2 ;i++){
-            frames.add(new TextureRegion(screen.getAtlas().findRegion("slime_dead"),i*48,0,64,32));
-        }
-        deadAnimation = new Animation<TextureRegion>(0.5f,frames);
-        frames.clear();
-
-        for(int i = 0; i < 2 ;i++){
-            frames.add(new TextureRegion(screen.getAtlas().findRegion("slime_gethit"),i*48,0,64,32));
-        }
-        getHitAnimation = new Animation<TextureRegion>(0.5f,frames);
-        frames.clear();
+        setTexture();
 
         setBounds(getX(),getY(),64 / Jannabi.PPM,32 / Jannabi.PPM);
         setToDestroy = false;
@@ -72,32 +48,39 @@ public class Slime extends Enemy {
         pauseJump = 1;
         beenHit = false;
         drop = false;
-
     }
 
-    public void update(float dt){
-
-        stateTime += dt;
-        if(setToDestroy && !destroy){
-            //world.destroyBody(b2body);
-            //destroy = true;
-            stateTime = 0;
-            setRegion(deadAnimation.getKeyFrame(0.5f,false));
-        }else if(!destroy){
-            //random movement ot this slime
-            randomMove(dt);
-
-            setPosition(b2body.getPosition().x - getWidth() / 2.5f,b2body.getPosition().y - getHeight()/ 3);
-            //check if slime get hit change animation
-            if(beenHit){
-                animateGetHit(dt);
-
-            }else{
-                setRegion(stayAnimation.getKeyFrame(stateTime,true));
-            }
-
+    @Override
+    protected void setTexture() {
+        for(int i =0; i < 2 ;i++){
+            frames.add(new TextureRegion(screen.getAtlas().findRegion("tamruot_stand"),i*32,0,32,32));
         }
+        stayAnimation = new Animation<TextureRegion>(0.5f,frames);
+        frames.clear();
+        stateTime = 0;
+        animateDelay = 0;
+        for(int i = 0; i < 4 ;i++){
+            frames.add(new TextureRegion(screen.getAtlas().findRegion("tamruot_walk"),i*32,0,32,32));
+        }
+        walkAnimation = new Animation<TextureRegion>(0.5f,frames);
+        frames.clear();
 
+        for(int i = 0; i < 2 ;i++){
+            frames.add(new TextureRegion(screen.getAtlas().findRegion("tamruot_gethit"),i*32,0,32,32));
+        }
+        deadAnimation = new Animation<TextureRegion>(0.5f,frames);
+        frames.clear();
+
+        for(int i = 0; i < 2 ;i++){
+            frames.add(new TextureRegion(screen.getAtlas().findRegion("tamruot_gethit"),i*32,0,32,32));
+        }
+        getHitAnimation = new Animation<TextureRegion>(0.5f,frames);
+        frames.clear();
+        for(int i = 0; i < 2 ;i++){
+            frames.add(new TextureRegion(screen.getAtlas().findRegion("tamruot_hit"),i*32,0,32,32));
+        }
+        attackAnimation = new Animation<TextureRegion>(0.5f,frames);
+        frames.clear();
     }
 
     @Override
@@ -120,13 +103,37 @@ public class Slime extends Enemy {
         fdef.filter.categoryBits = Jannabi.ENEMY_BIT;
         //what our slime can collide with
         fdef.filter.maskBits = Jannabi.DEFAULT_BIT | Jannabi.OTHERLAYER_BIT | Jannabi.ENEMY_BIT | Jannabi.JANNABI_BIT | Jannabi.PISTOL_BULLET_BIT
-                | Jannabi.Edge_BIT;
+                | Jannabi.Edge_BIT | Jannabi.SWORDHITBOX_BIT;
 
         fdef.shape = shape;
         fdef.restitution = 0.2f;
         fdef.density = 50;
         //fdef.isSensor = false;//this sensor use for jumping through
         b2body.createFixture(fdef).setUserData(this);
+    }
+
+    @Override
+    public void update(float dt) {
+        stateTime += dt;
+        if(setToDestroy && !destroy){
+            //world.destroyBody(b2body);
+            //destroy = true;
+            stateTime = 0;
+            setRegion(deadAnimation.getKeyFrame(0.5f,false));
+        }else if(!destroy){
+            //random movement ot this slime
+            randomMove(dt);
+
+            setPosition(b2body.getPosition().x - getWidth() / 2.5f,b2body.getPosition().y - getHeight()/ 3);
+            //check if slime get hit change animation
+            if(beenHit){
+                animateGetHit(dt);
+
+            }else{
+                setRegion(stayAnimation.getKeyFrame(stateTime,true));
+            }
+
+        }
     }
 
     @Override
@@ -137,16 +144,28 @@ public class Slime extends Enemy {
 
     }
 
-
+    @Override
     public void getHit(Gun gun) {
-        //setRegion(tempHitAnimation.getKeyFrame(0.5f,true));
-        //b2body.setLinearVelocity(3,2);
-
         Hp -= gun.getDmg();
         beenHit = true;
         if(Hp <= 0){
             setToDestroy = true;
-            //Hud.addScore(50);
+            //define drop condition
+            if(!drop){
+                screen.spawnItem(new ItemDef(new Vector2(b2body.getPosition().x,b2body.getPosition().y + 25), Potion.class));
+                drop = true;
+            }
+
+        }
+    }
+
+    @Override
+    public void getHit(Sword sword) {
+        Gdx.app.log("Im Bleeding!!!","");
+        Hp -= sword.getDmg();
+        beenHit = true;
+        if(Hp <= 0){
+            setToDestroy = true;
             //define drop condition
             if(!drop){
                 screen.spawnItem(new ItemDef(new Vector2(b2body.getPosition().x,b2body.getPosition().y + 25),Potion.class));
@@ -154,11 +173,11 @@ public class Slime extends Enemy {
             }
 
         }
-
     }
 
     @Override
     protected void randomMove(float dt) {
+        //need to change
         pauseJump -= dt;
         if(pauseJump < 0){
             if(moveLeft && b2body.getLinearVelocity().y == 0){
