@@ -424,6 +424,9 @@ public class Player extends Sprite {
 
     }
 
+    public boolean isBeenHit(){
+        return beenHit;
+    }
     private void reload(){
         //reload
         if(reloaded && allAmmo > 0){

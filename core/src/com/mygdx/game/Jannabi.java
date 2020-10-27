@@ -21,6 +21,8 @@ public class Jannabi extends Game {
 	//create width & height of our game
 	public static final int V_WIDTH = 400;
 	public static final int V_HEIGHT = 208;
+	public static final int F_WIDTH = 1280;
+	public static final int F_HEIGHT = 730;
 	public static final float PPM = 100;
 	public static final int PISTOL_CLIP = 13;
 	public static final int SMG_CLIP = 20;
@@ -61,9 +63,9 @@ public class Jannabi extends Game {
 		manager.load("Audio/Sound/Weapons/pistolReload.mp3",Sound.class);*/
 		manager.finishLoading();
 
-		setScreen(new EmptyScreen2(this));
+		//setScreen(new EmptyScreen2(this));
 		//setScreen(new GameOverScreen(this));
-		//setScreen(new PlayScreen(this));
+		setScreen(new PlayScreen(this));
 		//setScreen(new LoadingScreen(this));
 
 	}

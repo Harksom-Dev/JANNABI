@@ -6,10 +6,13 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.ai.GdxAI;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -19,6 +22,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.bullet.linearmath.HullDesc;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -43,13 +47,12 @@ public class PlayScreen implements Screen {
     public String imageAddress;
     //create Texture for background
     Texture background;
-
-    //creat Texture fot health bar
-    Texture healthBar;
+    Texture jannaHead;
 
     //implement main game camera and viewport
     private Jannabi game;
     private OrthographicCamera gamecam;
+    private OrthographicCamera camera;
     private Viewport gamePort;
 
     //create tile map variable
@@ -78,8 +81,16 @@ public class PlayScreen implements Screen {
 
     //background music player
     private Music music;
+    private BitmapFont bf_loadProgress;
+    private long progress = 0;
+    private ShapeRenderer shapeRenderer;
+    private BitmapFont bf_healthProgress;
+    private long health = 100;
+    private final int healthWidth = 1000 ;
+    private final int screenWidth = 1280, screenHeight = 720;
+    private boolean consHit ;
 
-
+    private Hud hud;
     Stage stage;
     Viewport viewport;
 
@@ -88,16 +99,7 @@ public class PlayScreen implements Screen {
 
         background = new Texture("Background/Stage1/stage1.png");
 
-        //health bar Texture
-        //healthBar = new Texture("Hud/Healthbar/1.png");
-
-        //create atlas and load from path
-        //atlas = new TextureAtlas("Sprite/allCharacter/character_all.pack");
-        //trying Load class
         atlas = new TextureAtlas("Sprite/allCharacter/character_pack.pack");
-
-//        updateAddress();
-//        healthBar = new Texture(imageAddress);
 
         viewport = new FitViewport(1280,720);
         stage = new Stage(viewport,((Jannabi)game).batch);
@@ -133,23 +135,33 @@ public class PlayScreen implements Screen {
         items = new Array<Item>();
         itemToSpawn = new LinkedBlockingDeque<ItemDef>();
 
-        //music
+        //Hud
+        hud = new Hud(game.batch, this.player);
+        //Health Bar
+        bf_healthProgress = new BitmapFont();
+        bf_healthProgress.getData().setScale(2,1);
+        shapeRenderer = new ShapeRenderer();
+        initCamera();
+        jannaHead = new Texture("Hud/JanHead.png");
+
+
+    }
+    private void initCamera() {
+        camera = new OrthographicCamera();
+        camera.setToOrtho(false, screenWidth, screenHeight);
+        camera.update();
     }
 
     //create getter for texture atlas
     public TextureAtlas getAtlas(){
         return atlas;
     }
-
     @Override
     public void show() {
-
     }
-
     public void spawnItem(ItemDef idef){
         itemToSpawn.add(idef);
     }
-
     public void handleSpawningItems(){
         if(!itemToSpawn.isEmpty()){
             ItemDef idef = itemToSpawn.poll();
@@ -158,7 +170,6 @@ public class PlayScreen implements Screen {
             }
         }
     }
-
     //create handle input when we get input from user
     public void handleInput( float dt){
         if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && player.b2body.getLinearVelocity().y == 0){
@@ -185,7 +196,6 @@ public class PlayScreen implements Screen {
         }
 
     }
-
     public void update(float dt){
         if(player.getHp() > 0){
             //check for input
@@ -238,19 +248,25 @@ public class PlayScreen implements Screen {
 
     @Override
     public void render(float delta) {
-
         update(delta);
 
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        ////////////////// HUD /////////////////////////////////////////////////
+        if (player.isBeenHit() && consHit == false) {
+            consHit = true;
+        }else{ consHit = false; }
+        // Width of progress bar on screen relevant to Screen width
+        float healthBarWidth = (50) * player.getHp() ;
+        game.batch.setProjectionMatrix(camera.combined);
 
-        //render box2d
+        ////////////////////////////////////////////////////////////////////////
+
         //if we comment this we not gonna outline object but not sure we can collide or not
         b2dr.render(world, gamecam.combined);
         game.batch.setProjectionMatrix(gamecam.combined);
         //need to draw background before render and render before player.draw
         game.batch.begin();
-        //multiple width to increase background (now get commented to check box2d)
         //can comment background  to check collision
         //game.batch.draw(background,0,0,(Jannabi.V_WIDTH /Jannabi.PPM) * 8,Jannabi.V_HEIGHT / Jannabi.PPM);
         game.batch.end();
@@ -259,19 +275,18 @@ public class PlayScreen implements Screen {
         //draw things
         game.batch.begin();
         player.draw(game.batch);
-        for(Enemy enemy : creator.getSlimes()){
-            enemy.draw(game.batch);
-        }
-        for(Item item : items){
-            item.draw(game.batch);
-        }
-        if (gameOver()){
-            game.setScreen(new GameOverScreen(game));
-        }
+        for(Enemy enemy : creator.getSlimes()){ enemy.draw(game.batch); }
+        for(Item item : items){ item.draw(game.batch); }
+        if (gameOver()){ game.setScreen(new GameOverScreen(game)); }
+        game.batch.draw(jannaHead,100,100);
+
         game.batch.end();
-
-
-
+        shapeRenderer.setProjectionMatrix(camera.combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(Color.RED);
+        shapeRenderer.rect(100, 625, healthBarWidth, 25);
+        shapeRenderer.end();
+        hud.stage.draw();
     }
     public boolean gameOver(){
         if (player.currentState == Player.State.DEAD && player.getStateTimer() > 2  ){
