@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.game.Screen.PlayScreen;
+import com.mygdx.game.Screen.LoadingScreen;
 import com.mygdx.game.Sprites.Player;
 import com.mygdx.game.Screen.*;
 
@@ -45,7 +46,7 @@ public class Jannabi extends Game {
 	public void create () {
 		batch = new SpriteBatch();
 		manager = new AssetManager();
-		manager.load("Audio/Music/i.mp3",Music.class);
+		/*manager.load("Audio/Music/i.mp3",Music.class);
 		manager.load("Audio/Music/GameOverMusic.mp3",Music.class);
 		manager.load("Audio/Sound/Slime/SlimeBeenHit.mp3", Sound.class);
 		manager.load("Audio/Sound/Slime/PickupPotion.mp3",Sound.class);
@@ -57,14 +58,19 @@ public class Jannabi extends Game {
 		manager.load("Audio/Sound/Player/beenHit.wav",Sound.class);
 		manager.load("Audio/Sound/Player/Jump.mp3",Sound.class);
 		manager.load("Audio/Sound/GameOver/GameOver.mp3",Sound.class);
-		manager.load("Audio/Sound/Weapons/pistolReload.mp3",Sound.class);
+		manager.load("Audio/Sound/Weapons/pistolReload.mp3",Sound.class);*/
 		manager.finishLoading();
 
 		setScreen(new EmptyScreen2(this));
 		//setScreen(new GameOverScreen(this));
 		//setScreen(new PlayScreen(this));
+		//setScreen(new LoadingScreen(this));
+
 	}
 
+	public SpriteBatch getBatch() {
+		return batch;
+	}
 
 	@Override
 	public void render () {

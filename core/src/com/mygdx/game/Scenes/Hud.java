@@ -6,17 +6,20 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.mygdx.game.Jannabi;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.mygdx.game.Jannabi;
+import com.mygdx.game.Screen.GameOverScreen;
+import com.mygdx.game.Screen.PlayScreen;
 import com.mygdx.game.Sprites.Player;
 
-import java.text.CollationElementIterator;
 
 public class Hud {
 
@@ -27,7 +30,9 @@ public class Hud {
     public Viewport viewport;
 
 
-    static Player player;
+
+   // static Player player;
+    Player player;
 
 
     //implement field
@@ -41,71 +46,72 @@ public class Hud {
     private static Image healthBar;
 
     //implement Label
-    private static Label scoreLabel;
     private static Label ammoLabel;
     private static Label ammoBoxLabel;
-    private Label textScoreLabel;
-    private Label levelLabel;
-    private Label stageLabel;
-    private Label slashLabel;
+
+    private ShapeRenderer shapeRenderer;
+    private BitmapFont bitmapFont;
+    private long health ;
+    private final int screenWidth = 1280, screenHeight = 720;
+    private OrthographicCamera camera;
+    Jannabi game;
 
 
-
-    public Hud(SpriteBatch sb, Player player){
-        //static field implement
-        score = 0;
+    public Hud(Jannabi game, Player player){
+        this.game = game;
+        this.player = player;
         ammo = player.getAmmo();
         allAmmo = player.getAllAmmo();
+        shapeRenderer = new ShapeRenderer();
+        bitmapFont = new BitmapFont();
+        bitmapFont.getData().setScale(2,1);
+        health = player.getHp();
+        initCamera();
+        ShowHealth();
 
         //image implement
         ammoBox = new Image(new Texture("Hud/Ammo-box.png"));
         janabi = new Image(new Texture("Hud/Janabi.png"));
-        healthBar = new Image(new Texture("Hud/Healthbar/1.png")); //default
+        healthBar = new Image(new Texture("Hud/Healthbar/01.png")); //default
 
         //set view and stage
-        viewport = new FitViewport(Jannabi.V_WIDTH, Jannabi.V_HEIGHT, new OrthographicCamera());
-        stage = new Stage(viewport, sb);
+        viewport = new FitViewport(1280, 720, new OrthographicCamera());
+        stage = new Stage(viewport, game.batch);
 
-        //implement table
+       /* //implement table
         Table table = new Table();
         table.top();
         table.setFillParent(true);
 
         //set Label
-        scoreLabel = new Label(String.format("%06d",score), new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        textScoreLabel = new Label("SCORE", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        levelLabel = new Label("1", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        stageLabel = new Label("STAGE", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
         ammoLabel = new Label(String.format("%02d", ammo ), new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        ammoBoxLabel = new Label(String.format("%02d", allAmmo ), new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        slashLabel = new Label("/", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
+        ammoBoxLabel = new Label(String.format("%02d", allAmmo ), new Label.LabelStyle(new BitmapFont(), Color.WHITE));*/
 
-        //set table
-        table.add().expandX();
-        table.add(janabi).width(25).height(25);
-        table.add().width(20).height(12);
-        table.add().expandX();
-        table.add().expandX();
-        table.add().expandX();
-        table.add(stageLabel).expandX().padTop(2);
-        table.add(textScoreLabel).expandX().padTop(2);
-        table.row();
-        table.add().expandX();
-        table.add(ammoBox).width(25).height(25);
-        table.add(ammoLabel).width(2).height(10);
-        table.add(slashLabel).width(0.5f).height(10);
-        table.add(ammoBoxLabel).width(1).height(10);
-        table.add().expandX();
-        table.add(levelLabel).expandX();
-        table.add(scoreLabel).expandX();
-
-        stage.addActor(table);
     }
 
-    //method for add score
-    public static void addScore(int value){
-        score += value;
-        scoreLabel.setText(String.format("%03d",score));
+    private void initCamera() {
+        camera = new OrthographicCamera();
+        camera.setToOrtho(false, screenWidth, screenHeight);
+        camera.update();
+    }
+    private void ShowHealth() {
+        //long currentTimeStamp = TimeUtils.nanoTime();
+        if (player.getHp() > 0) {
+            health = health - 1;
+        }
+        // Width of progress bar on screen relevant to Screen width
+        float healthBarWidth = (screenWidth / 100) * health;
+
+        game.getBatch().setProjectionMatrix(camera.combined);
+        game.getBatch().begin();
+        bitmapFont.draw(game.getBatch(), "Loading " + health + " / " + 10, 100, 100);
+        game.getBatch().end();
+
+        shapeRenderer.setProjectionMatrix(camera.combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(Color.WHITE);
+        shapeRenderer.rect(0, 10, healthBarWidth, 10);
+        shapeRenderer.end();
     }
 
     //method for update ammo
@@ -113,23 +119,14 @@ public class Hud {
         ammo = value;
         ammoLabel.setText(String.format("%02d",ammo));
     }
-
     public static void updateAllammo(int value){
         allAmmo = value;
         ammoBoxLabel.setText(String.format("%02d",allAmmo));
     }
-//    public static void updateHealthbar(){
-//        if(player.getHp() == 10){
-//            healthBar = new Image(new Texture("Hud/Healthbar/1.png"));
-//        }else if(player.getHp() == 9){
-//            healthBar = new Image(new Texture("Hud/Healthbar/2.png"));
-//        }
-//    }
+
+
 
     public void dispose() {
         stage.dispose();
     }
-
-
-
 }

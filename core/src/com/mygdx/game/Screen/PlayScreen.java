@@ -16,6 +16,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.bullet.linearmath.HullDesc;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -79,10 +80,6 @@ public class PlayScreen implements Screen {
     private Music music;
 
 
-
-    //hud
-    private Hud hud;
-
     Stage stage;
     Viewport viewport;
 
@@ -92,7 +89,7 @@ public class PlayScreen implements Screen {
         background = new Texture("Background/Stage1/stage1.png");
 
         //health bar Texture
-        healthBar = new Texture("Hud/Healthbar/1.png");
+        //healthBar = new Texture("Hud/Healthbar/1.png");
 
         //create atlas and load from path
         //atlas = new TextureAtlas("Sprite/allCharacter/character_all.pack");
@@ -137,11 +134,6 @@ public class PlayScreen implements Screen {
         itemToSpawn = new LinkedBlockingDeque<ItemDef>();
 
         //music
-
-
-
-        //Hud
-        hud = new Hud(game.batch, this.player);
     }
 
     //create getter for texture atlas
@@ -194,15 +186,6 @@ public class PlayScreen implements Screen {
 
     }
 
-
-//    public void  updateAddress(){
-//        if(hp == 10){
-//            imageAddress = "Hud/Healthbar/1.png";
-//        }else if(hp == 9){
-//            imageAddress = "Hud/Healthbar/2.png";
-//        }
-//    }
-
     public void update(float dt){
         if(player.getHp() > 0){
             //check for input
@@ -210,13 +193,12 @@ public class PlayScreen implements Screen {
         }
 
         handleSpawningItems();
-
         //dont know what this doing
         world.step(1/60f,6,2);
-
         //update player
         player.update(dt);
         //spawn all slimes
+
         /////////////need to destroy enemy in playscreen////////////
         slimeIterator = creator.getSlimeIterator();
         while(slimeIterator.hasNext())
@@ -238,13 +220,6 @@ public class PlayScreen implements Screen {
             }
 
         }
-        /*for(Slime enemy : creator.getSlimes()){
-            enemy.update(dt);
-            if(enemy.getX() < player.getX() +224 / Jannabi.PPM){
-                enemy.b2body.setActive(true);
-                //we can use this to enable attack in the future
-            }
-        }*/
         for(Item item : items){
             item.update(dt);
         }
@@ -255,10 +230,8 @@ public class PlayScreen implements Screen {
             gamecam.position.x = player.b2body.getPosition().x;
         }
 
-
         //update camera
         gamecam.update();
-
         //set view to camera
         renderer.setView(gamecam);
     }
@@ -268,30 +241,21 @@ public class PlayScreen implements Screen {
 
         update(delta);
 
-
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-
-
         //render box2d
-
         //if we comment this we not gonna outline object but not sure we can collide or not
         b2dr.render(world, gamecam.combined);
-
-
         game.batch.setProjectionMatrix(gamecam.combined);
-
         //need to draw background before render and render before player.draw
         game.batch.begin();
         //multiple width to increase background (now get commented to check box2d)
         //can comment background  to check collision
         //game.batch.draw(background,0,0,(Jannabi.V_WIDTH /Jannabi.PPM) * 8,Jannabi.V_HEIGHT / Jannabi.PPM);
         game.batch.end();
-
         //need to render after background
         renderer.render();
-
         //draw things
         game.batch.begin();
         player.draw(game.batch);
@@ -301,19 +265,18 @@ public class PlayScreen implements Screen {
         for(Item item : items){
             item.draw(game.batch);
         }
+        if (gameOver()){
+            game.setScreen(new GameOverScreen(game));
+        }
         game.batch.end();
 
 
-        //draw hud
-        hud.stage.draw();
 
-
-        //draw health bar
-        game.batch.begin();
-        game.batch.draw(healthBar,55,183,190,25);
-        game.batch.end();
-
-
+    }
+    public boolean gameOver(){
+        if (player.currentState == Player.State.DEAD && player.getStateTimer() > 2  ){
+            return true;
+        }else{return false;}
     }
 
     @Override

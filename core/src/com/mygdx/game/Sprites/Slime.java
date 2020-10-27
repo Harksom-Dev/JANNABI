@@ -146,7 +146,7 @@ public class Slime extends Enemy {
         beenHit = true;
         if(Hp <= 0){
             setToDestroy = true;
-            Hud.addScore(50);
+            //Hud.addScore(50);
             //define drop condition
             if(!drop){
                 screen.spawnItem(new ItemDef(new Vector2(b2body.getPosition().x,b2body.getPosition().y + 25),Potion.class));

@@ -67,13 +67,13 @@ public class MainMenuScreen implements Screen {
         HowtoplayActive = new Texture("MainMenu/HowtoplayActive.png");
         HowtoplayInactive = new Texture("MainMenu/HowtoplayInactive.png");
         MainMenuWallpaper = new Texture("MainMenu/MainWallpaper.png");
-        MuteButton = new Texture("MainMenu/mute.png");
-        UnmuteButton = new Texture("MainMenu/unmute.png");
+        //MuteButton = new Texture("MainMenu/mute.png");
+        //UnmuteButton = new Texture("MainMenu/unmute.png");
 
-        //music background
+        /*//music background
         music = Jannabi.manager.get("Audio/Music/i.mp3",Music.class);
         music.setLooping(true);
-        music.play();
+        music.play();*/
 
     }
 
@@ -82,7 +82,7 @@ public class MainMenuScreen implements Screen {
 
     }
 
-    public void muteMusic() {
+   /* public void muteMusic() {
         if (mutepress == true){ game.batch.draw(MuteButton,MUTE_BUTTON_WIDTH,MUTE_BUTTON_HEIGHT);}
         else {game.batch.draw(UnmuteButton,MUTE_BUTTON_WIDTH,MUTE_BUTTON_HEIGHT);}
  //       if (Gdx.input.getX() >1207 && Gdx.input.getX() < 1257 && Gdx.input.getY() > 30 && Gdx.input.getY() < 80){
@@ -91,9 +91,9 @@ public class MainMenuScreen implements Screen {
                 else {mutepress = true; music.pause();}
             }
   //      }
-    }
-    public void touchButtonSound(){ Jannabi.manager.get("Audio/Sound/MainMenu/Select.mp3",Sound.class).play(); }
-    public  void isClicked(){ Jannabi.manager.get("Audio/Sound/MainMenu/Selected.mp3",Sound.class).play(); }
+    }*/
+    //public void touchButtonSound(){ Jannabi.manager.get("Audio/Sound/MainMenu/Select.mp3",Sound.class).play(); }
+    //public  void isClicked(){ Jannabi.manager.get("Audio/Sound/MainMenu/Selected.mp3",Sound.class).play(); }
 
     @Override
     public void render(float delta) {
@@ -107,10 +107,10 @@ public class MainMenuScreen implements Screen {
         /// START GAME
         if (Gdx.input.getX() > 88 && Gdx.input.getX() < 417 && Gdx.input.getY() > 327&& Gdx.input.getY() < 364) {
             game.batch.draw(PlayButtonActive, START_BUTTON_WIDTH, START_BUTTON_HEIGHT);
-           touchButtonSound();
+           //touchButtonSound();
             if (Gdx.input.isTouched()){
-                isClicked();
-                game.setScreen(new EmptyScreen(game));
+             //   isClicked();
+                game.setScreen(new LoadingScreen(game));
                 this.dispose();
                 game.batch.end();
                 return;
@@ -120,9 +120,9 @@ public class MainMenuScreen implements Screen {
         /// HOW TO PLAY
         if (Gdx.input.getX() > 88 && Gdx.input.getX() < 417 && Gdx.input.getY() > 373&& Gdx.input.getY() < 410) {
             game.batch.draw(HowtoplayActive, HOW_BUTTON_WIDTE, HOW_BUTTON_HEIGHT);
-            touchButtonSound();
+            //touchButtonSound();
             if (Gdx.input.justTouched()){
-                isClicked();
+                //isClicked();
                 this.dispose();
                 game.batch.end();
                 game.setScreen(new EmptyScreen(game));
@@ -132,10 +132,10 @@ public class MainMenuScreen implements Screen {
 
         ///ABOUT
         if (Gdx.input.getX() > 88 && Gdx.input.getX() < 417 && Gdx.input.getY() > 420 && Gdx.input.getY() < 460) {
-            touchButtonSound();
+            //touchButtonSound();
             game.batch.draw(AboutButtonActive,ABOUT_BUTTON_WIDTH,ABOUT_BUTTON_HEIGHT);
             if (Gdx.input.justTouched()){
-                isClicked();
+                //isClicked();
                 this.dispose();
                 game.batch.end();
                 game.setScreen(new Credits(game));
@@ -146,14 +146,14 @@ public class MainMenuScreen implements Screen {
         /// EXIT
         if (Gdx.input.getX() > 88 && Gdx.input.getX() < 417 && Gdx.input.getY() > 470 && Gdx.input.getY() < 510) {
             game.batch.draw(ExitButtonActive,EXIT_BUTTON_WIDTH,EXIT_BUTTON_HEIGHT);
-            touchButtonSound();
+            //touchButtonSound();
             if (Gdx.input.isTouched()){
                 Gdx.app.exit();
             }
         } else {game.batch.draw(ExitButtonInactive,EXIT_BUTTON_WIDTH,EXIT_BUTTON_HEIGHT);}
 
         /// MUTE BUTTON
-        muteMusic();
+        //muteMusic();
 
         game.batch.end();
     }
@@ -172,7 +172,7 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void dispose() {
-        music.dispose();
+        //music.dispose();
     }
 }
 

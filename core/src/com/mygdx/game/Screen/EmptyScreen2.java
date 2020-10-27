@@ -39,7 +39,7 @@ public class EmptyScreen2 implements Screen {
         cam = new OrthographicCamera();
         Background = new Texture("Loading/main.png");
         Background2 = new Texture("Loading/main2.png");
-        Jannabi.manager.get("Audio/Sound/MainMenu/openUp.mp3", Sound.class).play();
+        //Jannabi.manager.get("Audio/Sound/MainMenu/openUp.mp3", Sound.class).play();
     }
 
     @Override

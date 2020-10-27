@@ -60,9 +60,9 @@ public class GameOverScreen implements Screen {
         QuitButtonActive = new Texture("GameOver/QuitActive.png");
         QuitButtonInactive = new Texture("GameOver/QuitInactive.png");
         Test = new Texture("MainMenu/MainWallpaper.png");
-        music = Jannabi.manager.get("Audio/Music/GameOverMusic.mp3",Music.class);
+        /*music = Jannabi.manager.get("Audio/Music/GameOverMusic.mp3",Music.class);
         music.setLooping(true);
-        music.play();
+        music.play();*/
     }
 
 
@@ -91,8 +91,8 @@ public class GameOverScreen implements Screen {
                 if (Gdx.input.isTouched()){
                     Gdx.app.log("Now I'm in TRYAGAIN BUTT","Pass");
                     this.dispose();
-                    game.batch.end();
                     game.setScreen(new PlayScreen(game));
+                    game.batch.end();
                     return;
                 }
         }else {
@@ -147,7 +147,7 @@ public class GameOverScreen implements Screen {
 
     @Override
     public void dispose() {
-        music.dispose();
+        //music.dispose();
 
     }
 }
