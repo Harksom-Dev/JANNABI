@@ -43,7 +43,6 @@ public class LoadingScreen implements Screen {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, screenWidth, screenHeight);
         camera.update();
-
     }
 
     @Override
