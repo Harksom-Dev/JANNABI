@@ -14,6 +14,7 @@ public abstract class Enemy extends Sprite {
     protected PlayScreen screen;
     protected int Hp;
     public Vector2 velocity;
+    public Vector2 velocity2;
     protected float pauseJump;
     protected boolean drop;
 
@@ -38,11 +39,7 @@ public abstract class Enemy extends Sprite {
     public abstract void getHit(Sword sword);
     protected abstract void randomMove(float dt);
     protected abstract void animateGetHit(float dt);
-
-    public void reverseVelocity(boolean x,boolean y){
-        if(x)velocity.x = -velocity.x;
-        if(y)velocity.y = -velocity.y;
-    }
+    public abstract void attack(boolean attack,boolean attackLeft);
 
     public abstract boolean getToDestroy();
 

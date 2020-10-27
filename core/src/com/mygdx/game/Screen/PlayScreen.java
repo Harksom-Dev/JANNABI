@@ -179,42 +179,29 @@ public class PlayScreen implements Screen {
         {
             Enemy nextEnemies = enemyIterator.next();
             nextEnemies.update(dt);
-            if(nextEnemies.getX()<player.getX()+224 / Jannabi.PPM)
+            if(nextEnemies.getX()<player.getX()+270 / Jannabi.PPM)
                 nextEnemies.b2body.setActive((true));
+            if(nextEnemies.getX()<player.getX()+50 / Jannabi.PPM && player.getX() < nextEnemies.getX() ){
+                nextEnemies.attack(true,true);
+            }else if(player.getX() < nextEnemies.getX() + 50 / Jannabi.PPM && nextEnemies.getX() < player.getX()){
+                nextEnemies.attack(true,false);
+            }
+
             if (nextEnemies.getToDestroy() && !nextEnemies.getDestroyed())
             {
                 world.destroyBody(nextEnemies.b2body);
                 nextEnemies.setDestroyed(true);
-            }
-
-            if (nextEnemies.getStateTime() >= 1 && nextEnemies.getDestroyed())
-            {
-                Gdx.app.log("removing slime from array", "");
                 enemyIterator.remove();
             }
+            /*if (nextEnemies.getStateTime() >= 1 && nextEnemies.getDestroyed())
+            {
+                Gdx.app.log("removing slime from array", "");
+
+            }*/
+
 
         }
 
-       /* BlackShirtIterator = creator.getBlackShirtIterator();
-        while(BlackShirtIterator.hasNext())
-        {
-            BlackShirt nextBlackShirt = BlackShirtIterator.next();
-            nextBlackShirt.update(dt);
-            if(nextBlackShirt.getX()<player.getX()+224 / Jannabi.PPM)
-                nextBlackShirt.b2body.setActive((true));
-            if (nextBlackShirt.getToDestroy() && !nextBlackShirt.getDestroyed())
-            {
-                world.destroyBody(nextBlackShirt.b2body);
-                nextBlackShirt.setDestroyed(true);
-            }
-
-            if (nextBlackShirt.getStateTime() >= 1 && nextBlackShirt.getDestroyed())
-            {
-                Gdx.app.log("removing slime from array", "");
-                slimeIterator.remove();
-            }
-
-        }*/
 
         for(Item item : items){
             item.update(dt);
@@ -257,7 +244,7 @@ public class PlayScreen implements Screen {
         game.batch.begin();
         //multiple width to increase background (now get commented to check box2d)
         //can comment background  to check collision
-        game.batch.draw(background,0,0,(Jannabi.V_WIDTH /Jannabi.PPM) * 8,Jannabi.V_HEIGHT / Jannabi.PPM);
+        //game.batch.draw(background,0,0,(Jannabi.V_WIDTH /Jannabi.PPM) * 8,Jannabi.V_HEIGHT / Jannabi.PPM);
         game.batch.end();
 
         //need to render after background
