@@ -119,14 +119,6 @@ public class Hud {
         allAmmo = value;
         ammoBoxLabel.setText(String.format("%02d",allAmmo));
     }
-//    public static void updateHealthbar(){
-//        if(player.getHp() == 10){
-//            healthBar = new Image(new Texture("Hud/Healthbar/1.png"));
-//        }else if(player.getHp() == 9){
-//            healthBar = new Image(new Texture("Hud/Healthbar/2.png"));
-//        }
-//    }
-
     public void dispose() {
         stage.dispose();
     }
