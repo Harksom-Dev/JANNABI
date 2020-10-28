@@ -108,7 +108,7 @@ public class PlayScreen implements Screen {
 
     public PlayScreen(Jannabi game) {
 
-        background = new Texture("Background/Stage1/stage1_fix.png");
+        background = new Texture("Background/Stage1/stage1.png");
 
 
         atlas = new TextureAtlas("Sprite/allCharacter/character_pack.pack");
@@ -156,7 +156,11 @@ public class PlayScreen implements Screen {
         initCamera();
         jannaHead = new Texture("Hud/JanHead.png");
 
+
+
         winCondition = false;
+
+
 
     }
     private void initCamera() {
@@ -282,7 +286,9 @@ public class PlayScreen implements Screen {
 
         }
 
-
+        if (winCondition == true){
+            game.setScreen(new Done(game));
+        }
 
         for(Item item : items){
             item.update(dt);
@@ -303,7 +309,7 @@ public class PlayScreen implements Screen {
     }
 
     private void shortToExit(){
-        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE) || winCondition ){
+        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE) ){
             this.dispose();
             game.setScreen(new MainMenuScreen(game));
         }
@@ -367,7 +373,7 @@ public class PlayScreen implements Screen {
     }
     public boolean gameOver(){
 
-        if (player.currentState == Player.State.DEAD && player.getStateTimer() > 2  || player.getY() < 0){
+        if (player.currentState == Player.State.DEAD && player.getStateTimer() > 1  || player.getY() < 0){
             return true;
         }else{return false;}
     }

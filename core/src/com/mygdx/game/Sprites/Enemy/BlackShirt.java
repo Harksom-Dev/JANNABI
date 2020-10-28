@@ -1,6 +1,7 @@
 package com.mygdx.game.Sprites.Enemy;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -256,6 +257,7 @@ public class BlackShirt extends Enemy {
 
     @Override
     protected void animateGetHit(float dt) {
+        Jannabi.manager.get("Audio/Sound/mons/monsterHit.wav", Sound.class).play();
         animateDelay += dt;
         setRegion(deadAnimation.getKeyFrame(stateTime,false));
         if(animateDelay > 0.125f){

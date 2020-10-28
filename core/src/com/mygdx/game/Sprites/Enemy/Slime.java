@@ -2,6 +2,7 @@ package com.mygdx.game.Sprites.Enemy;
 
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -148,10 +149,11 @@ public class Slime extends Enemy {
     public void getHit(Gun gun) {
         //setRegion(tempHitAnimation.getKeyFrame(0.5f,true));
         //b2body.setLinearVelocity(3,2);
-
+        Jannabi.manager.get("Audio/Sound/mons/monsterHit.wav", Sound.class).play();
         Hp -= gun.getDmg();
         beenHit = true;
         if(Hp <= 0){
+            Jannabi.manager.get("Audio/Sound/mons/monsterHit.wav", Sound.class).play();
             setToDestroy = true;
             //define drop condition
             if(!drop){
@@ -205,6 +207,7 @@ public class Slime extends Enemy {
 
     @Override
     protected void animateGetHit(float dt) {
+        Jannabi.manager.get("Audio/Sound/mons/monsterHit.wav", Sound.class).play();
         animateDelay += dt;
         setRegion(getHitAnimation.getKeyFrame(stateTime,false));
         if(animateDelay > 0.125f){

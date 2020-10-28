@@ -142,7 +142,7 @@ public class MainMenuScreen implements Screen {
                 isClicked();
                 this.dispose();
                 game.batch.end();
-                game.setScreen(new EmptyScreen(game));
+                game.setScreen(new HowToPlay(game));
                 return;
             }
         } else {game.batch.draw(HowtoplayInactive, HOW_BUTTON_WIDTE, HOW_BUTTON_HEIGHT);}

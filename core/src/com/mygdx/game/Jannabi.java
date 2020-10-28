@@ -47,7 +47,11 @@ public class Jannabi extends Game {
 		manager.load("Audio/Music/Harksom.mp3", Music.class);
 		manager.load("Audio/Music/jannabi.mp3", Music.class);
 		manager.load("Audio/Music/MainMenu.mp3", Music.class);
+		manager.load("Audio/Music/GameClear.mp3", Music.class);
+		manager.load("Audio/Music/backgroundSong.mp3", Music.class);
 		manager.load("Audio/Sound/gameoversound.mp3", Sound.class);
+		manager.load("Audio/Sound/mons/monsterHit.wav", Sound.class);
+		manager.load("Audio/Sound/mons/monDes.wav", Sound.class);
 		manager.load("Audio/Sound/gun/pistol.wav", Sound.class);
 		manager.load("Audio/Sound/gun/reload.mp3", Sound.class);
 		manager.load("Audio/Sound/gun/shotGun.mp3", Sound.class);
