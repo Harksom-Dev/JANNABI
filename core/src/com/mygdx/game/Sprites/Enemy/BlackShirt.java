@@ -137,7 +137,7 @@ public class BlackShirt extends Enemy {
                 region = attackAnimation.getKeyFrame(stateTime,true);
                 break;
             case GETHIT:
-                region = getHitAnimation.getKeyFrame(stateTime,true);
+                region = getHitAnimation.getKeyFrame(stateTime,false);
                 break;
             default:
                 region = deadAnimation.getKeyFrame(stateTime,true);
@@ -206,8 +206,10 @@ public class BlackShirt extends Enemy {
     public void getHit(Gun gun) {
         Hp -= gun.getDmg();
         beenHit = true;
+        currentState = State.GETHIT;
         if(Hp <= 0){
             setToDestroy = true;
+            currentState = State.DEAD;
             //define drop condition
             if(!drop){
 
@@ -223,8 +225,10 @@ public class BlackShirt extends Enemy {
         Gdx.app.log("Im Bleeding!!!","");
         Hp -= sword.getDmg();
         beenHit = true;
+        currentState = State.GETHIT;
         if(Hp <= 0){
             setToDestroy = true;
+            currentState = State.DEAD;
             //define drop condition
             if(!drop){
 

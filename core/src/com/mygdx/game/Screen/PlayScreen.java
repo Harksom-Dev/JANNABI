@@ -101,6 +101,9 @@ public class PlayScreen implements Screen {
 
     private boolean winCondition;
 
+    ////// music ///
+    private Music bgmusic;
+
     private Hud hud;
     Stage stage;
     Viewport viewport;
@@ -157,6 +160,12 @@ public class PlayScreen implements Screen {
         jannaHead = new Texture("Hud/JanHead.png");
 
 
+        /// music player ///
+        bgmusic = Jannabi.manager.get("Audio/Music/backgroundSong.mp3", Music.class);
+        bgmusic.setLooping(true);
+        bgmusic.setVolume(5);
+        bgmusic.play();
+
 
         winCondition = false;
 
@@ -197,7 +206,7 @@ public class PlayScreen implements Screen {
     }
 
     //create handle input when we get input from user
-    public void handleInput( float dt){
+    private void handleInput( float dt){
         if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && player.b2body.getLinearVelocity().y == 0){
             Jannabi.manager.get("Audio/Sound/player/jump.mp3", Sound.class).play();
             player.b2body.applyLinearImpulse(new Vector2(0,3),player.b2body.getWorldCenter(),true);
@@ -287,6 +296,7 @@ public class PlayScreen implements Screen {
         }
 
         if (winCondition == true){
+            bgmusic.dispose();
             game.setScreen(new Done(game));
         }
 
@@ -359,7 +369,7 @@ public class PlayScreen implements Screen {
         for(Item item : items){ item.draw(game.batch); }
 
 
-        if (gameOver()){ game.setScreen(new GameOverScreen(game)); }
+        if (gameOver()){ bgmusic.dispose(); game.setScreen(new GameOverScreen(game)); }
         game.batch.draw(jannaHead,100,100);
 
         game.batch.end();
@@ -413,6 +423,7 @@ public class PlayScreen implements Screen {
         renderer.dispose();
         world.dispose();
         b2dr.dispose();
-
+        //music.dispose();
+        bgmusic.dispose();
     }
 }

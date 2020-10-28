@@ -63,6 +63,7 @@ public class GameOverScreen implements Screen {
         Test = new Texture("MainMenu/MainWallpaper.png");
         music = Jannabi.manager.get("Audio/Music/GameOver.mp3",Music.class);
         music.setLooping(true);
+        music.setVolume(20);
         music.play();
     }
 

@@ -171,6 +171,7 @@ public class Slime extends Enemy {
         Hp -= sword.getDmg();
         beenHit = true;
         if(Hp <= 0){
+            Jannabi.manager.get("Audio/Sound/mons/monsterHit.wav", Sound.class).play();
             setToDestroy = true;
             //define drop condition
             if(!drop){

@@ -224,20 +224,20 @@ public class Boss extends Enemy {
         pauseJump -= dt;
         if(pauseJump < 0){
             if(moveLeft&& b2body.getLinearVelocity().y == 0){
-                b2body.applyLinearImpulse(new Vector2(-7,9),b2body.getWorldCenter(),true);
-                b2body.setLinearVelocity(-10,0);
+                b2body.applyLinearImpulse(new Vector2(-10,5),b2body.getWorldCenter(),true);
+                b2body.setLinearVelocity(-2.5f,2);
                 moveLeft = false;
                 pauseJump = 2;
             }else if(!moveLeft && b2body.getLinearVelocity().y == 0){
-                b2body.applyLinearImpulse(new Vector2(7,9),b2body.getWorldCenter(),true);
-                b2body.setLinearVelocity(10,0);
+                b2body.applyLinearImpulse(new Vector2(10,5),b2body.getWorldCenter(),true);
+                b2body.setLinearVelocity(2.5f,2);
                 moveLeft = true;
                 pauseJump = 2;
             }else if(pauseJump == 2){
                 if(moveLeft){
-                    b2body.setLinearVelocity(-20,10);
+                    b2body.setLinearVelocity(-10,5);
                 }else
-                    b2body.setLinearVelocity(20,10);
+                    b2body.setLinearVelocity(10,5);
             }
 
         }
